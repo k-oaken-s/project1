@@ -5,7 +5,6 @@ plugins {
     id("io.spring.dependency-management") version "1.1.6"
 }
 
-
 group = "com.example"
 version = "0.0.1-SNAPSHOT"
 
@@ -25,13 +24,10 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    runtimeOnly("com.h2database:h2") // 必要に応じて他のDBに変更
+    runtimeOnly("com.h2database:h2")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib")
 }
 
 kotlin {
     jvmToolchain(21)
-}
-
-tasks.test {
-    useJUnitPlatform()
 }
