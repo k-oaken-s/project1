@@ -1,4 +1,3 @@
-// ui/controller/UserController.kt
 package com.example.demo.ui.controller
 
 import com.example.demo.application.service.UserService
@@ -11,16 +10,18 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/users")
 class UserController(private val userService: UserService) {
 
-    @GetMapping
-    fun getAllUsers(): List<User> = userService.getAllUsers()
+    @GetMapping fun getAllUsers(): List<User> = userService.getAllUsers()
 
     @GetMapping("/{id}")
-    fun getUserById(@PathVariable id: Long): ResponseEntity<User> =
-        userService.getUserById(id)?.let { ResponseEntity.ok(it) }
-            ?: ResponseEntity.notFound().build()
-
-    @PostMapping
-    fun createUser(@RequestBody user: User): User = userService.saveUser(user)
+    fun getUserById(@PathVariable id: Long): ResponseEntity<User> {
+        val user = userService.getUserById(id).orElse(null) // OptionalからUser?に変換
+        return if (user != null) {
+            ResponseEntity.ok(user)
+        } else {
+            ResponseEntity.notFound().build()
+        }
+    }
+    @PostMapping fun createUser(@RequestBody user: User): User = userService.saveUser(user)
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
