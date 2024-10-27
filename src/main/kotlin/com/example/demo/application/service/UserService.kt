@@ -2,6 +2,7 @@ package com.example.demo.application.service
 
 import com.example.demo.domain.model.User
 import com.example.demo.domain.repository.UserRepository
+import java.util.Optional
 import org.springframework.stereotype.Service
 
 @Service
