@@ -1,0 +1,39 @@
+# エディタ設定のベースライン
+root = true
+
+# 全般設定
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# インデントの設定
+indent_style = space
+indent_size = 4
+tab_width = 4
+
+# Kotlin ファイルの設定
+[*.kt]
+indent_size = 4
+continuation_indent_size = 8
+
+# Java ファイルの設定
+[*.java]
+indent_size = 4
+continuation_indent_size = 8
+
+# XMLやHTMLファイルの設定
+[*.xml]
+indent_size = 2
+
+[*.html]
+indent_size = 2
+
+# Markdownファイルの設定
+[*.md]
+trim_trailing_whitespace = false
+
+# JSON ファイルの設定
+[*.json]
+indent_size = 2
