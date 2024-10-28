@@ -1,13 +1,35 @@
-# Ignore Gradle build files
-.gradle/
-build/
-
-# Ignore IntelliJ IDEA project files
-.idea/
+# Kotlin/Java specific
+*.class
+*.jar
+*.war
+*.ear
 *.iml
+/out/
+build/
+backend/build/
+backend/out/
+!gradle/wrapper/gradle-wrapper.jar
+.gradle
+backend/.gradle
+.idea/
+*.iws
+*.ipr
+*.iml
+*.hprof
 
-# Ignore VS Code workspace files
-.vscode/
-
-# Ignore OS generated files
+# OS generated files
 .DS_Store
+Thumbs.db
+
+# IntelliJ IDEA
+.idea/
+backend/.idea/
+*.iws
+*.iml
+.idea/
+backend/out/
+
+# VS Code
+.vscode/
+backend/.vscode/
+
