@@ -11,11 +11,6 @@ backend/out/
 !gradle/wrapper/gradle-wrapper.jar
 .gradle
 backend/.gradle
-.idea/
-*.iws
-*.ipr
-*.iml
-*.hprof
 
 # OS generated files
 .DS_Store
@@ -25,6 +20,7 @@ Thumbs.db
 .idea/
 backend/.idea/
 *.iws
+*.ipr
 *.iml
 .idea/
 backend/out/
@@ -32,4 +28,16 @@ backend/out/
 # VS Code
 .vscode/
 backend/.vscode/
+frontend/.vscode/
 
+# Node.js / Frontend
+node_modules/
+frontend/node_modules/
+npm-debug.log*
+yarn-error.log*
+frontend/.next/
+frontend/out/
+
+# Docker
+*.log
+doc

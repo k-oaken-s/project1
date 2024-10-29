@@ -9,7 +9,7 @@ services:
         ports:
             - "3306:3306"
         networks:
-            - backend-network
+            - app-network
 
     backend:
         build:
@@ -27,8 +27,19 @@ services:
         depends_on:
             - db
         networks:
-            - backend-network
+            - app-network
+
+    frontend:
+        build:
+            context: ./frontend
+            dockerfile: Dockerfile
+        ports:
+            - "3000:3000"
+        environment:
+            - NODE_ENV=production
+        networks:
+            - app-network
 
 networks:
-    backend-network:
+    app-network:
         driver: bridge
