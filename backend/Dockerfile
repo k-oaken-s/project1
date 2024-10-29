@@ -1,6 +1,9 @@
 # ベースイメージとしてOpenJDK 21を指定
 FROM openjdk:21-jdk-slim
 
+# 必要なパッケージのインストール
+RUN apt-get update && apt-get install -y default-mysql-client
+
 # アプリケーションを実行する作業ディレクトリを設定
 WORKDIR /app
 
