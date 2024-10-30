@@ -30,6 +30,7 @@ dependencies {
 	implementation("javax.validation:validation-api:2.0.1.Final")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
+    implementation("io.jsonwebtoken:jjwt:0.9.1")
     runtimeOnly("mysql:mysql-connector-java:8.0.33")
     runtimeOnly("com.h2database:h2")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
