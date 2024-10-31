@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/admin")
 class AdminController(
     private val categoryService: CategoryService,
     private val itemService: ItemService
