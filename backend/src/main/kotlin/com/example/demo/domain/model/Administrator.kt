@@ -7,7 +7,7 @@ import jakarta.persistence.Table
 import java.util.*
 
 @Entity
-@Table(name = "administrator")
+@Table(name = "administrator2")
 data class Administrator(
     @Id
     val id: String = UUID.randomUUID().toString(),

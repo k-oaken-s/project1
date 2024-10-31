@@ -6,7 +6,7 @@ import java.util.*
 
 @Entity
 @Table(name = "game")
-data class Game(
+data class Category(
     @Id
     val id: String = UUID.randomUUID().toString(),
 
@@ -15,6 +15,6 @@ data class Game(
 
     val description: String? = null,
 
-    @OneToMany(mappedBy = "game", cascade = [CascadeType.ALL])
-    val characters: List<Character> = emptyList()
+    @OneToMany(mappedBy = "category", cascade = [CascadeType.ALL])
+    val items: List<Item> = emptyList()
 )
