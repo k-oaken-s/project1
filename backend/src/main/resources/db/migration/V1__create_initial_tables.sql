@@ -1,4 +1,4 @@
-CREATE TABLE game (
+CREATE TABLE category (
     id VARCHAR(36) PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description TEXT,
@@ -6,15 +6,15 @@ CREATE TABLE game (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE game_character (
+CREATE TABLE item (
     id VARCHAR(36) PRIMARY KEY,
-    game_id VARCHAR(36) NOT NULL,
+    category_id VARCHAR(36) NOT NULL,
     name VARCHAR(255) NOT NULL,
     image_url VARCHAR(255),
     description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (game_id) REFERENCES game(id) ON DELETE CASCADE
+    FOREIGN KEY (category_id) REFERENCES category(id) ON DELETE CASCADE
 );
 
 CREATE TABLE administrator (
