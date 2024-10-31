@@ -1,16 +1,19 @@
 package com.example.demo.ui.controller
 
-import com.example.demo.application.service.CharacterService
-import com.example.demo.application.service.GameService
-import com.example.demo.domain.model.Character
-import com.example.demo.domain.model.Game
+import com.example.demo.application.service.ItemService
+import com.example.demo.application.service.CategoryService
+import com.example.demo.common.security.JwtUtil
+import com.example.demo.domain.model.Category
+import com.example.demo.domain.model.Item
+import com.example.demo.ui.controller.dto.LoginRequest
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/admin")
 class AdminController(
-        private val gameService: GameService,
-        private val characterService: CharacterService
+    private val categoryService: CategoryService,
+    private val itemService: ItemService
 ) {
 
     @PostMapping("/login")
@@ -23,18 +26,18 @@ class AdminController(
     }
 
     @PostMapping("/games")
-    fun createGame(@RequestBody game: Game): Game = gameService.saveGame(game)
+    fun createGame(@RequestBody category: Category): Category = categoryService.saveGame(category)
 
     @DeleteMapping("/games/{gameId}")
-    fun deleteGame(@PathVariable gameId: String) = gameService.deleteGame(gameId)
+    fun deleteGame(@PathVariable gameId: String) = categoryService.deleteGame(gameId)
 
     @PostMapping("/games/{gameId}/characters")
     fun createCharacter(
-            @PathVariable gameId: String,
-            @RequestBody character: Character
-    ): Character = characterService.saveCharacter(gameId, character)
+            @PathVariable categoryId: String,
+            @RequestBody item: Item
+    ): Item = itemService.saveCharacter(categoryId, item)
 
     @DeleteMapping("/characters/{characterId}")
     fun deleteCharacter(@PathVariable characterId: String) =
-            characterService.deleteCharacter(characterId)
+            itemService.deleteCharacter(characterId)
 }
