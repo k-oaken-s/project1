@@ -6,7 +6,7 @@ import axios from 'axios';
 const AddCategoryForm = () => {
     const [name, setName] = useState('');
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
         try {
             const token = localStorage.getItem('token');

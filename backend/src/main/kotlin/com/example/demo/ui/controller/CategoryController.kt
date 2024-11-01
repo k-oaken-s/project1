@@ -17,14 +17,14 @@ class CategoryController(private val categoryService: CategoryService) {
 
     @GetMapping fun getAllGames(): List<Category> = categoryService.getAllCategory()
 
-    @GetMapping("/{gameId}")
-    fun getGameById(@PathVariable gameId: String): ResponseEntity<Category> {
-        val game = categoryService.getCategoryById(gameId)
-        return if (game != null) ResponseEntity.ok(game) else ResponseEntity.notFound().build()
+    @GetMapping("/{categoryId}")
+    fun getGameById(@PathVariable categoryId: String): ResponseEntity<Category> {
+        val category = categoryService.getCategoryById(categoryId)
+        return if (category != null) ResponseEntity.ok(category) else ResponseEntity.notFound().build()
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     fun addCategory(@RequestBody category: Category): ResponseEntity<Category> {
         val createdCategory = categoryService.addCategory(category)
         return ResponseEntity.ok(createdCategory)
