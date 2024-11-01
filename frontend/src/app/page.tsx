@@ -1,26 +1,26 @@
 "use client";
 
-import { Game } from '@/types/Game';
+import { Category } from '@/types/Category';
 import axios from 'axios';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 const HomePage = () => {
-    const [games, setGames] = useState<Game[]>([]);
+    const [categories, setCategories] = useState<Category[]>([]);
 
     useEffect(() => {
-        axios.get<Game[]>('http://localhost:8080/api/games')
-            .then((res) => setGames(res.data as Game[]))
+        axios.get<Category[]>('http://localhost:8080/categories')
+            .then((res) => setCategories(res.data as Category[]))
             .catch((err) => console.error(err));
     }, []);
 
     return (
         <div>
-            <h1>ゲームを選択してください</h1>
+            <h1>カテゴリーを選択してください</h1>
             <ul>
-                {games.map((game: Game) => (
-                    <li key={game.id}>
-                        <Link href={`/rankings?gameId=${game.id}`}>{game.name}</Link>
+                {categories.map((category: Category) => (
+                    <li key={category.id}>
+                        <Link href={`/rankings?categoryId=${category.id}`}>{category.name}</Link>
                     </li>
                 ))}
             </ul>

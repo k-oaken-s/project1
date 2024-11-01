@@ -1,49 +1,79 @@
 "use client";
 
-import { Game } from '@/types/Game';
+import { Category } from '@/types/Category';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 const AdminDashboard = () => {
-    const [games, setGames] = useState<Game[]>([]);
+    const [categories, setCategories] = useState<Category[]>([]);
+    const [newCategoryName, setNewCategoryName] = useState('');
     const router = useRouter();
 
     useEffect(() => {
-        // トークンがない場合はログインページへリダイレクト
         const token = localStorage.getItem('token');
         if (!token) {
             router.push('/admin/login');
             return;
         }
 
-        // トークンを使用してゲームデータを取得
-        axios.get<Game[]>(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/games`, {
+        axios.get<Category[]>(`${process.env.NEXT_PUBLIC_API_BASE_URL}/categories`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
         })
-            .then((res) => setGames(res.data))
-            .catch((err) => console.error(err));
+        .then((res) => setCategories(res.data))
+        .catch((err) => console.error(err));
     }, []);
 
-    const addGame = () => {
-        // ゲーム追加の処理
+    const addCategory = () => {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/categories`, { name: newCategoryName }, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        .then((res) => {
+            setCategories([...categories, res.data]);
+            setNewCategoryName(''); // フィールドをクリア
+        })
+        .catch((err) => console.error(err));
     };
 
-    const deleteGame = (gameId: string) => {
-        // ゲーム削除の処理
+    const deleteCategory = (categoryId: string) => {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        axios.delete(`${process.env.NEXT_PUBLIC_API_BASE_URL}/categories/${categoryId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        .then(() => {
+            setCategories(categories.filter(category => category.id !== categoryId));
+        })
+        .catch((err) => console.error(err));
     };
 
     return (
         <div>
             <h1>管理者ダッシュボード</h1>
-            <button onClick={addGame}>ゲームを追加</button>
+            <div>
+                <input
+                    type="text"
+                    placeholder="カテゴリー名を入力"
+                    value={newCategoryName}
+                    onChange={(e) => setNewCategoryName(e.target.value)}
+                />
+                <button onClick={addCategory}>カテゴリーを追加</button>
+            </div>
             <ul>
-                {games.map((game) => (
-                    <li key={game.id}>
-                        {game.name}
-                        <button onClick={() => deleteGame(game.id)}>削除</button>
+                {categories.map((category) => (
+                    <li key={category.id}>
+                        {category.name}
+                        <button onClick={() => deleteCategory(category.id)}>削除</button>
                     </li>
                 ))}
             </ul>

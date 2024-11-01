@@ -1,5 +1,5 @@
 
-export interface Game {
+export interface Category {
     id: string;
     name: string;
 }
