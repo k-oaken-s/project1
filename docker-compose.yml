@@ -22,17 +22,21 @@ services:
         volumes:
             - ./src/main/kotlin:/app/src/main/kotlin
             - ./src/main/resources:/app/src/main/resources
+            - ./backend/build:/app/build # コンパイル済みファイルを反映
+            - ~/.m2:/root/.m2 # ローカルのMavenキャッシュ共有で依存関係のダウンロードを高速化
         ports:
             - "8080:8080"
         environment:
             - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/my_database
             - SPRING_DATASOURCE_USERNAME=root
             - SPRING_DATASOURCE_PASSWORD=root_password
+            - JAVA_OPTS=-Dspring.devtools.restart.enabled=true # DevToolsの再起動機能を明示的に有効化
         depends_on:
             db:
                 condition: service_healthy
         networks:
             - app-network
+        command: ./gradlew bootRun # ホットリロード対応のための起動コマンド
 
     frontend:
         build:
@@ -44,6 +48,9 @@ services:
             - NODE_ENV=production
         networks:
             - app-network
+        volumes:
+            - ./frontend:/app
+        command: npm run dev
 
     phpmyadmin:
         image: phpmyadmin/phpmyadmin
