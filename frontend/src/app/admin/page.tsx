@@ -8,6 +8,8 @@ import { useEffect, useState } from 'react';
 const AdminDashboard = () => {
     const [categories, setCategories] = useState<Category[]>([]);
     const [newCategoryName, setNewCategoryName] = useState('');
+    const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null); // 選択されたカテゴリーID
+    const [newItemName, setNewItemName] = useState(''); // 新規Itemの名前
     const router = useRouter();
 
     useEffect(() => {
@@ -37,7 +39,7 @@ const AdminDashboard = () => {
         })
         .then((res) => {
             setCategories([...categories, res.data]);
-            setNewCategoryName(''); // フィールドをクリア
+            setNewCategoryName('');
         })
         .catch((err) => console.error(err));
     };
@@ -57,6 +59,24 @@ const AdminDashboard = () => {
         .catch((err) => console.error(err));
     };
 
+    // 選択されたカテゴリーに紐づくItemを追加する
+    const addItemToCategory = () => {
+        const token = localStorage.getItem('token');
+        if (!token || !selectedCategoryId) return;
+
+        axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/categories/${selectedCategoryId}/items`, { name: newItemName }, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        .then(() => {
+            alert('Itemが追加されました');
+            setNewItemName('');
+            setSelectedCategoryId(null); // フォームを閉じる
+        })
+        .catch((err) => console.error(err));
+    };
+
     return (
         <div>
             <h1>管理者ダッシュボード</h1>
@@ -72,8 +92,23 @@ const AdminDashboard = () => {
             <ul>
                 {categories.map((category) => (
                     <li key={category.id}>
-                        {category.name}
+                        <span onClick={() => setSelectedCategoryId(category.id)} style={{ cursor: 'pointer', color: 'blue' }}>
+                            {category.name}
+                        </span>
                         <button onClick={() => deleteCategory(category.id)}>削除</button>
+
+                        {/* カテゴリーが選択されたらItem追加フォームを表示 */}
+                        {selectedCategoryId === category.id && (
+                            <div style={{ marginTop: '10px' }}>
+                                <input
+                                    type="text"
+                                    placeholder="Item名を入力"
+                                    value={newItemName}
+                                    onChange={(e) => setNewItemName(e.target.value)}
+                                />
+                                <button onClick={addItemToCategory}>Itemを追加</button>
+                            </div>
+                        )}
                     </li>
                 ))}
             </ul>
