@@ -8,8 +8,10 @@ import { useEffect, useState } from 'react';
 const AdminDashboard = () => {
     const [categories, setCategories] = useState<Category[]>([]);
     const [newCategoryName, setNewCategoryName] = useState('');
-    const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null); // 選択されたカテゴリーID
-    const [newItemName, setNewItemName] = useState(''); // 新規Itemの名前
+    const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+    const [newItemName, setNewItemName] = useState('');
+    const [categoryImage, setCategoryImage] = useState<File | null>(null);
+    const [itemImage, setItemImage] = useState<File | null>(null);
     const router = useRouter();
 
     useEffect(() => {
@@ -27,102 +29,124 @@ const AdminDashboard = () => {
             },
         })
             .then((res) => {
-                            if (res.data && Array.isArray(res.data)) {
-                                setCategories(res.data);
-                            }
-                        })
+                if (res.data && Array.isArray(res.data)) {
+                    setCategories(res.data);
+                }
+            })
             .catch((err) => {
                 console.error(err);
                 if (err.response && err.response.status === 401) {
-                    // 未認証時のリダイレクト
                     router.push('/admin/login');
                 }
             });
     }, []);
 
+    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, setImage: (file: File | null) => void) => {
+        if (e.target.files && e.target.files[0]) {
+            setImage(e.target.files[0]);
+        }
+    };
+
+    const handleDrop = (e: React.DragEvent<HTMLDivElement>, setImage: (file: File | null) => void) => {
+        e.preventDefault();
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+            setImage(e.dataTransfer.files[0]);
+        }
+    };
+
+    const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>, setImage: (file: File | null) => void) => {
+        if (e.clipboardData.files && e.clipboardData.files[0]) {
+            setImage(e.clipboardData.files[0]);
+        }
+    };
+
     const addCategory = () => {
         const token = localStorage.getItem('token');
         if (!token) return;
 
-        axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/categories`, { name: newCategoryName }, {
+        const formData = new FormData();
+        formData.append('category', new Blob([JSON.stringify({ name: newCategoryName, description: "" })], { type: 'application/json' }));
+        if (categoryImage) formData.append('file', categoryImage);
+
+        axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/categories`, formData, {
             headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${token}`
             },
         })
-            .then((res) => {
-                setCategories((prevCategories) => [...prevCategories, res.data]);
-                setNewCategoryName('');
-            })
-            .catch((err) => console.error(err));
-    };
-
-    const deleteCategory = (categoryId: string) => {
-        const token = localStorage.getItem('token');
-        if (!token) return;
-
-        axios.delete(`${process.env.NEXT_PUBLIC_API_BASE_URL}/categories/${categoryId}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
+        .then((res) => {
+            setCategories((prevCategories) => [...prevCategories, res.data]);
+            setNewCategoryName('');
+            setCategoryImage(null);
         })
-            .then(() => {
-                setCategories((prevCategories) => prevCategories.filter(category => category.id !== categoryId));
-            })
-            .catch((err) => console.error(err));
+        .catch((err) => console.error(err));
     };
 
-    // 選択されたカテゴリーに紐づくItemを追加する
     const addItemToCategory = () => {
         const token = localStorage.getItem('token');
         if (!token || !selectedCategoryId) return;
 
-        axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/categories/${selectedCategoryId}/items`, { name: newItemName }, {
+        const formData = new FormData();
+        formData.append('name', newItemName);
+        if (itemImage) formData.append('image', itemImage);
+
+        axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/categories/${selectedCategoryId}/items`, formData, {
             headers: {
                 Authorization: `Bearer ${token}`,
+                'Content-Type': 'multipart/form-data'
             },
         })
             .then(() => {
                 alert('Itemが追加されました');
                 setNewItemName('');
-                setSelectedCategoryId(null); // フォームを閉じる
+                setItemImage(null);
+                setSelectedCategoryId(null);
             })
             .catch((err) => console.error(err));
     };
 
     return (
-        <div>
-            <h1>管理者ダッシュボード</h1>
-            <div>
+        <div className="p-5 max-w-4xl mx-auto">
+            <h1 className="text-2xl font-bold mb-6">管理者ダッシュボード</h1>
+            <div className="mb-4 p-4 border rounded shadow-md bg-white">
                 <input
                     type="text"
                     placeholder="カテゴリー名を入力"
                     value={newCategoryName}
                     onChange={(e) => setNewCategoryName(e.target.value)}
+                    className="border rounded p-2 w-full mb-2"
                 />
-                <button onClick={addCategory}>カテゴリーを追加</button>
+                <input
+                    type="file"
+                    onChange={(e) => handleImageUpload(e, setCategoryImage)}
+                    onPaste={(e) => handlePaste(e, setCategoryImage)}
+                    className="mb-2"
+                />
+                <button
+                    onClick={addCategory}
+                    className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+                >
+                    カテゴリーを追加
+                </button>
             </div>
-            <ul>
-                {categories.map((category) => (
-                    <li key={category.id}>
-                        <span onClick={() => setSelectedCategoryId(category.id)} style={{ cursor: 'pointer', color: 'blue' }}>
-                            {category.name}
-                        </span>
-                        <button onClick={() => deleteCategory(category.id)}>削除</button>
-
-                        {/* カテゴリーが選択されたらItem追加フォームを表示 */}
-                        {selectedCategoryId === category.id && (
-                            <div style={{ marginTop: '10px' }}>
-                                <input
-                                    type="text"
-                                    placeholder="Item名を入力"
-                                    value={newItemName}
-                                    onChange={(e) => setNewItemName(e.target.value)}
-                                />
-                                <button onClick={addItemToCategory}>Itemを追加</button>
-                            </div>
-                        )}
+            <ul className="space-y-4">
+                {categories.length > 0 ? categories.map((category) => (
+                    <li key={category.id} className="border rounded p-4 shadow-md flex items-center">
+                        <img
+                            src={`data:image/png;base64,${category.image}`}
+                            alt={`${category.name}の画像`}
+                            className="w-16 h-16 object-cover rounded mr-4"
+                        />
+                        <div className="flex-1">
+                            <span className="font-semibold text-lg">{category.name}</span>
+                        </div>
+                        <button
+                            onClick={() => deleteCategory(category.id)}
+                            className="bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600"
+                        >
+                            削除
+                        </button>
                     </li>
-                ))}
+                )) : <li className="text-gray-500">カテゴリーがありません</li>}
             </ul>
         </div>
     );

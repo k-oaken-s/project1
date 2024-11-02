@@ -6,6 +6,12 @@ import axios from 'axios';
 const AddCategoryForm = () => {
     const [name, setName] = useState('');
 
+      const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+          setImage(e.target.files[0]);
+        }
+      };
+
     const handleSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
         try {
@@ -27,20 +33,18 @@ const AddCategoryForm = () => {
         }
     };
 
-    return (
-        <form onSubmit={handleSubmit} className="p-4 bg-white rounded shadow-md">
-            <h2 className="text-lg font-semibold mb-4">カテゴリー追加</h2>
-            <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="カテゴリー名"
-                className="p-2 border rounded w-full mb-4"
-                required
-            />
-            <button type="submit" className="bg-blue-500 text-white p-2 rounded">追加</button>
-        </form>
-    );
+  return (
+    <div>
+      <input
+        type="text"
+        placeholder="カテゴリー名を入力"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+      />
+      <input type="file" onChange={handleImageUpload} />
+      <button onClick={handleSubmit}>カテゴリーを追加</button>
+    </div>
+  );
 };
 
 export default AddCategoryForm;

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service
 @Service
 class ItemService(
     private val itemRepository: ItemRepository,
-    private val categoryService: CategoryService,
+    private val categoryUseCase: CategoryUseCase,
     private val categoryRepository: CategoryRepository,
 ) {
 

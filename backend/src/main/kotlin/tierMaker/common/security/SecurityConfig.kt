@@ -30,8 +30,6 @@ class SecurityConfig {
             .authorizeHttpRequests { auth ->
                 auth.requestMatchers("/admin/login")
                     .permitAll() // 認証なしでアクセス可能
-//                    .requestMatchers("/admin/**")
-//                    .hasRole("ADMIN") // ロール"ADMIN"のユーザーのみアクセス可能
                     .anyRequest()
                     .authenticated() // その他のリクエストは認証が必要
             }
@@ -52,11 +50,24 @@ class SecurityConfig {
     fun corsConfigurationSource(): UrlBasedCorsConfigurationSource {
         val source = UrlBasedCorsConfigurationSource()
         val config = CorsConfiguration()
-        config.allowedOrigins = listOf("http://localhost:3000") // 許可するオリジンを指定
+        config.allowedOriginPatterns = listOf("http://localhost:3000") // 許可するオリジンを指定
         config.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS") // 許可するHTTPメソッドを指定
         config.allowedHeaders = listOf("Authorization", "Content-Type") // 許可するヘッダー
         config.allowCredentials = true // 認証情報を許可
         source.registerCorsConfiguration("/**", config)
+
+//    val source = UrlBasedCorsConfigurationSource()
+//    val config = CorsConfiguration()
+//    // オリジンをワイルドカードで指定（ただし、allowCredentialsがtrueの場合は特定のオリジンを指定する必要があるため注意）
+//    config.allowedOrigins = listOf("*")
+//    // 許可するHTTPメソッドを全て指定
+//    config.allowedMethods = listOf("*")
+//    // 許可するヘッダーを全て指定
+//    config.allowedHeaders = listOf("*")
+//    // 認証情報の許可
+//    config.allowCredentials = true
+//    // CORS設定を全パスに適用
+//    source.registerCorsConfiguration("/**", config);
         return source
     }
 }

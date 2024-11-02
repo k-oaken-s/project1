@@ -1,7 +1,7 @@
 package tierMaker.Presentation.controller
 
-import tierMaker.application.category.CategoryService
-import tierMaker.application.category.addCategoryDto
+import tierMaker.application.category.CategoryUseCase
+import tierMaker.application.category.AddCategoryDto
 import tierMaker.domain.model.Category
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -15,22 +15,23 @@ import org.springframework.web.multipart.MultipartFile
 
 @RestController
 @RequestMapping("/categories")
-class CategoryController(private val categoryService: CategoryService) {
+class CategoryController(private val categoryUseCase: CategoryUseCase) {
 
-    @GetMapping fun getAllGames(): List<Category> = categoryService.getAllCategory()
+    @GetMapping fun getAllGames(): List<Category> = categoryUseCase.getAllCategory()
 
     @GetMapping("/{categoryId}")
     fun getGameById(@PathVariable categoryId: String): ResponseEntity<Category> {
-        val category = categoryService.getCategoryById(categoryId)
+        val category = categoryUseCase.getCategoryById(categoryId)
         return if (category != null) ResponseEntity.ok(category) else ResponseEntity.notFound().build()
     }
 
-    @PostMapping(value = ["/upload"], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+    @PostMapping()
     fun addCategory(
-        @RequestPart("category") addCategoryDto: addCategoryDto,
+        @RequestPart("category") addCategoryDto: AddCategoryDto,
         @RequestPart("file") file: MultipartFile
     ): ResponseEntity<Category> {
-        val createdCategory = categoryService.addCategory(addCategoryDto, file)
+        val imageBytes = if (!file.isEmpty) file.bytes else null
+        val createdCategory = categoryUseCase.addCategory(addCategoryDto, imageBytes)
         return ResponseEntity.ok(createdCategory)
     }
 
