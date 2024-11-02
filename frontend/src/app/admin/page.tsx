@@ -26,7 +26,11 @@ const AdminDashboard = () => {
                 'Content-Type': 'application/json'
             },
         })
-            .then((res) => setCategories(res.data)) // 修正: 配列でラップされていたのを削除
+            .then((res) => {
+                            if (res.data && Array.isArray(res.data)) {
+                                setCategories(res.data);
+                            }
+                        })
             .catch((err) => {
                 console.error(err);
                 if (err.response && err.response.status === 401) {
