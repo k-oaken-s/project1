@@ -12,12 +12,11 @@ data class Item(
     @Column(nullable = false)
     val name: String = "",
 
-    val description: String? = null,
-
-    @Column(name = "image_url")
-    val imageUrl: String? = null,
+    @Lob
+    @Column(name = "image", columnDefinition = "BLOB")
+    val image: ByteArray? = null,
 
     @ManyToOne
-    @JoinColumn(name = "category_id")
-    val category: Category? = null
+    @JoinColumn(name = "category_id", nullable = false)
+    val category: Category
 )

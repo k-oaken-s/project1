@@ -1,6 +1,6 @@
 package tierMaker.Presentation.controller
 
-import tierMaker.application.category.ItemService
+import tierMaker.application.category.ItemUseCase
 import tierMaker.application.category.CategoryUseCase
 import tierMaker.common.security.JwtUtil
 import tierMaker.Presentation.controller.dto.LoginRequest
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/admin")
 class AdminController(
     private val categoryUseCase: CategoryUseCase,
-    private val itemService: ItemService
+    private val itemUseCase: ItemUseCase
 ) {
 
     @PostMapping("/login")

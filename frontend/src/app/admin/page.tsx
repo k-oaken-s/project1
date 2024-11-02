@@ -8,10 +8,7 @@ import { useEffect, useState } from 'react';
 const AdminDashboard = () => {
     const [categories, setCategories] = useState<Category[]>([]);
     const [newCategoryName, setNewCategoryName] = useState('');
-    const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
-    const [newItemName, setNewItemName] = useState('');
-    const [categoryImage, setCategoryImage] = useState<File | null>(null);
-    const [itemImage, setItemImage] = useState<File | null>(null);
+    const [categoryImage, setCategoryImage] = useState<File | null>(null); // カテゴリー用の画像
     const router = useRouter();
 
     useEffect(() => {
@@ -47,19 +44,6 @@ const AdminDashboard = () => {
         }
     };
 
-    const handleDrop = (e: React.DragEvent<HTMLDivElement>, setImage: (file: File | null) => void) => {
-        e.preventDefault();
-        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-            setImage(e.dataTransfer.files[0]);
-        }
-    };
-
-    const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>, setImage: (file: File | null) => void) => {
-        if (e.clipboardData.files && e.clipboardData.files[0]) {
-            setImage(e.clipboardData.files[0]);
-        }
-    };
-
     const addCategory = () => {
         const token = localStorage.getItem('token');
         if (!token) return;
@@ -81,33 +65,14 @@ const AdminDashboard = () => {
         .catch((err) => console.error(err));
     };
 
-    const addItemToCategory = () => {
-        const token = localStorage.getItem('token');
-        if (!token || !selectedCategoryId) return;
-
-        const formData = new FormData();
-        formData.append('name', newItemName);
-        if (itemImage) formData.append('image', itemImage);
-
-        axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/categories/${selectedCategoryId}/items`, formData, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'multipart/form-data'
-            },
-        })
-            .then(() => {
-                alert('Itemが追加されました');
-                setNewItemName('');
-                setItemImage(null);
-                setSelectedCategoryId(null);
-            })
-            .catch((err) => console.error(err));
+    const handleCategoryClick = (category: Category) => {
+        router.push(`/admin/categories/${category.id}`);
     };
 
     return (
         <div className="p-5 max-w-4xl mx-auto">
             <h1 className="text-2xl font-bold mb-6">管理者ダッシュボード</h1>
-            <div className="mb-4 p-4 border rounded shadow-md bg-white">
+            <div className="mb-6">
                 <input
                     type="text"
                     placeholder="カテゴリー名を入力"
@@ -118,33 +83,30 @@ const AdminDashboard = () => {
                 <input
                     type="file"
                     onChange={(e) => handleImageUpload(e, setCategoryImage)}
-                    onPaste={(e) => handlePaste(e, setCategoryImage)}
                     className="mb-2"
                 />
                 <button
                     onClick={addCategory}
-                    className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+                    className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
                 >
                     カテゴリーを追加
                 </button>
             </div>
             <ul className="space-y-4">
                 {categories.length > 0 ? categories.map((category) => (
-                    <li key={category.id} className="border rounded p-4 shadow-md flex items-center">
+                    <li
+                        key={category.id}
+                        className="border rounded p-4 shadow-md flex items-center cursor-pointer hover:bg-gray-100"
+                        onClick={() => handleCategoryClick(category)}
+                    >
                         <img
                             src={`data:image/png;base64,${category.image}`}
                             alt={`${category.name}の画像`}
-                            className="w-16 h-16 object-cover rounded mr-4"
+                            className="w-16 h-16 object-cover mr-4"
                         />
                         <div className="flex-1">
                             <span className="font-semibold text-lg">{category.name}</span>
                         </div>
-                        <button
-                            onClick={() => deleteCategory(category.id)}
-                            className="bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600"
-                        >
-                            削除
-                        </button>
                     </li>
                 )) : <li className="text-gray-500">カテゴリーがありません</li>}
             </ul>
