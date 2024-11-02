@@ -5,13 +5,13 @@ import java.util.*
 
 
 @Entity
-@Table(name = "game")
+@Table(name = "category")
 data class Category(
     @Id
     val id: String = UUID.randomUUID().toString(),
 
     @Column(nullable = false)
-    val name: String,
+    val name: String = "",
 
     val description: String? = null,
 

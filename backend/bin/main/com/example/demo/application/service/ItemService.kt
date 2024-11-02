@@ -1,24 +1,28 @@
 package com.example.demo.application.service
 
 import com.example.demo.domain.model.Item
+import com.example.demo.domain.repository.CategoryRepository
 import com.example.demo.domain.repository.ItemRepository
+import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 
 @Service
 class ItemService(
-        private val characterRepository: ItemRepository,
-        private val categoryService: CategoryService
+    private val itemRepository: ItemRepository,
+    private val categoryService: CategoryService,
+    private val categoryRepository: CategoryRepository,
 ) {
 
-    fun getCharactersByGameId(gameId: String): List<Item> =
-            characterRepository.findByCategoryId(gameId)
+    fun getItemsByCategoryId(categoryId: String): List<Item> =
+            itemRepository.findByCategoryId(categoryId)
 
-    fun saveCharacter(categoryId: String, item: Item): Item {
-        val category =
-                categoryService.getCategoryById(categoryId) ?: throw Exception("Category not found")
-        val newCharacter = item.copy(category = category)
-        return characterRepository.save(newCharacter)
+    fun deleteItem(id: String) = itemRepository.deleteById(id)
+
+    @Transactional
+    fun addItemToCategory(categoryId: String, itemName: String): Item {
+        val category = categoryRepository.findById(categoryId)
+            .orElseThrow { IllegalArgumentException("Category not found") }
+        val newItem = Item(name = itemName, category = category)
+        return itemRepository.save(newItem)
     }
-
-    fun deleteCharacter(id: String) = characterRepository.deleteById(id)
 }

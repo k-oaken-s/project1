@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.spring") version "1.9.25"
     id("org.springframework.boot") version "3.3.5"
     id("io.spring.dependency-management") version "1.1.6"
+    id("application")
 }
 
 group = "com.example"
@@ -49,4 +50,8 @@ kotlin {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+application {
+    mainClass.set("com.example.demo.DemoApplication")
 }

@@ -24,20 +24,4 @@ class AdminController(
         }
         return ResponseEntity.status(401).build()
     }
-
-    @PostMapping("/games")
-    fun createGame(@RequestBody category: Category): Category = categoryService.addCategory(category)
-
-    @DeleteMapping("/games/{gameId}")
-    fun deleteGame(@PathVariable gameId: String) = categoryService.deleteCategory(gameId)
-
-    @PostMapping("/games/{gameId}/characters")
-    fun createCharacter(
-            @PathVariable categoryId: String,
-            @RequestBody item: Item
-    ): Item = itemService.saveCharacter(categoryId, item)
-
-    @DeleteMapping("/characters/{characterId}")
-    fun deleteCharacter(@PathVariable characterId: String) =
-            itemService.deleteCharacter(characterId)
 }

@@ -26,13 +26,13 @@ class SecurityConfig {
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
-            .cors { } // CORSを有効化
+            .cors { it.configurationSource(corsConfigurationSource()) } // CORS設定を適用
             .csrf { it.disable() } // CSRFを無効化
             .authorizeHttpRequests { auth ->
                 auth.requestMatchers("/admin/login")
                     .permitAll() // 認証なしでアクセス可能
-                    .requestMatchers("/admin/**")
-                    .hasRole("ADMIN") // ロール"ADMIN"のユーザーのみアクセス可能
+//                    .requestMatchers("/admin/**")
+//                    .hasRole("ADMIN") // ロール"ADMIN"のユーザーのみアクセス可能
                     .anyRequest()
                     .authenticated() // その他のリクエストは認証が必要
             }
@@ -48,9 +48,9 @@ class SecurityConfig {
         return JwtAuthenticationFilter(JwtUtil)
     }
 
-    // CORSの設定
+    // HttpSecurity用CORS設定
     @Bean
-    fun corsFilter(): CorsFilter {
+    fun corsConfigurationSource(): UrlBasedCorsConfigurationSource {
         val source = UrlBasedCorsConfigurationSource()
         val config = CorsConfiguration()
         config.allowedOrigins = listOf("http://localhost:3000") // 許可するオリジンを指定
@@ -58,6 +58,6 @@ class SecurityConfig {
         config.allowedHeaders = listOf("Authorization", "Content-Type") // 許可するヘッダー
         config.allowCredentials = true // 認証情報を許可
         source.registerCorsConfiguration("/**", config)
-        return CorsFilter(source)
+        return source
     }
 }

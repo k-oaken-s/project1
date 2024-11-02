@@ -24,7 +24,7 @@ class CategoryController(private val categoryService: CategoryService) {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     fun addCategory(@RequestBody category: Category): ResponseEntity<Category> {
         val createdCategory = categoryService.addCategory(category)
         return ResponseEntity.ok(createdCategory)

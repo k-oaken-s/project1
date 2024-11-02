@@ -20,12 +20,20 @@ const AdminDashboard = () => {
         }
 
         axios.get<Category[]>(`${process.env.NEXT_PUBLIC_API_BASE_URL}/categories`, {
+            withCredentials: true,
             headers: {
                 Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
             },
         })
-        .then((res) => setCategories(res.data))
-        .catch((err) => console.error(err));
+            .then((res) => setCategories(res.data)) // 修正: 配列でラップされていたのを削除
+            .catch((err) => {
+                console.error(err);
+                if (err.response && err.response.status === 401) {
+                    // 未認証時のリダイレクト
+                    router.push('/admin/login');
+                }
+            });
     }, []);
 
     const addCategory = () => {
@@ -37,11 +45,11 @@ const AdminDashboard = () => {
                 Authorization: `Bearer ${token}`,
             },
         })
-        .then((res) => {
-            setCategories([...categories, res.data]);
-            setNewCategoryName('');
-        })
-        .catch((err) => console.error(err));
+            .then((res) => {
+                setCategories((prevCategories) => [...prevCategories, res.data]);
+                setNewCategoryName('');
+            })
+            .catch((err) => console.error(err));
     };
 
     const deleteCategory = (categoryId: string) => {
@@ -53,10 +61,10 @@ const AdminDashboard = () => {
                 Authorization: `Bearer ${token}`,
             },
         })
-        .then(() => {
-            setCategories(categories.filter(category => category.id !== categoryId));
-        })
-        .catch((err) => console.error(err));
+            .then(() => {
+                setCategories((prevCategories) => prevCategories.filter(category => category.id !== categoryId));
+            })
+            .catch((err) => console.error(err));
     };
 
     // 選択されたカテゴリーに紐づくItemを追加する
@@ -69,12 +77,12 @@ const AdminDashboard = () => {
                 Authorization: `Bearer ${token}`,
             },
         })
-        .then(() => {
-            alert('Itemが追加されました');
-            setNewItemName('');
-            setSelectedCategoryId(null); // フォームを閉じる
-        })
-        .catch((err) => console.error(err));
+            .then(() => {
+                alert('Itemが追加されました');
+                setNewItemName('');
+                setSelectedCategoryId(null); // フォームを閉じる
+            })
+            .catch((err) => console.error(err));
     };
 
     return (
