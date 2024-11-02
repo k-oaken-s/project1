@@ -6,9 +6,6 @@ plugins {
     id("application")
 }
 
-group = "com.example"
-version = "0.0.1-SNAPSHOT"
-
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(21)
@@ -53,5 +50,5 @@ tasks.test {
 }
 
 application {
-    mainClass.set("com.example.demo.DemoApplication")
+    mainClass.set("tierMaker.TierMakerApplication")
 }
