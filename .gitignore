@@ -8,7 +8,9 @@
 build/
 backend/build/
 backend/bin/
+backend/bin/*
 /backend/bin/
+/backend/bin/*
 backend/out/
 !gradle/wrapper/gradle-wrapper.jar
 .gradle
