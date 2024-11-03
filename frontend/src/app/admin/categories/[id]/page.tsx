@@ -1,20 +1,23 @@
 "use client";
 
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useParams, useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 
 interface Item {
     id: string;
     name: string;
-    image?: string;
+    image?: Blob;
 }
 
-const CategoryPage = ({ params }: { params: { id: string } }) => {
+const CategoryPage = () => {
     const [items, setItems] = useState<Item[]>([]);
     const [newItemName, setNewItemName] = useState('');
     const [itemImage, setItemImage] = useState<File | null>(null);
     const router = useRouter();
+    const params = useParams();
+    const categoryId = params?.id;
+
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -23,7 +26,7 @@ const CategoryPage = ({ params }: { params: { id: string } }) => {
             return;
         }
 
-        axios.get<Item[]>(`${process.env.NEXT_PUBLIC_API_BASE_URL}/categories/${params.id}/items`, {
+        axios.get<Item[]>(`${process.env.NEXT_PUBLIC_API_BASE_URL}/categories/${categoryId}/items`, {
             withCredentials: true,
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -41,7 +44,7 @@ const CategoryPage = ({ params }: { params: { id: string } }) => {
                     router.push('/admin/login');
                 }
             });
-    }, [params.id, router]);
+    }, [categoryId, router]);
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -54,10 +57,10 @@ const CategoryPage = ({ params }: { params: { id: string } }) => {
         if (!token) return;
 
         const formData = new FormData();
-        formData.append('name', newItemName);
+        formData.append('item', new Blob([JSON.stringify({ name: newItemName })], { type: 'application/json' }));
         if (itemImage) formData.append('file', itemImage);
 
-        axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/categories/${params.id}/items`, formData, {
+        axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/categories/${categoryId}/items`, formData, {
             headers: {
                 Authorization: `Bearer ${token}`
             },
