@@ -23,7 +23,7 @@ class ItemUseCase(
     fun addItemToCategory(categoryId: String, itemName: String, imageBytes: ByteArray?): Item {
         val category = categoryRepository.findById(categoryId)
             .orElseThrow { IllegalArgumentException("Category not found") }
-        val newItem = Item(name = itemName, category = category, image = imageBytes)
+        val newItem = Item.create(name = itemName, category = category, image = imageBytes)
         return itemRepository.save(newItem)
     }
 }

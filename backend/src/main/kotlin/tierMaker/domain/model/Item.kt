@@ -19,4 +19,16 @@ data class Item(
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     val category: Category
-)
+) {
+    constructor() : this(UUID.randomUUID().toString(), "", null, Category())
+
+    companion object {
+        fun create(name: String, category: Category, image: ByteArray?): Item {
+            return Item(
+                name = name,
+                image = image,
+                category = category
+            )
+        }
+    }
+}
