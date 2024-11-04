@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react';
 interface Item {
     id: string;
     name: string;
-    image?: Blob;
+    image?: string;
 }
 
 const CategoryPage = () => {
@@ -17,7 +17,6 @@ const CategoryPage = () => {
     const router = useRouter();
     const params = useParams();
     const categoryId = params?.id;
-
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -81,9 +80,10 @@ const CategoryPage = () => {
                     <li key={item.id} className="border rounded p-4 shadow-md flex items-center">
                         {item.image && (
                             <img
-                                src={`data:image/png;base64,${item.image}`}
+                                src={`data:image/png;base64,${item.image}`} // Base64エンコードされた画像を使用
                                 alt={`${item.name}の画像`}
                                 className="w-16 h-16 object-cover mr-4"
+                                loading="lazy"
                             />
                         )}
                         <span className="font-semibold text-lg flex-1">{item.name}</span>

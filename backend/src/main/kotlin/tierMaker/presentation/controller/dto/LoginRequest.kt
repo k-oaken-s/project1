@@ -1,4 +1,4 @@
-package tierMaker.Presentation.controller.dto
+package tierMaker.presentation.controller.dto
 
 data class LoginRequest(
     val username: String,

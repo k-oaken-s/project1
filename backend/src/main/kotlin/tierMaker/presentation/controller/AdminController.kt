@@ -1,9 +1,9 @@
-package tierMaker.Presentation.controller
+package tierMaker.presentation.controller
 
 import tierMaker.application.category.ItemUseCase
 import tierMaker.application.category.CategoryUseCase
 import tierMaker.common.security.JwtUtil
-import tierMaker.Presentation.controller.dto.LoginRequest
+import tierMaker.presentation.controller.dto.LoginRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
