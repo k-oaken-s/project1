@@ -31,4 +31,13 @@ data class Item(
             )
         }
     }
+
+    fun update(name: String, image: ByteArray?): Item {
+        return Item(
+            id = this.id,
+            name = name,
+            image = image,
+            category = this.category
+        )
+    }
 }

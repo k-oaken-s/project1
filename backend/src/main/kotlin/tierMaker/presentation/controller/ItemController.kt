@@ -36,4 +36,21 @@ class ItemController(
         val item = itemUseCase.addItemToCategory(categoryId, item.name, file?.bytes)
         return ResponseEntity.ok(item)
     }
+
+    @PutMapping("/{itemId}")
+    fun updateItem(
+        @PathVariable categoryId: String,
+        @PathVariable itemId: String,
+        @RequestPart("item") item: addItemDto,
+        @RequestParam("file", required = false) file: MultipartFile?,
+        @RequestParam(value = "keepCurrentImage", defaultValue = "false") keepCurrentImage: Boolean
+    ): ResponseEntity<ItemResponse> {
+        val updatedItem = itemUseCase.updateItem(categoryId, itemId, item.name, file, keepCurrentImage)
+        val response = ItemResponse(
+            id = updatedItem.id,
+            name = updatedItem.name,
+            image = updatedItem.image?.let { Base64.getEncoder().encodeToString(it) }
+        )
+        return ResponseEntity.ok(response)
+    }
 }

@@ -26,4 +26,20 @@ class ItemUseCase(
         val newItem = Item.create(name = itemName, category = category, image = imageBytes)
         return itemRepository.save(newItem)
     }
+
+    fun updateItem(categoryId: String, itemId: String, name: String, file: MultipartFile?, keepCurrentImage: Boolean): Item {
+        val item = itemRepository.findById(itemId).orElseThrow { RuntimeException("Item not found") }
+        val imageBytes = if (keepCurrentImage) {
+            item.image // 既存の画像を保持
+        } else {
+            file?.bytes ?: run {
+                if (file != null && file.isEmpty) {
+                    throw RuntimeException("Failed to read file")
+                }
+                null
+            }
+        }
+        val updatedItem = item.update(name = name, image = imageBytes)
+        return itemRepository.save(updatedItem)
+    }
 }
