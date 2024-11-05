@@ -112,20 +112,26 @@ const CategoryPage = () => {
                 Authorization: `Bearer ${token}`
             },
         })
-        .then((res) => {
-            setItems((prevItems) =>
-                prevItems.map((item) => (item.id === editingItem.id ? res.data : item))
-            );
-            setEditingItem(null);
-            setEditedItemName('');
-            setEditedItemImage(null);
-        })
-        .catch((err) => console.error(err));
+            .then((res) => {
+                setItems((prevItems) =>
+                    prevItems.map((item) => (item.id === editingItem.id ? res.data : item))
+                );
+                setEditingItem(null);
+                setEditedItemName('');
+                setEditedItemImage(null);
+            })
+            .catch((err) => console.error(err));
     };
 
     return (
         <div className="p-5 max-w-4xl mx-auto">
             <h1 className="text-2xl font-bold mb-6">カテゴリーのアイテム一覧</h1>
+            <button
+                onClick={() => router.push('/admin')}
+                className="bg-gray-700 text-white py-2 px-4 rounded hover:bg-gray-800 mb-4"
+            >
+                管理者ダッシュボードに戻る
+            </button>
             <ul className="space-y-4">
                 {items.length > 0 ? items.map((item) => (
                     <li key={item.id} className="border rounded p-4 shadow-md flex items-center">
