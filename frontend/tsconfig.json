@@ -29,7 +29,16 @@
       ],
       "@/types/*": [
         "types/*"
-      ]
+      ],
+      "@/components/*": [
+        "components/*"
+      ],
+      "@/app/*": [
+        "app/*"
+      ],
+      "@/utils/*": [
+        "utils/*"
+      ],
     }
   },
   "include": [

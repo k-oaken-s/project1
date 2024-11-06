@@ -1,15 +1,14 @@
 "use client";
 
+import CategoryForm from '@/app/admin/categories/components/CategoryForm';
+import CategoryList from '@/components/CategoryList';
 import { Category } from '@/types/Category';
 import axios from 'axios';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 const AdminDashboard = () => {
     const [categories, setCategories] = useState<Category[]>([]);
-    const [newCategoryName, setNewCategoryName] = useState('');
-    const [categoryImage, setCategoryImage] = useState<File | null>(null); // カテゴリー用の画像
     const router = useRouter();
 
     useEffect(() => {
@@ -20,101 +19,39 @@ const AdminDashboard = () => {
         }
 
         axios.get<Category[]>(`${process.env.NEXT_PUBLIC_API_BASE_URL}/categories`, {
-            withCredentials: true,
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
+            headers: { Authorization: `Bearer ${token}` },
         })
-            .then((res) => {
-                if (res.data && Array.isArray(res.data)) {
-                    setCategories(res.data);
-                }
-            })
+            .then((res) => setCategories(res.data))
             .catch((err) => {
-                console.error(err);
-                if (err.response && err.response.status === 401) {
-                    router.push('/admin/login');
-                }
+                if (err.response?.status === 401) router.push('/admin/login');
             });
     }, []);
 
-    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            setCategoryImage(e.target.files[0]);
-        }
-    };
-
-    const addCategory = () => {
+    const addCategory = (name: string, image: File | null) => {
         const token = localStorage.getItem('token');
-        if (!token) return;
+        if (!token) {
+            router.push('/admin/login');
+            return;
+        }
 
         const formData = new FormData();
-        formData.append('category', new Blob([JSON.stringify({ name: newCategoryName, description: "" })], { type: 'application/json' }));
-        if (categoryImage) formData.append('file', categoryImage);
+        formData.append('category', new Blob([JSON.stringify({ name })], { type: 'application/json' }));
+        if (image) formData.append('file', image);
 
-        axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/categories`, formData, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            },
+        axios.post<Category>(`${process.env.NEXT_PUBLIC_API_BASE_URL}/categories`, formData, {
+            headers: { Authorization: `Bearer ${token}` },
         })
             .then((res) => {
                 setCategories((prevCategories) => [...prevCategories, res.data]);
-                setNewCategoryName('');
-                setCategoryImage(null);
             })
-            .catch((err) => console.error(err));
+            .catch((err) => console.error("Failed to add category:", err));
     };
 
     return (
         <div className="p-5 max-w-4xl mx-auto">
             <h1 className="text-2xl font-bold mb-6">管理者ダッシュボード</h1>
-
-            {/* カテゴリ追加フォーム */}
-            <div className="mb-6">
-                <input
-                    type="text"
-                    placeholder="カテゴリー名を入力"
-                    value={newCategoryName}
-                    onChange={(e) => setNewCategoryName(e.target.value)}
-                    className="border rounded p-2 w-full mb-2"
-                />
-                <input
-                    type="file"
-                    onChange={handleImageUpload}
-                    className="mb-2"
-                />
-                <button
-                    onClick={addCategory}
-                    className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
-                >
-                    カテゴリーを追加
-                </button>
-            </div>
-
-            {/* カテゴリ一覧表示 */}
-            <ul className="space-y-4">
-                {categories.length > 0 ? categories.map((category) => (
-                    <li
-                        key={category.id}
-                        className="border rounded p-4 shadow-md flex items-center"
-                    >
-                        {category.image && (
-                            <img
-                                src={`data:image/png;base64,${category.image}`}
-                                alt={`${category.name}の画像`}
-                                className="w-16 h-16 object-cover mr-4"
-                                loading="lazy"
-                            />
-                        )}
-                        <div className="flex-1">
-                            <Link href={`/admin/categories/${category.id}`} className="font-semibold text-lg text-blue-600 hover:underline">
-                                {category.name}
-                            </Link>
-                        </div>
-                    </li>
-                )) : <li className="text-gray-500">カテゴリーがありません</li>}
-            </ul>
+            <CategoryForm onAddCategory={addCategory} />
+            <CategoryList categories={categories} />
         </div>
     );
 };

@@ -1,205 +1,91 @@
 "use client";
 
+import ItemForm from '@/app/admin/categories/components/ItemForm';
+import ItemList from '@/components/ItemList';
 import { useFetchCategoryWithItems } from '@/hooks/useFetchCategoryWithItems';
 import { Item } from '@/types/Category';
 import axios from 'axios';
 import { useParams, useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-
-const CategoryPage = () => {
-    const [items, setItems] = useState<Item[]>([]);
-    const [newItemName, setNewItemName] = useState('');
-    const [itemImage, setItemImage] = useState<File | null>(null);
-    const [editingItem, setEditingItem] = useState<Item | null>(null);
-    const [editedItemName, setEditedItemName] = useState('');
-    const [editedItemImage, setEditedItemImage] = useState<File | null | "remove">(null);
+const CategoryDetailPage = () => {
     const params = useParams();
     const router = useRouter();
     const categoryId = Array.isArray(params?.id) ? params.id[0] : params?.id;
     const { category, isLoading } = useFetchCategoryWithItems(categoryId);
+    const [items, setItems] = useState<Item[]>([]);
+    const [editingItem, setEditingItem] = useState<Item | null>(null);
 
     useEffect(() => {
-        if (category) {
-            setItems(category.items || []);
-        }
+        if (category) setItems(category.items);
     }, [category]);
 
-    // アイテム追加関数
-    const addItemToCategory = () => {
+    const addItem = (name: string, image: File | null | "remove") => {
         const token = localStorage.getItem('token');
-        if (!token || !categoryId) return;
-
+        if (!token) {
+            router.push('/admin/login');
+            return;
+        }
         const formData = new FormData();
-        formData.append('item', new Blob([JSON.stringify({ name: newItemName })], { type: 'application/json' }));
-        if (itemImage) formData.append('file', itemImage);
+        formData.append('item', new Blob([JSON.stringify({ name })], { type: 'application/json' }));
+        if (image && image !== "remove") formData.append('file', image);
 
-        axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/categories/${categoryId}/items`, formData, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            },
+        axios.post<Item>(`${process.env.NEXT_PUBLIC_API_BASE_URL}/categories/${categoryId}/items`, formData, {
+            headers: { Authorization: `Bearer ${token}` },
         })
             .then((res) => {
                 setItems((prevItems) => [...prevItems, res.data]);
-                setNewItemName('');
-                setItemImage(null);
             })
-            .catch((err) => console.error(err));
+            .catch((err) => console.error("Failed to add item:", err));
     };
 
-    // 編集する画像のアップロード処理
-    const handleEditImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            setEditedItemImage(e.target.files[0]);
-        } else {
-            setEditedItemImage(null);
-        }
-    };
-
-    // アイテム編集開始
-    const startEditingItem = (item: Item) => {
-        setEditingItem(item);
-        setEditedItemName(item.name);
-        setEditedItemImage(null); // 初期状態は画像を変更しない
-    };
-
-    // アイテム更新
-    const updateItem = () => {
-        if (!editingItem || !categoryId) return;
-
+    const editItem = (name: string, image: File | null | "remove") => {
+        if (!editingItem) return;
         const token = localStorage.getItem('token');
-        if (!token) return;
+        if (!token) {
+            router.push('/admin/login');
+            return;
+        }
 
         const formData = new FormData();
-        formData.append('item', new Blob([JSON.stringify({ name: editedItemName })], { type: 'application/json' }));
+        formData.append('item', new Blob([JSON.stringify({ name })], { type: 'application/json' }));
 
-        if (editedItemImage === "remove") {
+        if (image === "remove") {
             formData.append('removeImage', 'true');
-        } else if (editedItemImage) {
-            formData.append('file', editedItemImage);
+        } else if (image) {
+            formData.append('file', image);
         } else {
             formData.append('keepCurrentImage', 'true');
         }
 
-        axios.put(`${process.env.NEXT_PUBLIC_API_BASE_URL}/categories/${categoryId}/items/${editingItem.id}`, formData, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            },
+        axios.put<Item>(`${process.env.NEXT_PUBLIC_API_BASE_URL}/categories/${categoryId}/items/${editingItem.id}`, formData, {
+            headers: { Authorization: `Bearer ${token}` },
         })
             .then((res) => {
                 setItems((prevItems) =>
                     prevItems.map((item) => (item.id === editingItem.id ? res.data : item))
                 );
                 setEditingItem(null);
-                setEditedItemName('');
-                setEditedItemImage(null);
             })
-            .catch((err) => console.error(err));
+            .catch((err) => console.error("Failed to update item:", err));
     };
 
-    if (isLoading) {
-        return <p>Loading...</p>;
-    }
+    const startEditingItem = (item: Item) => {
+        setEditingItem(item);
+    };
 
-    return (
+    return isLoading ? (
+        <p>Loading...</p>
+    ) : (
         <div className="p-5 max-w-4xl mx-auto">
             <h1 className="text-2xl font-bold mb-6">カテゴリーのアイテム一覧</h1>
-            {category && (
-                <div className="mb-6 p-4 bg-gray-100 rounded shadow">
-                    <h2 className="text-xl font-semibold">{category.name}</h2>
-                    {category.description && <p className="text-gray-600">{category.description}</p>}
-                </div>
-            )}
-
-            <button
-                onClick={() => router.push('/admin')}
-                className="bg-gray-700 text-white py-2 px-4 rounded hover:bg-gray-800 mb-4"
-            >
+            <button onClick={() => router.push('/admin')} className="bg-gray-700 text-white py-2 px-4 rounded hover:bg-gray-800 mb-4">
                 管理者ダッシュボードに戻る
             </button>
-
-            <ul className="space-y-4">
-                {items.map((item) => (
-                    <li key={item.id} className="border rounded p-4 shadow-md flex items-center">
-                        {item.image && (
-                            <img
-                                src={`data:image/png;base64,${item.image}`}
-                                alt={`${item.name}の画像`}
-                                className="w-16 h-16 object-cover mr-4"
-                                loading="lazy"
-                            />
-                        )}
-                        <span className="font-semibold text-lg flex-1">{item.name}</span>
-                        <button
-                            onClick={() => startEditingItem(item)}
-                            className="bg-yellow-500 text-white py-1 px-3 rounded hover:bg-yellow-600 ml-2"
-                        >
-                            編集
-                        </button>
-                    </li>
-                ))}
-            </ul>
-
-            {/* アイテム追加フォーム */}
-            <div className="mt-6">
-                <input
-                    type="text"
-                    placeholder="アイテム名を入力"
-                    value={newItemName}
-                    onChange={(e) => setNewItemName(e.target.value)}
-                    className="border rounded p-2 w-full mb-2"
-                />
-                <input
-                    type="file"
-                    onChange={(e) => handleEditImageUpload(e)}
-                    className="mb-2"
-                />
-                <button
-                    onClick={addItemToCategory}
-                    className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-                >
-                    アイテムを追加
-                </button>
-            </div>
-
-            {/* アイテム編集フォーム */}
-            {editingItem && (
-                <div className="mt-6 p-4 border rounded shadow-md bg-gray-50">
-                    <h2 className="text-xl font-bold mb-4">アイテムの編集</h2>
-                    <input
-                        type="text"
-                        placeholder="アイテム名を編集"
-                        value={editedItemName}
-                        onChange={(e) => setEditedItemName(e.target.value)}
-                        className="border rounded p-2 w-full mb-2"
-                    />
-                    <input
-                        type="file"
-                        onChange={handleEditImageUpload}
-                        className="mb-2"
-                    />
-                    <button
-                        onClick={() => setEditedItemImage("remove")}
-                        className="bg-gray-500 text-white py-1 px-4 rounded hover:bg-gray-600 mb-2"
-                    >
-                        画像を削除
-                    </button>
-                    <button
-                        onClick={updateItem}
-                        className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
-                    >
-                        保存
-                    </button>
-                    <button
-                        onClick={() => setEditingItem(null)}
-                        className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 ml-2"
-                    >
-                        キャンセル
-                    </button>
-                </div>
-            )}
+            <ItemList items={items} onEdit={startEditingItem} />
+            <ItemForm onSubmit={editingItem ? editItem : addItem} />
         </div>
     );
 };
 
-export default CategoryPage;
+export default CategoryDetailPage;
