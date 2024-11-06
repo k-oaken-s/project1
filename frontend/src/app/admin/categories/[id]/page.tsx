@@ -1,14 +1,11 @@
 "use client";
 
+import { useFetchCategoryWithItems } from '@/hooks/useFetchCategoryWithItems';
+import { Item } from '@/types/Category';
 import axios from 'axios';
 import { useParams, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
-interface Item {
-    id: string;
-    name: string;
-    image?: string; // Base64エンコードされた画像を格納
-}
 
 const CategoryPage = () => {
     const [items, setItems] = useState<Item[]>([]);
@@ -17,54 +14,21 @@ const CategoryPage = () => {
     const [editingItem, setEditingItem] = useState<Item | null>(null);
     const [editedItemName, setEditedItemName] = useState('');
     const [editedItemImage, setEditedItemImage] = useState<File | null | "remove">(null);
-    const router = useRouter();
     const params = useParams();
-    const categoryId = params?.id;
+    const router = useRouter();
+    const categoryId = Array.isArray(params?.id) ? params.id[0] : params?.id;
+    const { category, isLoading } = useFetchCategoryWithItems(categoryId);
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            router.push('/admin/login');
-            return;
+        if (category) {
+            setItems(category.items || []);
         }
+    }, [category]);
 
-        axios.get<Item[]>(`${process.env.NEXT_PUBLIC_API_BASE_URL}/categories/${categoryId}/items`, {
-            withCredentials: true,
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-        })
-            .then((res) => {
-                if (res.data && Array.isArray(res.data)) {
-                    setItems(res.data);
-                }
-            })
-            .catch((err) => {
-                console.error(err);
-                if (err.response && err.response.status === 401) {
-                    router.push('/admin/login');
-                }
-            });
-    }, [categoryId, router]);
-
-    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            setItemImage(e.target.files[0]);
-        }
-    };
-
-    const handleEditImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            setEditedItemImage(e.target.files[0]);
-        } else {
-            setEditedItemImage(null); // 未設定に戻すために null をセット
-        }
-    };
-
+    // アイテム追加関数
     const addItemToCategory = () => {
         const token = localStorage.getItem('token');
-        if (!token) return;
+        if (!token || !categoryId) return;
 
         const formData = new FormData();
         formData.append('item', new Blob([JSON.stringify({ name: newItemName })], { type: 'application/json' }));
@@ -83,14 +47,25 @@ const CategoryPage = () => {
             .catch((err) => console.error(err));
     };
 
+    // 編集する画像のアップロード処理
+    const handleEditImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            setEditedItemImage(e.target.files[0]);
+        } else {
+            setEditedItemImage(null);
+        }
+    };
+
+    // アイテム編集開始
     const startEditingItem = (item: Item) => {
         setEditingItem(item);
         setEditedItemName(item.name);
         setEditedItemImage(null); // 初期状態は画像を変更しない
     };
 
+    // アイテム更新
     const updateItem = () => {
-        if (!editingItem) return;
+        if (!editingItem || !categoryId) return;
 
         const token = localStorage.getItem('token');
         if (!token) return;
@@ -103,7 +78,6 @@ const CategoryPage = () => {
         } else if (editedItemImage) {
             formData.append('file', editedItemImage);
         } else {
-            // 画像を変更していないことを示すフラグを追加
             formData.append('keepCurrentImage', 'true');
         }
 
@@ -123,21 +97,33 @@ const CategoryPage = () => {
             .catch((err) => console.error(err));
     };
 
+    if (isLoading) {
+        return <p>Loading...</p>;
+    }
+
     return (
         <div className="p-5 max-w-4xl mx-auto">
             <h1 className="text-2xl font-bold mb-6">カテゴリーのアイテム一覧</h1>
+            {category && (
+                <div className="mb-6 p-4 bg-gray-100 rounded shadow">
+                    <h2 className="text-xl font-semibold">{category.name}</h2>
+                    {category.description && <p className="text-gray-600">{category.description}</p>}
+                </div>
+            )}
+
             <button
                 onClick={() => router.push('/admin')}
                 className="bg-gray-700 text-white py-2 px-4 rounded hover:bg-gray-800 mb-4"
             >
                 管理者ダッシュボードに戻る
             </button>
+
             <ul className="space-y-4">
-                {items.length > 0 ? items.map((item) => (
+                {items.map((item) => (
                     <li key={item.id} className="border rounded p-4 shadow-md flex items-center">
                         {item.image && (
                             <img
-                                src={`data:image/png;base64,${item.image}`} // Base64エンコードされた画像を使用
+                                src={`data:image/png;base64,${item.image}`}
                                 alt={`${item.name}の画像`}
                                 className="w-16 h-16 object-cover mr-4"
                                 loading="lazy"
@@ -151,8 +137,10 @@ const CategoryPage = () => {
                             編集
                         </button>
                     </li>
-                )) : <li className="text-gray-500">アイテムがありません</li>}
+                ))}
             </ul>
+
+            {/* アイテム追加フォーム */}
             <div className="mt-6">
                 <input
                     type="text"
@@ -163,7 +151,7 @@ const CategoryPage = () => {
                 />
                 <input
                     type="file"
-                    onChange={handleImageUpload}
+                    onChange={(e) => handleEditImageUpload(e)}
                     className="mb-2"
                 />
                 <button
@@ -173,6 +161,8 @@ const CategoryPage = () => {
                     アイテムを追加
                 </button>
             </div>
+
+            {/* アイテム編集フォーム */}
             {editingItem && (
                 <div className="mt-6 p-4 border rounded shadow-md bg-gray-50">
                     <h2 className="text-xl font-bold mb-4">アイテムの編集</h2>

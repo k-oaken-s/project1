@@ -2,6 +2,7 @@
 
 import { Category } from '@/types/Category';
 import axios from 'axios';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -38,9 +39,9 @@ const AdminDashboard = () => {
             });
     }, []);
 
-    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, setImage: (file: File | null) => void) => {
+    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
-            setImage(e.target.files[0]);
+            setCategoryImage(e.target.files[0]);
         }
     };
 
@@ -57,21 +58,19 @@ const AdminDashboard = () => {
                 Authorization: `Bearer ${token}`
             },
         })
-        .then((res) => {
-            setCategories((prevCategories) => [...prevCategories, res.data]);
-            setNewCategoryName('');
-            setCategoryImage(null);
-        })
-        .catch((err) => console.error(err));
-    };
-
-    const handleCategoryClick = (category: Category) => {
-        router.push(`/admin/categories/${category.id}`);
+            .then((res) => {
+                setCategories((prevCategories) => [...prevCategories, res.data]);
+                setNewCategoryName('');
+                setCategoryImage(null);
+            })
+            .catch((err) => console.error(err));
     };
 
     return (
         <div className="p-5 max-w-4xl mx-auto">
             <h1 className="text-2xl font-bold mb-6">管理者ダッシュボード</h1>
+
+            {/* カテゴリ追加フォーム */}
             <div className="mb-6">
                 <input
                     type="text"
@@ -82,7 +81,7 @@ const AdminDashboard = () => {
                 />
                 <input
                     type="file"
-                    onChange={(e) => handleImageUpload(e, setCategoryImage)}
+                    onChange={handleImageUpload}
                     className="mb-2"
                 />
                 <button
@@ -92,23 +91,26 @@ const AdminDashboard = () => {
                     カテゴリーを追加
                 </button>
             </div>
+
+            {/* カテゴリ一覧表示 */}
             <ul className="space-y-4">
                 {categories.length > 0 ? categories.map((category) => (
                     <li
                         key={category.id}
-                        className="border rounded p-4 shadow-md flex items-center cursor-pointer hover:bg-gray-100"
-                        onClick={() => handleCategoryClick(category)}
+                        className="border rounded p-4 shadow-md flex items-center"
                     >
                         {category.image && (
                             <img
-                                src={`data:image/png;base64,${category.image}`} // Base64エンコードされた画像を使用
+                                src={`data:image/png;base64,${category.image}`}
                                 alt={`${category.name}の画像`}
                                 className="w-16 h-16 object-cover mr-4"
                                 loading="lazy"
                             />
                         )}
                         <div className="flex-1">
-                            <span className="font-semibold text-lg">{category.name}</span>
+                            <Link href={`/admin/categories/${category.id}`} className="font-semibold text-lg text-blue-600 hover:underline">
+                                {category.name}
+                            </Link>
                         </div>
                     </li>
                 )) : <li className="text-gray-500">カテゴリーがありません</li>}
