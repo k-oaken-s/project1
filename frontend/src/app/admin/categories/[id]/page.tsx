@@ -1,7 +1,6 @@
 "use client";
 
 import ItemForm from '@/app/admin/categories/components/ItemForm';
-import Category from '@/components/Category';
 import ItemList from '@/components/ItemList';
 import { useFetchCategoryWithItems } from '@/hooks/useFetchCategoryWithItems';
 import { Item } from '@/types/Category';
@@ -76,20 +75,39 @@ const CategoryDetailPage = () => {
     };
 
     return isLoading ? (
-        <p>Loading...</p>
+        <p className="text-center text-gray-500 text-lg mt-10">Loading...</p>
     ) : (
-        <div className="p-5 max-w-4xl mx-auto">
-            <button onClick={() => router.push('/admin')} className="bg-gray-700 text-white py-2 px-4 rounded hover:bg-gray-800 mb-4">
+        <div className="p-8 max-w-4xl mx-auto bg-white rounded-lg shadow-lg">
+            <button
+                onClick={() => router.push('/admin')}
+                className="bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 px-6 rounded-full hover:shadow-lg transition-all duration-300 mb-6"
+            >
                 管理者ダッシュボードに戻る
             </button>
+
             {category && (
-                <div className="mb-6">
-                    <Category category={category} />
+                <div className="mb-8">
+                    <h1 className="text-3xl font-bold text-gray-800 mb-2">{category.name}</h1>
+                    {category.description && <p className="text-gray-600 mb-4">{category.description}</p>}
+                    {category.image && (
+                        <img
+                            src={`data:image/jpeg;base64,${category.image}`}
+                            alt={`${category.name} image`}
+                            className="mt-4 w-full max-h-72 object-cover rounded-lg shadow-lg"
+                        />
+                    )}
                 </div>
             )}
-            <h2 className="text-xl font-semibold mb-4">カテゴリーのアイテム一覧</h2>
-            <ItemList items={items} onEdit={startEditingItem} />
-            <ItemForm onSubmit={editingItem ? editItem : addItem} />
+
+            <h2 className="text-2xl font-semibold text-gray-700 mb-6">カテゴリーのアイテム一覧</h2>
+
+            <div className="mb-6">
+                <ItemList items={items} onEdit={startEditingItem} />
+            </div>
+
+            <div className="p-6 bg-gray-50 rounded-lg shadow-inner">
+                <ItemForm onSubmit={editingItem ? editItem : addItem} />
+            </div>
         </div>
     );
 };
