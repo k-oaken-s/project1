@@ -1,6 +1,7 @@
 "use client";
 
 import ItemForm from '@/app/admin/categories/components/ItemForm';
+import Category from '@/components/Category';
 import ItemList from '@/components/ItemList';
 import { useFetchCategoryWithItems } from '@/hooks/useFetchCategoryWithItems';
 import { Item } from '@/types/Category';
@@ -78,10 +79,15 @@ const CategoryDetailPage = () => {
         <p>Loading...</p>
     ) : (
         <div className="p-5 max-w-4xl mx-auto">
-            <h1 className="text-2xl font-bold mb-6">カテゴリーのアイテム一覧</h1>
             <button onClick={() => router.push('/admin')} className="bg-gray-700 text-white py-2 px-4 rounded hover:bg-gray-800 mb-4">
                 管理者ダッシュボードに戻る
             </button>
+            {category && (
+                <div className="mb-6">
+                    <Category category={category} />
+                </div>
+            )}
+            <h2 className="text-xl font-semibold mb-4">カテゴリーのアイテム一覧</h2>
             <ItemList items={items} onEdit={startEditingItem} />
             <ItemForm onSubmit={editingItem ? editItem : addItem} />
         </div>

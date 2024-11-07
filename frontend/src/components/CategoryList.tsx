@@ -1,29 +1,15 @@
-import { Category } from '@/types/Category';
-import Link from 'next/link';
+import { Category as CategoryType } from '@/types/Category';
+import Category from './Category';
 
 interface CategoryListProps {
-    categories: Category[];
+    categories: CategoryType[];
 }
 
 const CategoryList = ({ categories }: CategoryListProps) => (
     <ul className="space-y-4">
         {categories.length > 0 ? (
             categories.map((category) => (
-                <li key={category.id} className="border rounded p-4 shadow-md flex items-center">
-                    {category.image && (
-                        <img
-                            src={`data:image/png;base64,${category.image}`}
-                            alt={`${category.name}の画像`}
-                            className="w-16 h-16 object-cover mr-4"
-                            loading="lazy"
-                        />
-                    )}
-                    <div className="flex-1">
-                        <Link href={`/admin/categories/${category.id}`} className="font-semibold text-lg text-blue-600 hover:underline">
-                            {category.name}
-                        </Link>
-                    </div>
-                </li>
+                <Category key={category.id} category={category} />
             ))
         ) : (
             <li className="text-gray-500">カテゴリーがありません</li>
