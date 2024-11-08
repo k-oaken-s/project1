@@ -6,5 +6,8 @@
     "dev": "npm --prefix frontend run dev",
     "build:frontend": "npm --prefix frontend run build"
   },
-  "dependencies": {}
+  "dependencies": {
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1"
+  }
 }
