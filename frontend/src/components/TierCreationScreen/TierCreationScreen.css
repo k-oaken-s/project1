@@ -1,0 +1,50 @@
+.tier-creation-screen {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+}
+
+.tier-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+}
+
+.tier {
+    padding: 16px;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    min-height: 100px;
+}
+
+.tier1 {
+    background-color: red;
+}
+
+.tier2 {
+    background-color: yellow;
+}
+
+.tier3 {
+    background-color: green;
+}
+
+.tier4 {
+    background-color: blue;
+}
+
+.item-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 16px;
+}
+
+.draggable-item {
+    padding: 8px;
+    background-color: lightgray;
+    border-radius: 4px;
+    cursor: pointer;
+}

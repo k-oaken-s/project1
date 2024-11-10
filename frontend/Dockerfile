@@ -1,7 +1,6 @@
 # frontend/Dockerfile
 FROM node:18-alpine
 
-# 作業ディレクトリを作成
 WORKDIR /app
 
 # package.jsonとpackage-lock.jsonをコピー
@@ -9,7 +8,6 @@ COPY package*.json ./
 
 # 依存関係をインストール
 RUN npm install
-RUN npm install axios
 
 # ソースコードをコピー
 COPY . .
