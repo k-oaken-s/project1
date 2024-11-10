@@ -1,9 +1,6 @@
-import { Item } from "./Item";
-
-export interface Category {
+export interface Item {
     id: string;
     name: string;
     description: string;
     image: string
-    items: Item[];
 }

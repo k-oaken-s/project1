@@ -1,4 +1,4 @@
-import { Item } from '@/types/Category';
+import { Item } from '@/types/Item';
 import { useEffect, useState } from 'react';
 
 interface ItemFormProps {

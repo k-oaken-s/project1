@@ -3,7 +3,7 @@
 import ItemForm from '@/app/admin/categories/components/ItemForm';
 import ItemList from '@/components/ItemList';
 import { useFetchCategoryWithItems } from '@/hooks/useFetchCategoryWithItems';
-import { Item } from '@/types/Category';
+import { Item } from '@/types/Item';
 import axios from 'axios';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
