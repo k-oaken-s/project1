@@ -1,20 +1,20 @@
-"use client";
-
+// src/pages/index.tsx
 import TierCreationScreen from '@/components/TierCreationScreen/TierCreationScreen';
 import { TierItem } from '@/types/TierItem';
-import React from 'react';
 
-const App: React.FC = () => {
-    const items: TierItem[] = [
-        { id: 1, name: 'Item 1' },
-        { id: 2, name: 'Item 2' },
-    ];
+const items: TierItem[] = [
+    { id: '1', name: 'アイテム1' },
+    { id: '2', name: 'アイテム2' },
+    { id: '3', name: 'アイテム3' },
+    // その他のアイテム
+];
 
+const HomePage = () => {
     return (
-        <div className="App">
+        <div>
             <TierCreationScreen items={items} />
         </div>
     );
 };
 
-export default App;
+export default HomePage;

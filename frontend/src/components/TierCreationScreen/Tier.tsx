@@ -1,7 +1,9 @@
 import { TierItem } from '@/types/TierItem';
+import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import React from 'react';
 import DraggableItem from './DraggableItem';
+import styles from './Tier.module.css';
 
 type TierProps = {
     name: string;
@@ -9,19 +11,17 @@ type TierProps = {
 };
 
 const Tier: React.FC<TierProps> = ({ name, items }) => {
-    const tierColors: { [key: string]: string } = {
-        Tier1: 'red',
-        Tier2: 'yellow',
-        Tier3: 'green',
-        Tier4: 'blue',
-    };
+    const { isOver, setNodeRef } = useDroppable({
+        id: name,
+        data: { tierName: name },
+    });
 
     return (
-        <div className="tier" style={{ backgroundColor: tierColors[name] }}>
+        <div ref={setNodeRef} className={styles.tier}>
             <h3>{name}</h3>
-            <SortableContext items={items} strategy={verticalListSortingStrategy}>
+            <SortableContext items={items.map((item) => item.id)} strategy={verticalListSortingStrategy}>
                 {items.map((item) => (
-                    <DraggableItem key={item.id} item={item} />
+                    <DraggableItem key={item.id} item={item} tierName={name} />
                 ))}
             </SortableContext>
         </div>

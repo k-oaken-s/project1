@@ -1,8 +1,8 @@
-import { Item } from '@/types/Item';
+import { TierItem } from "@/types/TierItem";
 
 interface ItemListProps {
-    items: Item[];
-    onEdit?: (item: Item) => void;
+    items: TierItem[];
+    onEdit?: (item: TierItem) => void;
 }
 
 const ItemList = ({ items, onEdit }: ItemListProps) => (

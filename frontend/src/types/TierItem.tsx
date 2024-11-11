@@ -1,4 +1,9 @@
+// types/TierItem.ts
+
 export type TierItem = {
-    id: number;
+    id: string;
     name: string;
+    description?: string;
+    image?: string;
+    // その他のプロパティ
 };
