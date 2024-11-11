@@ -1,3 +1,4 @@
+import 'antd/dist/reset.css';
 import Header from '../components/Header';
 import './globals.css';
 
