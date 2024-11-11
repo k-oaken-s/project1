@@ -1,8 +1,9 @@
-// src/pages/index.tsx
-import TierCreationScreen from '@/components/TierCreationScreen/TierCreationScreen';
-import { TierItem } from '@/types/TierItem';
+'use client';
 
-const items: TierItem[] = [
+import TierCreationScreen from '@/components/TierCreationScreen/TierCreationScreen';
+import { Item } from '@/types/Item';
+
+const items: Item[] = [
     { id: '1', name: 'アイテム1' },
     { id: '2', name: 'アイテム2' },
     { id: '3', name: 'アイテム3' },

@@ -1,11 +1,11 @@
-// DraggableItem.tsx
-import { TierItem } from '@/types/TierItem';
+import { Item } from '@/types/Item';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { Avatar, Typography } from 'antd';
 import React from 'react';
 
 type DraggableItemProps = {
-    item: TierItem;
+    item: Item;
     tierName: string;
 };
 
@@ -29,14 +29,9 @@ const DraggableItem: React.FC<DraggableItemProps> = ({ item, tierName }) => {
     };
 
     return (
-        <div
-            ref={setNodeRef}
-            style={style}
-            {...attributes}
-            {...listeners}
-            className="draggable-item"
-        >
-            {item.name}
+        <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+            <Avatar style={{ marginRight: 8 }}>{item.name.charAt(0)}</Avatar>
+            <Typography.Text>{item.name}</Typography.Text>
         </div>
     );
 };

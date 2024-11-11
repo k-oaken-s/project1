@@ -1,10 +1,9 @@
-// DraggableItemOverlay.tsx
-import { TierItem } from '@/types/TierItem';
+import { Item } from '@/types/Item';
 import React from 'react';
 
 type DraggableItemOverlayProps = {
     id: string;
-    findItemById: (id: string) => TierItem | undefined;
+    findItemById: (id: string) => Item | undefined;
 };
 
 const DraggableItemOverlay: React.FC<DraggableItemOverlayProps> = ({ id, findItemById }) => {

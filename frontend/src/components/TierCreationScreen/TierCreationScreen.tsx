@@ -1,19 +1,20 @@
 "use client";
 
-import { TierItem } from '@/types/TierItem';
 import { closestCenter, DndContext, DragEndEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
+import { Col, Row } from 'antd';
 import React, { useState } from 'react';
 import DraggableItemOverlay from './DraggableItemOverlay';
 import Tier from './Tier';
 import TierItemList from './TierItemList';
+import { Item } from '@/types/Item';
 
 type TierCreationScreenProps = {
-    items: TierItem[];
+    items: Item[];
 };
 
 const TierCreationScreen: React.FC<TierCreationScreenProps> = ({ items }) => {
-    const [tiers, setTiers] = useState<{ [key: string]: TierItem[] }>({
+    const [tiers, setTiers] = useState<{ [key: string]: Item[] }>({
         Tier1: [],
         Tier2: [],
         Tier3: [],
@@ -21,9 +22,9 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({ items }) => {
     });
 
     const [activeId, setActiveId] = useState<string | null>(null);
-    const [availableItems, setAvailableItems] = useState<TierItem[]>(items);
+    const [availableItems, setAvailableItems] = useState<Item[]>(items);
 
-    const findItemById = (id: string): TierItem | undefined => {
+    const findItemById = (id: string): Item | undefined => {
         // availableItemsから検索
         const item = availableItems.find((item) => item.id === id);
         if (item) return item;
@@ -50,7 +51,7 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({ items }) => {
         const activeId = String(active.id);
         const overId = String(over.id);
 
-        const item = active.data.current?.item as TierItem;
+        const item = active.data.current?.item as Item;
         const sourceTierName = active.data.current?.tierName;
         const destinationTierName = over.data.current?.tierName;
 
@@ -113,12 +114,16 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({ items }) => {
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
         >
-            <div className="tier-creation-screen">
-                <TierItemList items={availableItems} />
+            <Row gutter={[16, 16]}>
+                <Col span={24}>
+                    <TierItemList items={availableItems} />
+                </Col>
                 {Object.keys(tiers).map((tierName) => (
-                    <Tier key={tierName} name={tierName} items={tiers[tierName]} />
+                    <Col key={tierName} xs={24} sm={12} md={8} lg={6}>
+                        <Tier name={tierName} items={tiers[tierName]} />
+                    </Col>
                 ))}
-            </div>
+            </Row>
 
             <DragOverlay>
                 {activeId ? (

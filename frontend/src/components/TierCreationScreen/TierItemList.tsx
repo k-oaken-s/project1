@@ -1,20 +1,26 @@
 // ItemList.tsx
 
-import { TierItem } from '@/types/TierItem';
+import { Item } from '@/types/Item';
+import { Card, List } from 'antd';
 import React from 'react';
 import DraggableItem from './DraggableItem';
 
 type TierItemListProps = {
-    items: TierItem[];
+    items: Item[];
 };
 
 const TierItemList: React.FC<TierItemListProps> = ({ items }) => {
     return (
-        <div className="item-list">
-            {items.map((item) => (
-                <DraggableItem key={item.id} item={item} tierName="unassigned" />
-            ))}
-        </div>
+        <Card title="Available Items" style={{ width: '100%', margin: '16px 0' }}>
+            <List
+                dataSource={items}
+                renderItem={(item) => (
+                    <List.Item key={item.id}>
+                        <DraggableItem item={item} tierName="unassigned" />
+                    </List.Item>
+                )}
+            />
+        </Card>
     );
 };
 
