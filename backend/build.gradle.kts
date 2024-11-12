@@ -50,5 +50,5 @@ tasks.test {
 }
 
 application {
-    mainClass.set("tierMaker.TierMakerApplication")
+    mainClass.set("tierMaker.TierMakerApplicationKt")
 }
