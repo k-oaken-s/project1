@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
+import org.springframework.web.filter.CorsFilter
 
 @Configuration
 @EnableWebSecurity
@@ -31,29 +32,22 @@ class SecurityConfig {
     }
 
     @Bean
-    fun jwtAuthenticationFilter(): JwtAuthenticationFilter {
-        return JwtAuthenticationFilter(JwtUtil)
-    }
-
-    @Bean
     fun corsConfigurationSource(): UrlBasedCorsConfigurationSource {
         val source = UrlBasedCorsConfigurationSource()
         val config = CorsConfiguration()
 
-        // すべてのオリジンを許可
+        // 全てのオリジン、メソッド、ヘッダーを許可してCORSを無効化
         config.allowedOriginPatterns = listOf("*")
-
-        // すべてのHTTPメソッドを許可
         config.allowedMethods = listOf("*")
-
-        // すべてのヘッダーを許可
         config.allowedHeaders = listOf("*")
+        config.allowCredentials = true
 
-        // 認証情報を無効にする
-        config.allowCredentials = false
-
-        // すべてのパスにCORS設定を適用
         source.registerCorsConfiguration("/**", config)
         return source
+    }
+
+    @Bean
+    fun corsFilter(): CorsFilter {
+        return CorsFilter(corsConfigurationSource())
     }
 }
