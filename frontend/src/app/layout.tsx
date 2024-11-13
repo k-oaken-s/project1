@@ -1,16 +1,15 @@
+"use client";
+
 import { Layout, Typography } from 'antd';
 import 'antd/dist/reset.css';
 import './globals.css';
 
 const { Header, Content } = Layout;
 
-export default function RootLayout({
-    children,
-}: {
-    children: React.ReactNode;
-}) {
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
-        <html lang="en">
+        <html>
             <body>
                 <Layout>
                     <Header>
