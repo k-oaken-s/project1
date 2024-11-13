@@ -4,6 +4,7 @@ import ItemForm from '@/app/admin/categories/components/ItemForm';
 import ItemList from '@/components/ItemList';
 import { useFetchCategoryWithItems } from '@/hooks/useFetchCategoryWithItems';
 import { Item } from '@/types/Item';
+import { getApiBaseUrl } from '@/utils/getApiBaseUrl';
 import axios from 'axios';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -30,7 +31,7 @@ const CategoryDetailPage = () => {
         formData.append('item', new Blob([JSON.stringify({ name })], { type: 'application/json' }));
         if (image && image !== "remove") formData.append('file', image);
 
-        axios.post<Item>(`${process.env.NEXT_PUBLIC_API_BASE_URL}/categories/${categoryId}/items`, formData, {
+        axios.post<Item>(`${getApiBaseUrl()}/categories/${categoryId}/items`, formData, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then((res) => {
@@ -58,7 +59,7 @@ const CategoryDetailPage = () => {
             formData.append('keepCurrentImage', 'true');
         }
 
-        axios.put<Item>(`${process.env.NEXT_PUBLIC_API_BASE_URL}/categories/${categoryId}/items/${editingItem.id}`, formData, {
+        axios.put<Item>(`${getApiBaseUrl()}/categories/${categoryId}/items/${editingItem.id}`, formData, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then((res) => {

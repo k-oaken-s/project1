@@ -3,6 +3,7 @@
 import CategoryForm from '@/app/admin/categories/components/CategoryForm';
 import CategoryList from '@/components/CategoryList';
 import { Category } from '@/types/Category';
+import { getApiBaseUrl } from '@/utils/getApiBaseUrl';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -18,7 +19,7 @@ const AdminDashboard = () => {
             return;
         }
 
-        axios.get<Category[]>(`${process.env.NEXT_PUBLIC_API_BASE_URL}/categories`, {
+        axios.get<Category[]>(`${getApiBaseUrl()}/categories`, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then((res) => setCategories(res.data))
@@ -38,7 +39,7 @@ const AdminDashboard = () => {
         formData.append('category', new Blob([JSON.stringify({ name })], { type: 'application/json' }));
         if (image) formData.append('file', image);
 
-        axios.post<Category>(`${process.env.NEXT_PUBLIC_API_BASE_URL}/categories`, formData, {
+        axios.post<Category>(`${getApiBaseUrl()}/categories`, formData, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then((res) => {

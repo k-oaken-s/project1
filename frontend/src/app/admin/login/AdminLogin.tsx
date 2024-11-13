@@ -1,5 +1,6 @@
 "use client";
 
+import { getApiBaseUrl } from '@/utils/getApiBaseUrl';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -12,7 +13,7 @@ const AdminLogin = () => {
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/login`, {
+            const response = await axios.post(`${getApiBaseUrl()}/admin/login`, {
                 username,
                 password,
             });

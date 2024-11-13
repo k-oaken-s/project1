@@ -1,4 +1,5 @@
 import { Category } from '@/types/Category';
+import { getApiBaseUrl } from '@/utils/getApiBaseUrl';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -18,7 +19,7 @@ export const useFetchCategoryWithItems = (categoryId: string | undefined) => {
         }
 
         setIsLoading(true);
-        axios.get<Category>(`${process.env.NEXT_PUBLIC_API_BASE_URL}/categories/${categoryId}`, {
+        axios.get<Category>(`${getApiBaseUrl()}/categories/${categoryId}`, {
             withCredentials: true,
             headers: {
                 Authorization: `Bearer ${token}`,
