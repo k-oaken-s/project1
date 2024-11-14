@@ -26,7 +26,7 @@ const AdminDashboard = () => {
             .catch((err) => {
                 if (err.response?.status === 401) router.push('/admin/login');
             });
-    }, []);
+    }, [router]);
 
     const addCategory = (name: string, image: File | null) => {
         const token = localStorage.getItem('token');

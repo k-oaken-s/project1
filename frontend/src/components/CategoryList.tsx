@@ -1,4 +1,5 @@
 import { Category as CategoryType } from '@/types/Category';
+import { Col, Row } from 'antd';
 import Category from './Category';
 
 interface CategoryListProps {
@@ -6,15 +7,26 @@ interface CategoryListProps {
 }
 
 const CategoryList = ({ categories }: CategoryListProps) => (
-    <ul className="space-y-4">
+    <Row gutter={[16, 16]}>
         {categories.length > 0 ? (
             categories.map((category) => (
-                <Category key={category.id} category={category} />
+                <Col
+                    key={category.id}
+                    xs={24}
+                    sm={12}
+                    md={8}
+                    lg={6}
+                    style={{ height: '100%' }} // 高さを100%に設定
+                >
+                    <Category category={category} />
+                </Col>
             ))
         ) : (
-            <li className="text-gray-500">カテゴリーがありません</li>
+            <Col span={24} className="text-gray-500 text-center">
+                カテゴリーがありません
+            </Col>
         )}
-    </ul>
+    </Row>
 );
 
 export default CategoryList;

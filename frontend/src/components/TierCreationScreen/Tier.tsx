@@ -1,9 +1,9 @@
+import { Item } from '@/types/Item';
 import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { Card, List } from 'antd';
 import React from 'react';
 import DraggableItem from './DraggableItem';
-import { Item } from '@/types/Item';
 
 type TierProps = {
     name: string;
@@ -16,16 +16,11 @@ const Tier: React.FC<TierProps> = ({ name, items }) => {
         data: { tierName: name },
     });
 
-    const cardStyle = {
-        backgroundColor: isOver ? '#e6f7ff' : '#fff',
-    };
-
     return (
         <Card
             ref={setNodeRef}
             title={name}
-            style={{ width: 300, margin: '16px' }}
-            bodyStyle={cardStyle}
+            style={{ width: 300, margin: '16px', backgroundColor: isOver ? '#e6f7ff' : '#fff' }}
         >
             <SortableContext items={items.map((item) => item.id)} strategy={verticalListSortingStrategy}>
                 <List

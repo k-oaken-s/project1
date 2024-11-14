@@ -20,7 +20,6 @@ export const useFetchCategoryWithItems = (categoryId: string | undefined) => {
 
         setIsLoading(true);
         axios.get<Category>(`${getApiBaseUrl()}/categories/${categoryId}`, {
-            withCredentials: true,
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
