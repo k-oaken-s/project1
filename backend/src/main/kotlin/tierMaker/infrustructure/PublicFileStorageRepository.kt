@@ -4,7 +4,7 @@ import java.time.Instant
 import org.springframework.stereotype.Service
 
 @Service
-class FileStorageService {
+class PublicFileStorageRepository {
 
     private val baseDir = "public"
 
