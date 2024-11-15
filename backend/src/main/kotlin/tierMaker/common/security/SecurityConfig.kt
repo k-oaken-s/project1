@@ -15,39 +15,39 @@ import org.springframework.web.filter.CorsFilter
 @EnableWebSecurity
 class SecurityConfig {
 
-    @Bean
-    fun passwordEncoder(): PasswordEncoder {
-        return BCryptPasswordEncoder()
-    }
+  @Bean
+  fun passwordEncoder(): PasswordEncoder {
+    return BCryptPasswordEncoder()
+  }
 
-    @Bean
-    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
-        http
-                .cors { it.configurationSource(corsConfigurationSource()) } // CORS設定を適用
-                .csrf { it.disable() } // CSRFを無効化
-                .authorizeHttpRequests { auth ->
-                    auth.anyRequest().permitAll() // 全てのリクエストを許可
-                }
-        return http.build()
-    }
+  @Bean
+  fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
+    http
+      .cors { it.configurationSource(corsConfigurationSource()) } // CORS設定を適用
+      .csrf { it.disable() } // CSRFを無効化
+      .authorizeHttpRequests { auth ->
+        auth.anyRequest().permitAll() // 全てのリクエストを許可
+      }
+    return http.build()
+  }
 
-    @Bean
-    fun corsConfigurationSource(): UrlBasedCorsConfigurationSource {
-        val source = UrlBasedCorsConfigurationSource()
-        val config = CorsConfiguration()
+  @Bean
+  fun corsConfigurationSource(): UrlBasedCorsConfigurationSource {
+    val source = UrlBasedCorsConfigurationSource()
+    val config = CorsConfiguration()
 
-        // 全てのオリジン、メソッド、ヘッダーを許可してCORSを無効化
-        config.allowedOriginPatterns = listOf("*")
-        config.allowedMethods = listOf("*")
-        config.allowedHeaders = listOf("*")
-        config.allowCredentials = true
+    // 全てのオリジン、メソッド、ヘッダーを許可してCORSを無効化
+    config.allowedOriginPatterns = listOf("*")
+    config.allowedMethods = listOf("*")
+    config.allowedHeaders = listOf("*")
+    config.allowCredentials = true
 
-        source.registerCorsConfiguration("/**", config)
-        return source
-    }
+    source.registerCorsConfiguration("/**", config)
+    return source
+  }
 
-    @Bean
-    fun corsFilter(): CorsFilter {
-        return CorsFilter(corsConfigurationSource())
-    }
+  @Bean
+  fun corsFilter(): CorsFilter {
+    return CorsFilter(corsConfigurationSource())
+  }
 }

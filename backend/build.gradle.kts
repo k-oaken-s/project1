@@ -4,6 +4,7 @@ plugins {
     id("org.springframework.boot") version "3.3.5"
     id("io.spring.dependency-management") version "1.1.6"
     id("application")
+    id("com.diffplug.spotless") version "6.22.0"
 }
 
 java {
@@ -51,4 +52,10 @@ tasks.test {
 
 application {
     mainClass.set("tierMaker.TierMakerApplicationKt")
+}
+
+spotless {
+    kotlin {
+        ktfmt().googleStyle()
+    }
 }

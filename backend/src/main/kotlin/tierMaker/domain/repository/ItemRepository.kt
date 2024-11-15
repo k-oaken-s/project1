@@ -6,5 +6,5 @@ import tierMaker.domain.model.Item
 
 @Repository
 internal interface ItemRepository : JpaRepository<Item, String> {
-    fun findByCategoryId(categoryId: String): List<Item>
+  fun findByCategoryId(categoryId: String): List<Item>
 }
