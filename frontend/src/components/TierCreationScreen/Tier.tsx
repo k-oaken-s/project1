@@ -1,8 +1,6 @@
-import { Item } from '@/types/Item';
 import { useDroppable } from '@dnd-kit/core';
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { Card, List } from 'antd';
 import React from 'react';
+import { Item } from '@/types/Item';
 import DraggableItem from './DraggableItem';
 
 type TierProps = {
@@ -11,28 +9,30 @@ type TierProps = {
 };
 
 const Tier: React.FC<TierProps> = ({ name, items }) => {
-    const { isOver, setNodeRef } = useDroppable({
+    const { setNodeRef } = useDroppable({
         id: name,
-        data: { tierName: name },
+        data: { tierName: name }, // ドロップ先の名前を明示
     });
 
     return (
-        <Card
+        <div
             ref={setNodeRef}
-            title={name}
-            style={{ width: 300, margin: '16px', backgroundColor: isOver ? '#e6f7ff' : '#fff' }}
+            style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                width: '100%',
+                minHeight: '150px',
+                border: '1px solid #ccc',
+                padding: '10px',
+                gap: '10px',
+                alignItems: 'center',
+                background: '#f9f9f9',
+            }}
         >
-            <SortableContext items={items.map((item) => item.id)} strategy={verticalListSortingStrategy}>
-                <List
-                    dataSource={items}
-                    renderItem={(item) => (
-                        <List.Item key={item.id}>
-                            <DraggableItem item={item} tierName={name} />
-                        </List.Item>
-                    )}
-                />
-            </SortableContext>
-        </Card>
+            {items.map((item) => (
+                <DraggableItem key={item.id} item={item} tierName={name} />
+            ))}
+        </div>
     );
 };
 

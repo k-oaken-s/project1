@@ -4,6 +4,7 @@
 import { useFetchCategoryWithItems } from '@/hooks/useFetchCategoryWithItems';
 import { Item } from '@/types/Item';
 import { getApiBaseUrl } from '@/utils/getApiBaseUrl';
+import { getImageUrl } from '@/utils/getImageUrl';
 import { ArrowLeftOutlined, UploadOutlined } from '@ant-design/icons';
 import { Button, Card, Input, List, message, Spin, Typography, Upload } from 'antd';
 import axios from 'axios';
@@ -93,7 +94,7 @@ const CategoryDetailPage = () => {
                             cover={
                                 category.image ? (
                                     <img
-                                        src={`data:image/jpeg;base64,${category.image}`}
+                                        src={getImageUrl(category.image)}
                                         alt={`${category.name} image`}
                                         style={{ maxHeight: "300px", objectFit: "cover", width: "100%" }}
                                     />
@@ -117,7 +118,7 @@ const CategoryDetailPage = () => {
                                     avatar={
                                         item.image ? (
                                             <img
-                                                src={`data:image/jpeg;base64,${item.image}`}
+                                                src={getImageUrl(item.image)}
                                                 alt={`${item.name} image`}
                                                 style={{ width: 50, height: 50, objectFit: "cover" }}
                                             />

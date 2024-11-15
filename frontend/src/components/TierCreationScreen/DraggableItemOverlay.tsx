@@ -1,4 +1,5 @@
 import { Item } from '@/types/Item';
+import { getImageUrl } from '@/utils/getImageUrl';
 import { Avatar, Card } from 'antd';
 import React from 'react';
 
@@ -17,7 +18,7 @@ const DraggableItemOverlay: React.FC<DraggableItemOverlayProps> = ({ id, findIte
             style={{ width: 150, display: 'flex', alignItems: 'center' }}
         >
             <Avatar
-                src={`data:image/png;base64,${item.image}`}
+                src={getImageUrl(item.image)}
                 alt={item.name}
                 size={50}
                 style={{ marginRight: '16px' }}

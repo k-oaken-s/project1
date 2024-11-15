@@ -1,37 +1,46 @@
-import { Item } from '@/types/Item';
-import { useSortable } from '@dnd-kit/sortable';
+import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
-import { Avatar, Typography } from 'antd';
 import React from 'react';
+import { Item } from '@/types/Item';
+import { Avatar } from 'antd';
+import { getImageUrl } from '@/utils/getImageUrl';
 
 type DraggableItemProps = {
     item: Item;
-    tierName: string;
+    tierName?: string;
 };
 
 const DraggableItem: React.FC<DraggableItemProps> = ({ item, tierName }) => {
-    const {
-        attributes,
-        listeners,
-        setNodeRef,
-        transform,
-        transition,
-        isDragging,
-    } = useSortable({
+    const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
         id: item.id,
-        data: { item, tierName },
+        data: {
+            item,
+            tierName, // 元のTier名を設定
+        },
     });
 
-    const style = {
-        transform: CSS.Transform.toString(transform),
-        transition,
-        opacity: isDragging ? 0 : 1, // ドラッグ中は非表示
+    const style: React.CSSProperties = {
+        transform: transform ? CSS.Transform.toString(transform) : undefined,
+        transition: 'transform 0.2s ease',
+        margin: '10px',
+        opacity: isDragging ? 0.5 : 1,
+        width: '100px',
+        height: '100px',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        border: '1px solid #ccc',
+        borderRadius: '10px',
+        background: '#fff',
     };
 
     return (
-        <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-            <Avatar style={{ marginRight: 8 }}>{item.name.charAt(0)}</Avatar>
-            <Typography.Text>{item.name}</Typography.Text>
+        <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
+            <Avatar
+                src={getImageUrl(item.image)}
+                alt={item.name}
+                size={64}
+            />
         </div>
     );
 };

@@ -1,23 +1,28 @@
 import { Item } from '@/types/Item';
 import { Avatar, Card } from 'antd';
 import React from 'react';
+import { getImageUrl } from '@/utils/getImageUrl';
 
 type TierItemListProps = {
     items: Item[];
 };
 
 const TierItemList: React.FC<TierItemListProps> = ({ items }) => (
-    <div className="item-list">
+    <div className="item-list" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center' }}>
         {items.map((item) => (
             <Card
                 key={item.id}
-                style={{ marginBottom: '10px', display: 'flex', alignItems: 'center' }}
+                style={{
+                    width: '150px',
+                    textAlign: 'center',
+                    padding: '10px',
+                }}
             >
                 <Avatar
-                    src={item.image}
+                    src={getImageUrl(item.image)}
                     alt={item.name}
-                    size={50}
-                    style={{ marginRight: '16px' }}
+                    size={100}
+                    style={{ marginBottom: '10px' }}
                 />
                 <span>{item.name}</span>
             </Card>
