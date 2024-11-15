@@ -1,6 +1,5 @@
 package tierMaker.presentation.controller
 
-import java.util.Base64
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
@@ -41,7 +40,10 @@ class CategoryController(
         id = category.id,
         name = category.name,
         description = category.description,
-        image = category.image?.let { Base64.getEncoder().encodeToString(it) },
+        image =
+          category.image?.let {
+            this.publicFileStorageRepository.saveFile("images", category.id, it, "jpg")
+          },
         items =
           category.items.map { item ->
             ItemResponse(
