@@ -1,6 +1,6 @@
 'use client';
 
-import TierCreationScreen from '@/components/TierCreationScreen/TierCreationScreen';
+import TierCreationScreen from '@/app/categories/[id]/TierCreationScreen/TierCreationScreen';
 import { Category } from '@/types/Category';
 import { Item } from '@/types/Item';
 import { getApiBaseUrl } from '@/utils/getApiBaseUrl';
