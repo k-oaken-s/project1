@@ -28,13 +28,16 @@ jobs:
 
       - name: Log in to Amazon ECR
         run: |
+          AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
           aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | \
-          docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+          docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
 
       - name: Build Docker Image
         run: |
-          docker build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/rankify-hub:latest .
+          AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
+          docker build -t $AWS_ACCOUNT_ID.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/rankify-hub:latest .
 
       - name: Push Docker Image to ECR
         run: |
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/rankify-hub:latest
+          AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
+          docker push $AWS_ACCOUNT_ID.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/rankify-hub:latest
