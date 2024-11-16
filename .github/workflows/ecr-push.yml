@@ -8,7 +8,7 @@ on:
       - Dockerfile
       - "**/Dockerfile"
       - "backend/**" # Dockerイメージに関連する変更があるファイルやディレクトリを指定
-    workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
   build-and-push:
