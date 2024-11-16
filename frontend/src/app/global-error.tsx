@@ -1,4 +1,4 @@
-'use client' // Error boundaries は Client Components である必要があります
+'use client'
 
 export default function GlobalError({
     error,
@@ -8,7 +8,6 @@ export default function GlobalError({
     reset: () => void
 }) {
     return (
-        // global-error には html と body タグを含める必要があります
         <html>
             <body>
                 <h2>何か問題が発生しました！</h2>
