@@ -1,23 +1,17 @@
 "use client";
 
-import { Item } from '@/types/Item';
+import { Item } from "@/types/Item";
 import {
-    closestCenter,
     DndContext,
-    DragEndEvent,
     DragOverlay,
-    DragStartEvent,
     PointerSensor,
     useSensor,
     useSensors,
-} from '@dnd-kit/core';
-import { Typography } from 'antd';
-import React, { useState } from 'react';
-import DraggableItem from './DraggableItem';
-import Tier from './Tier';
-import TierItemList from './TierItemList';
-
-const { Title } = Typography;
+} from "@dnd-kit/core";
+import React, { useState } from "react";
+import DroppableArea from "./DraggableArea";
+import DraggableItem from "./DraggableItem";
+import Tier from "./Tier";
 
 type TierCreationScreenProps = {
     items: Item[];
@@ -31,100 +25,97 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({ items }) => {
         Tier4: [],
     });
 
-    const [activeId, setActiveId] = useState<string | null>(null);
     const [availableItems, setAvailableItems] = useState<Item[]>(items);
+    const [activeId, setActiveId] = useState<string | null>(null);
 
-    const findItemById = (id: string): Item | undefined => {
-        const itemInAvailable = availableItems.find((item) => item.id === id);
-        if (itemInAvailable) return itemInAvailable;
+    const sensors = useSensors(
+        useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
+    );
 
-        for (const tier of Object.values(tiers)) {
-            const itemInTier = tier.find((item) => item.id === id);
-            if (itemInTier) return itemInTier;
-        }
-
-        return undefined;
+    const findItemById = (id: string): Item | null => {
+        const allItems = [
+            ...availableItems,
+            ...Object.values(tiers).flat(),
+        ];
+        return allItems.find((item) => item.id === id) || null;
     };
 
-
-    const handleDragStart = (event: DragStartEvent) => {
-        setActiveId(String(event.active.id));
+    const handleDragStart = ({ active }: any) => {
+        setActiveId(active.id);
     };
 
-    const handleDragEnd = (event: DragEndEvent) => {
-        const { active, over } = event;
-
+    const handleDragEnd = ({ active, over }: any) => {
         if (!over) {
             setActiveId(null);
             return;
         }
 
-        const activeId = String(active.id);
-        const item = findItemById(activeId);
-        if (!item) {
+        const activeItem = findItemById(active.id);
+        if (!activeItem) {
             setActiveId(null);
             return;
         }
 
-        const sourceTierName = active.data.current?.tierName || 'unassigned';
-        const destinationTierName = over.data.current?.tierName || 'unassigned';
+        const sourceTier = Object.keys(tiers).find((key) =>
+            tiers[key].some((item) => item.id === active.id)
+        ) || "unassigned";
 
-        if (sourceTierName === destinationTierName) {
-            // 同じTier内での移動
+        const destinationTier = over.id;
+
+        if (sourceTier === destinationTier) {
             setActiveId(null);
             return;
         }
 
-        // アイテムを移動
-        setTiers((prev) => {
-            const newTiers = { ...prev };
+        if (sourceTier === "unassigned") {
+            // 未割り当てアイテムから移動
+            setAvailableItems((prev) =>
+                prev.filter((item) => item.id !== active.id)
+            );
+        } else {
+            // 他のTierから移動
+            setTiers((prev) => ({
+                ...prev,
+                [sourceTier]: prev[sourceTier].filter(
+                    (item) => item.id !== active.id
+                ),
+            }));
+        }
 
-            // 元のTierからアイテムを削除
-            if (sourceTierName !== 'unassigned') {
-                newTiers[sourceTierName] = newTiers[sourceTierName].filter((i) => i.id !== activeId);
-            } else {
-                setAvailableItems((prevItems) => prevItems.filter((i) => i.id !== activeId));
-            }
-
-            // 新しいTierにアイテムを追加
-            if (destinationTierName !== 'unassigned') {
-                newTiers[destinationTierName] = [...newTiers[destinationTierName], item];
-            } else {
-                setAvailableItems((prevItems) => [...prevItems, item]);
-            }
-
-            return newTiers;
-        });
+        if (destinationTier === "unassigned") {
+            // 未割り当てエリアに戻す
+            setAvailableItems((prev) => [...prev, activeItem]);
+        } else {
+            // 他のTierに移動
+            setTiers((prev) => ({
+                ...prev,
+                [destinationTier]: [...prev[destinationTier], activeItem],
+            }));
+        }
 
         setActiveId(null);
     };
 
-
-    const sensors = useSensors(
-        useSensor(PointerSensor, {
-            activationConstraint: {
-                distance: 5,
-            },
-        })
-    );
-
     return (
         <DndContext
             sensors={sensors}
-            collisionDetection={closestCenter}
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
         >
-            <div style={{ width: '100%' }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
                 {Object.keys(tiers).map((tierName) => (
                     <Tier key={tierName} name={tierName} items={tiers[tierName]} />
                 ))}
             </div>
 
-            <div>
-                <Title level={4}>未割り当てアイテム</Title>
-                <TierItemList items={availableItems} />
-            </div>
+            <DroppableArea id="unassigned" items={availableItems}>
+                <h3>未割り当てアイテム</h3>
+                <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                    {availableItems.map((item) => (
+                        <DraggableItem key={item.id} item={item} />
+                    ))}
+                </div>
+            </DroppableArea>
 
             <DragOverlay>
                 {activeId ? (

@@ -1,51 +1,51 @@
-import { Item } from '@/types/Item';
-import { getImageUrl } from '@/utils/getImageUrl';
-import { useDraggable } from '@dnd-kit/core';
-import { CSS } from '@dnd-kit/utilities';
-import { Avatar } from 'antd';
-import React from 'react';
+import { Item } from "@/types/Item";
+import { getImageUrl } from "@/utils/getImageUrl";
+import { useDraggable } from "@dnd-kit/core";
+import { CSS } from "@dnd-kit/utilities";
+import React from "react";
 
 type DraggableItemProps = {
     item: Item;
-    tierName?: string;
-    isOverlay?: boolean; // この行を追加
+    isOverlay?: boolean;
 };
 
-const DraggableItem: React.FC<DraggableItemProps> = ({ item, tierName, isOverlay = false }) => {
-    const draggable = useDraggable({
+const DraggableItem: React.FC<DraggableItemProps> = ({ item, isOverlay = false }) => {
+    const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
         id: item.id,
-        data: {
-            item,
-            tierName,
-        },
     });
-
-    const { attributes, listeners, setNodeRef, transform, isDragging } = draggable;
 
     const style: React.CSSProperties = {
         transform: transform ? CSS.Transform.toString(transform) : undefined,
-        transition: isDragging ? 'transform 0.2s ease' : undefined,
-        margin: '8px',
+        transition: "transform 0.2s ease",
         opacity: isDragging ? 0.5 : 1,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: '100px',
-        height: '100px',
-        background: '#f0f0f0',
-        borderRadius: '8px',
+        width: "80px",
+        height: "80px",
+        borderRadius: "8px",
+        overflow: "hidden",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#fff",
+        boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
     };
 
-    const ref = isOverlay ? undefined : setNodeRef; // isOverlay の場合、ref を設定しない
-
     return (
-        <div ref={ref} style={style} {...listeners} {...attributes}>
-            <Avatar
+        <div
+            ref={isOverlay ? undefined : setNodeRef}
+            style={style}
+            {...listeners}
+            {...attributes}
+        >
+            <img
                 src={getImageUrl(item.image)}
                 alt={item.name}
-                size={64}
+                style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    borderRadius: "8px",
+                }}
             />
-            <span style={{ marginTop: '8px' }}>{item.name}</span>
         </div>
     );
 };
