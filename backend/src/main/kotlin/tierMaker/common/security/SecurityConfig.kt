@@ -11,15 +11,36 @@ import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import org.springframework.web.filter.CorsFilter
 
+/**
+ * Spring Security の設定クラス
+ *
+ * アプリケーションのセキュリティ設定を管理します。
+ * 主に認証、認可、CORS、CSRF などの設定を行います。
+ */
 @Configuration
 @EnableWebSecurity
 class SecurityConfig {
 
+  /**
+   * パスワードエンコーダーの Bean を生成
+   *
+   * アプリケーション全体で使用するパスワードのハッシュ化アルゴリズムを提供します。
+   *
+   * @return PasswordEncoder のインスタンス
+   */
   @Bean
   fun passwordEncoder(): PasswordEncoder {
     return BCryptPasswordEncoder()
   }
 
+  /**
+   * セキュリティフィルターチェーンを定義
+   *
+   * HTTP リクエストのセキュリティルールを設定します。CSRF の無効化、CORS 設定、認可のルールなどを定義。
+   *
+   * @param http HttpSecurity インスタンス
+   * @return SecurityFilterChain のインスタンス
+   */
   @Bean
   fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
     http
@@ -31,6 +52,14 @@ class SecurityConfig {
     return http.build()
   }
 
+  /**
+   * CORS 設定のソースを生成
+   *
+   * アプリケーションにおける CORS（クロスオリジンリソース共有）のルールを定義。
+   * 全てのオリジン、メソッド、ヘッダーを許可する設定を適用。
+   *
+   * @return CORS 設定のソース
+   */
   @Bean
   fun corsConfigurationSource(): UrlBasedCorsConfigurationSource {
     val source = UrlBasedCorsConfigurationSource()
@@ -46,6 +75,13 @@ class SecurityConfig {
     return source
   }
 
+  /**
+   * CORS フィルターを生成
+   *
+   * HTTP リクエストに CORS 設定を適用するためのフィルターを作成。
+   *
+   * @return CORS フィルター
+   */
   @Bean
   fun corsFilter(): CorsFilter {
     return CorsFilter(corsConfigurationSource())

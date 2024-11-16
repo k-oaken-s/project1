@@ -5,16 +5,28 @@ import org.springframework.web.bind.annotation.*
 import tierMaker.common.security.JwtUtil
 import tierMaker.presentation.controller.dto.LoginRequest
 
+/**
+ * RESTコントローラー: 管理者認証を処理します。
+ */
 @RestController
 @RequestMapping("/admin")
-class AdminController() {
+class AdminController {
 
-  @PostMapping("/login")
-  fun login(@RequestBody loginRequest: LoginRequest): ResponseEntity<Map<String, String>> {
-    if (loginRequest.username == "admin" && loginRequest.password == "password") {
-      val token = JwtUtil.generateToken(loginRequest.username)
-      return ResponseEntity.ok(mapOf("token" to token))
+    /**
+     * 管理者ログイン用のエンドポイント。
+     *
+     * このメソッドは、指定されたユーザー名とパスワードを使用して認証を行い、成功した場合はJWTトークンを返します。
+     * TODO: ユーザー名は "admin"、パスワードは "password" に固定されている
+     *
+     * @param loginRequest ログインリクエスト（ユーザー名とパスワード）
+     * @return 認証に成功した場合はJWTトークンを含むレスポンス。それ以外の場合は401ステータスコード。
+     */
+    @PostMapping("/login")
+    fun login(@RequestBody loginRequest: LoginRequest): ResponseEntity<Map<String, String>> {
+        if (loginRequest.username == "admin" && loginRequest.password == "password") {
+            val token = JwtUtil.generateToken(loginRequest.username)
+            return ResponseEntity.ok(mapOf("token" to token))
+        }
+        return ResponseEntity.status(401).build()
     }
-    return ResponseEntity.status(401).build()
-  }
 }

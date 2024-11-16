@@ -8,13 +8,40 @@ import tierMaker.domain.model.Category
 import tierMaker.domain.model.Item
 import tierMaker.domain.repository.CategoryRepository
 
+/**
+ * カテゴリーに関するユースケースを提供するクラス
+ *
+ * カテゴリーの取得、追加、削除、およびアイテムの操作に関するビジネスロジックを定義します。
+ *
+ * @property categoryRepository カテゴリーの永続化を行うリポジトリ
+ */
 @Service
 class CategoryUseCase(private val categoryRepository: CategoryRepository) {
+
+  /**
+   * すべてのカテゴリーを取得します。
+   *
+   * @return 登録されているカテゴリーのリスト
+   */
   fun getAllCategories(): List<Category> = categoryRepository.findAll()
 
+  /**
+   * 指定されたIDのカテゴリーとそのアイテムを取得します。
+   *
+   * @param id カテゴリーのID
+   * @return 指定されたIDのカテゴリー
+   * @throws IllegalArgumentException カテゴリーが見つからない場合
+   */
   fun getCategoryWithItems(id: String): Category =
     categoryRepository.findById(id).orElseThrow { IllegalArgumentException("Category not found") }
 
+  /**
+   * 新しいカテゴリーを追加します。
+   *
+   * @param addCategoryDto カテゴリーの追加情報を含むDTO
+   * @param imageBytes カテゴリーの画像データ
+   * @return 追加されたカテゴリー
+   */
   fun addCategory(addCategoryDto: AddCategoryDto, imageBytes: ByteArray?): Category {
     val category =
       Category.create(
@@ -25,8 +52,22 @@ class CategoryUseCase(private val categoryRepository: CategoryRepository) {
     return categoryRepository.save(category)
   }
 
+  /**
+   * 指定されたIDのカテゴリーを削除します。
+   *
+   * @param id 削除するカテゴリーのID
+   */
   fun deleteCategory(id: String) = categoryRepository.deleteById(id)
 
+  /**
+   * カテゴリーにアイテムを追加します。
+   *
+   * @param categoryId カテゴリーのID
+   * @param itemJson アイテムの情報を含むJSON文字列
+   * @param imageBytes アイテムの画像データ
+   * @return 追加されたアイテム
+   * @throws IllegalArgumentException カテゴリーが見つからない場合
+   */
   @Transactional
   fun addItemToCategory(categoryId: String, itemJson: String, imageBytes: ByteArray?): Item {
     val category =
@@ -39,6 +80,17 @@ class CategoryUseCase(private val categoryRepository: CategoryRepository) {
     return newItem
   }
 
+  /**
+   * カテゴリー内のアイテムを更新します。
+   *
+   * @param categoryId カテゴリーのID
+   * @param itemId 更新するアイテムのID
+   * @param itemJson アイテムの更新情報を含むJSON文字列
+   * @param file アイテムの新しい画像データ（任意）
+   * @param keepCurrentImage 現在の画像を保持するかどうか
+   * @return 更新されたアイテム
+   * @throws IllegalArgumentException カテゴリーが見つからない場合
+   */
   @Transactional
   fun updateItemInCategory(
     categoryId: String,

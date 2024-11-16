@@ -4,6 +4,12 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import org.springframework.stereotype.Service
 
+/**
+ * 公開用ファイルの生成を行うリポジトリ
+ *
+ * アプリケーション内で扱うファイル（例: 画像やドキュメント）を保存し、
+ * 公開URLを返す機能を提供します。
+ */
 @Service
 class PublicFileStorageRepository {
 
@@ -24,23 +30,14 @@ class PublicFileStorageRepository {
         fileData: ByteArray,
         extension: String
     ): String {
-        // ディレクトリとファイル名の生成
         val directoryPath = Paths.get(baseDir, fileType)
         val fileName = "$identifier.$extension"
         val filePath = directoryPath.resolve(fileName)
-
-        // ディレクトリが存在しない場合は作成
         Files.createDirectories(directoryPath)
-
-        // ファイルが既に存在する場合は上書き
         if (Files.exists(filePath)) {
             Files.delete(filePath)
         }
-
-        // ファイルの保存
         Files.write(filePath, fileData)
-
-        // ファイルURLの生成
         return "/$fileType/$fileName"
     }
 }
