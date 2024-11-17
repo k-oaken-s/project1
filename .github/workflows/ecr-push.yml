@@ -22,20 +22,24 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: '23'
+          java-version: '21'
           distribution: 'corretto'
 
       - name: Build project
         run: |
-          ./gradlew build # 必要に応じて他のオプションを追加
+          ./gradlew build
         env:
           AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Log in to Amazon ECR
-        id: ecr-login
         uses: aws-actions/amazon-ecr-login@v2
+        env:
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Build Docker Image
         run: |
