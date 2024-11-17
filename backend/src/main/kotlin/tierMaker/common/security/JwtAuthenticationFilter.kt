@@ -12,8 +12,8 @@ import org.springframework.web.filter.OncePerRequestFilter
 /**
  * フィルタークラス: JWT 認証フィルター
  *
- * このフィルターは、リクエストの Authorization ヘッダーに含まれる JWT を検証し、
- * ユーザー情報を Spring Security の SecurityContext に設定します。
+ * このフィルターは、リクエストの Authorization ヘッダーに含まれる JWT を検証し、 ユーザー情報を Spring Security の SecurityContext
+ * に設定します。
  */
 class JwtAuthenticationFilter(
   private val jwtUtil: JwtUtil // JwtUtilを注入してトークン検証とパースを行う
