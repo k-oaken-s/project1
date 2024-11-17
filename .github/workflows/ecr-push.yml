@@ -34,7 +34,8 @@ jobs:
 
       - name: Build project
         run: |
-          ./gradlew build
+          echo "Running Gradle build..."
+          ./gradlew build || { echo "Gradle build failed"; exit 1; }
         env:
           AWS_REGION: ${{ secrets.AWS_REGION }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -45,7 +46,9 @@ jobs:
           echo "Creating docker-context directory..."
           mkdir -p docker-context || { echo "Failed to create docker-context"; exit 1; }
           echo "Copying build artifacts..."
-          ls backend/build/libs || { echo "Build artifacts not found"; exit 1; }
+          if [ -z "$(ls backend/build/libs/*.jar 2>/dev/null)" ]; then
+            echo "No JAR files found in backend/build/libs"; exit 1;
+          fi
           cp backend/build/libs/*.jar docker-context/ || { echo "Failed to copy jar files"; exit 1; }
           echo "Copying Dockerfile..."
           cp backend/Dockerfile docker-context/ || { echo "Failed to copy Dockerfile"; exit 1; }
@@ -56,11 +59,13 @@ jobs:
 
       - name: Build Docker Image
         run: |
+          echo "Building Docker image..."
           AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
           echo "AWS Account ID: $AWS_ACCOUNT_ID"
           docker build -f docker-context/Dockerfile -t $AWS_ACCOUNT_ID.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/rankify-hub:latest docker-context || { echo "Docker build failed"; exit 1; }
 
       - name: Push to Amazon ECR
         run: |
+          echo "Pushing Docker image to ECR..."
           AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
           docker push $AWS_ACCOUNT_ID.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/rankify-hub:latest || { echo "Docker push failed"; exit 1; }
