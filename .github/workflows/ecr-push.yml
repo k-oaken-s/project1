@@ -47,7 +47,7 @@ jobs:
         run: |
           AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
           echo "AWS Account ID: $AWS_ACCOUNT_ID"
-          docker build -t $AWS_ACCOUNT_ID.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/rankify-hub:latest .
+          docker build -f ./backend/Dockerfile -t $AWS_ACCOUNT_ID.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/rankify-hub:latest .
 
       - name: Push to Amazon ECR
         run: |
