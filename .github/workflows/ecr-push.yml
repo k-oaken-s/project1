@@ -42,9 +42,14 @@ jobs:
 
       - name: Prepare Docker context
         run: |
-          mkdir -p docker-context
-          cp backend/build/libs/*.jar docker-context/app.jar
-          cp backend/Dockerfile docker-context/
+          echo "Creating docker-context directory..."
+          mkdir -p docker-context || { echo "Failed to create docker-context"; exit 1; }
+          echo "Copying build artifacts..."
+          ls backend/build/libs || { echo "Build artifacts not found"; exit 1; }
+          cp backend/build/libs/*.jar docker-context/ || { echo "Failed to copy jar files"; exit 1; }
+          echo "Copying Dockerfile..."
+          cp backend/Dockerfile docker-context/ || { echo "Failed to copy Dockerfile"; exit 1; }
+        shell: bash
 
       - name: Log in to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
@@ -53,9 +58,9 @@ jobs:
         run: |
           AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
           echo "AWS Account ID: $AWS_ACCOUNT_ID"
-          docker build -f docker-context/Dockerfile -t $AWS_ACCOUNT_ID.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/rankify-hub:latest docker-context
+          docker build -f docker-context/Dockerfile -t $AWS_ACCOUNT_ID.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/rankify-hub:latest docker-context || { echo "Docker build failed"; exit 1; }
 
       - name: Push to Amazon ECR
         run: |
           AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
-          docker push $AWS_ACCOUNT_ID.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/rankify-hub:latest
+          docker push $AWS_ACCOUNT_ID.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/rankify-hub:latest || { echo "Docker push failed"; exit 1; }
