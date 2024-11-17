@@ -45,3 +45,6 @@ frontend/out/
 # Docker
 *.log
 doc
+
+#
+.secrets
