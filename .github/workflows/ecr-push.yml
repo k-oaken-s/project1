@@ -23,7 +23,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '23'
-          distribution: 'correto'
+          distribution: 'corretto'
 
       - name: Build project
         run: |
