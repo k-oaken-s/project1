@@ -10,5 +10,4 @@ import tierMaker.domain.model.Category
  * @see JpaRepository
  * @see Category
  */
-@Repository
-interface CategoryRepository : JpaRepository<Category, String>
+@Repository interface CategoryRepository : JpaRepository<Category, String>

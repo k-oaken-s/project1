@@ -20,8 +20,7 @@ class AdminDetailsService(private val administratorRepository: AdministratorRepo
   /**
    * ユーザー名を基に管理者の認証情報をロード
    *
-   * 指定されたユーザー名を使用して管理者のデータをデータベースから取得し、
-   * Spring Security の認証プロセスで使用する `UserDetails` オブジェクトを生成します。
+   * 指定されたユーザー名を使用して管理者のデータをデータベースから取得し、 Spring Security の認証プロセスで使用する `UserDetails` オブジェクトを生成します。
    *
    * @param username 認証対象の管理者のユーザー名
    * @return `UserDetails` オブジェクト（管理者の認証情報を含む）

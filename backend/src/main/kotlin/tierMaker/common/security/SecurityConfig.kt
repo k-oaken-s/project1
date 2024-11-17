@@ -14,8 +14,7 @@ import org.springframework.web.filter.CorsFilter
 /**
  * Spring Security の設定クラス
  *
- * アプリケーションのセキュリティ設定を管理します。
- * 主に認証、認可、CORS、CSRF などの設定を行います。
+ * アプリケーションのセキュリティ設定を管理します。 主に認証、認可、CORS、CSRF などの設定を行います。
  */
 @Configuration
 @EnableWebSecurity
@@ -55,8 +54,7 @@ class SecurityConfig {
   /**
    * CORS 設定のソースを生成
    *
-   * アプリケーションにおける CORS（クロスオリジンリソース共有）のルールを定義。
-   * 全てのオリジン、メソッド、ヘッダーを許可する設定を適用。
+   * アプリケーションにおける CORS（クロスオリジンリソース共有）のルールを定義。 全てのオリジン、メソッド、ヘッダーを許可する設定を適用。
    *
    * @return CORS 設定のソース
    */

@@ -14,13 +14,7 @@ import java.util.*
 @Entity
 @Table(name = "administrator")
 data class Administrator(
-
-    @Id
-    val id: String = UUID.randomUUID().toString(),
-
-    @Column(nullable = false, unique = true)
-    val username: String,
-
-    @Column(nullable = false)
-    val passwordHash: String
+  @Id val id: String = UUID.randomUUID().toString(),
+  @Column(nullable = false, unique = true) val username: String,
+  @Column(nullable = false) val passwordHash: String
 )
