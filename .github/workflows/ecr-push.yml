@@ -40,6 +40,12 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
+      - name: Prepare Docker context
+        run: |
+          mkdir -p docker-context
+          cp backend/build/libs/*.jar docker-context/app.jar
+          cp backend/Dockerfile docker-context/
+
       - name: Log in to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
 
@@ -47,7 +53,7 @@ jobs:
         run: |
           AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
           echo "AWS Account ID: $AWS_ACCOUNT_ID"
-          docker build -f ./backend/Dockerfile -t $AWS_ACCOUNT_ID.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/rankify-hub:latest .
+          docker build -f docker-context/Dockerfile -t $AWS_ACCOUNT_ID.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/rankify-hub:latest docker-context
 
       - name: Push to Amazon ECR
         run: |
