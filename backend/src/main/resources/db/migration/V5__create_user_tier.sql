@@ -2,10 +2,14 @@ CREATE TABLE user_tier (
     id UUID PRIMARY KEY,
     anonymous_id VARCHAR(255) NOT NULL,
     category_id UUID NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    is_public BOOLEAN NOT NULL DEFAULT FALSE,
+    access_url VARCHAR(255) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES category(id) ON DELETE CASCADE
 );
+
 
 CREATE TABLE user_tier_levels (
     id UUID PRIMARY KEY,

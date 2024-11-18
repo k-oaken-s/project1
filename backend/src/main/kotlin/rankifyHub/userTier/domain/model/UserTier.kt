@@ -1,49 +1,73 @@
 package rankifyHub.userTier.domain.model
 
 import jakarta.persistence.*
+import rankifyHub.userTier.domain.vo.AccessUrl
+import rankifyHub.userTier.domain.vo.AnonymousId
 import java.time.LocalDateTime
+import java.util.*
 
 /**
- * ユーザーが作成したTierを表すエンティティ
+ * ユーザーが作成したTierエンティティ
  *
- * @property id Tierの一意な識別子
- * @property anonymousId 匿名ユーザーの識別子
- * @property categoryId Tierが関連付けられるカテゴリーID
- * @property tierName Tierの名前
- * @property order 上からの並び順
+ * @property id ユニークな識別子（UUID）
+ * @property anonymousId 匿名ユーザー識別子
+ * @property categoryId 紐づくカテゴリのID
+ * @property name Tierの名前
+ * @property visibility 公開/非公開の設定（ENUM型）
+ * @property accessUrl アクセス用のURL（値オブジェクト）
  * @property createdAt 作成日時
  * @property updatedAt 更新日時
- * @property items Tierに配置されたアイテムのリスト
- * @property configs Tierに紐づく設定
  */
 @Entity
-@Table(name = "user_tiers")
+@Table(name = "user_tier")
 data class UserTier(
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0,
+    val id: UUID = UUID.randomUUID(),
 
-    @Column(nullable = false)
-    val anonymousId: String,
+    @Embedded
+    val anonymousId: AnonymousId,
 
-    @Column(nullable = false)
-    val categoryId: String,
+    @Column(name = "category_id", nullable = false)
+    val categoryId: UUID,
 
-    @Column(nullable = false)
-    val tierName: String,
+    @Column(name = "name", nullable = false)
+    val name: String,
 
-    @Column(nullable = false)
-    val order: Int,
+    @Enumerated(EnumType.STRING)
+    @Column(name = "visibility", nullable = false)
+    val visibility: Visibility = Visibility.PRIVATE,
 
-    @Column(nullable = false)
+    @Embedded
+    val accessUrl: AccessUrl,
+
+    @Column(name = "created_at", nullable = false, updatable = false)
     val createdAt: LocalDateTime = LocalDateTime.now(),
 
-    @Column(nullable = false)
-    val updatedAt: LocalDateTime = LocalDateTime.now(),
+    @Column(name = "updated_at", nullable = false)
+    var updatedAt: LocalDateTime = LocalDateTime.now()
+) {
+    /**
+     * 公開設定を変更する
+     *
+     * @param newVisibility 新しい公開設定
+     */
+    fun changeVisibility(newVisibility: Visibility): UserTier {
+        return this.copy(visibility = newVisibility, updatedAt = LocalDateTime.now())
+    }
 
-    @OneToMany(mappedBy = "userTier", cascade = [CascadeType.ALL], orphanRemoval = true)
-    val items: List<UserTierItem> = emptyList(),
+    /**
+     * 名前を更新する
+     *
+     * @param newName 新しい名前
+     */
+    fun updateName(newName: String): UserTier {
+        return this.copy(name = newName, updatedAt = LocalDateTime.now())
+    }
 
-    @OneToMany(mappedBy = "userTier", cascade = [CascadeType.ALL], orphanRemoval = true)
-    val configs: List<UserTierConfig> = emptyList()
-)
+    /**
+     * アクセスURLを再生成する
+     */
+    fun regenerateAccessUrl(): UserTier {
+        return this.copy(accessUrl = AccessUrl.generate(), updatedAt = LocalDateTime.now())
+    }
+}
