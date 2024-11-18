@@ -30,7 +30,7 @@ class PublicFileCleanupTask {
    * <li>最終更新（アクセス）からの時間が {@code maxInactiveHours} を超えている。</li>
    * </ul>
    */
-  @Scheduled(cron = "0 0 * * * ?") // 毎時実行
+  @Scheduled(org.springframework.scheduling.annotation.Scheduled.cron = "0 0 * * * ?") // 毎時実行
   fun cleanUpUnusedImages() {
     val imageDir = File(imageDirPath)
 

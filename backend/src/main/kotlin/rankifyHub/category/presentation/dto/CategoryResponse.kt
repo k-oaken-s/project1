@@ -1,4 +1,4 @@
-package rankifyHub.presentation.controller.dto
+package rankifyHub.category.presentation.dto
 
 data class CategoryResponse(
   val id: String,

@@ -1,4 +1,4 @@
-package rankifyHub.domain.model
+package rankifyHub.admin.domain.model
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity

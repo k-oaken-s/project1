@@ -1,4 +1,4 @@
-package rankifyHub.infrustructure
+package rankifyHub.shared.infrustructure
 
 import java.nio.file.Files
 import java.nio.file.Paths

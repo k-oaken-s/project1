@@ -1,4 +1,4 @@
-package rankifyHub.domain.model
+package rankifyHub.category.domain.model
 
 import jakarta.persistence.*
 import java.util.*

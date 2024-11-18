@@ -1,8 +1,8 @@
-package rankifyHub.infrustructure
+package rankifyHub.admin.infrustructure
 
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
-import rankifyHub.domain.model.Administrator
+import rankifyHub.admin.domain.model.Administrator
 
 @Repository
 interface AdministratorRepository : JpaRepository<Administrator, String> {

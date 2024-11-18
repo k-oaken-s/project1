@@ -1,4 +1,4 @@
-package rankifyHub.application.category
+package rankifyHub.category.application
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.transaction.Transactional
@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import rankifyHub.domain.model.Category
 import rankifyHub.domain.model.Item
-import rankifyHub.domain.repository.CategoryRepository
+import rankifyHub.category.domain.repository.CategoryRepository
 
 /**
  * カテゴリーに関するユースケースを提供するクラス
