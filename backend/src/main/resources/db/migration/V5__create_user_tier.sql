@@ -19,8 +19,8 @@ CREATE TABLE user_tier_level (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_user_tier FOREIGN KEY (user_tier_id) REFERENCES user_tier(id) ON DELETE CASCADE,
-    UNIQUE (user_tier_id, tier_name),
-    UNIQUE (user_tier_id, tier_order)
+    UNIQUE (user_tier_id, name),
+    UNIQUE (user_tier_id, order_index)
 );
 
 CREATE TABLE user_tier_level_item (
@@ -34,5 +34,5 @@ CREATE TABLE user_tier_level_item (
     CONSTRAINT fk_user_tier FOREIGN KEY (user_tier_id) REFERENCES user_tier(id) ON DELETE CASCADE,
     CONSTRAINT fk_user_tier_level FOREIGN KEY (user_tier_level_id) REFERENCES user_tier_levels(id) ON DELETE CASCADE,
     CONSTRAINT fk_item FOREIGN KEY (item_id) REFERENCES item(id) ON DELETE CASCADE,
-    UNIQUE (user_tier_level_id, "order")
+    UNIQUE (user_tier_level_id, order_index)
 );
