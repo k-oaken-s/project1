@@ -2,7 +2,7 @@ package rankifyHub.userTier.domain.model
 
 import jakarta.persistence.*
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 /**
  * ユーザーが作成したTierを表すエンティティ
@@ -23,56 +23,49 @@ data class UserTier(
     val id: UUID = UUID.randomUUID(),
 
     @Embedded
-    @Column(name = "anonymous_id", nullable = false)
+    @AttributeOverride(name = "value", column = Column(name = "anonymous_id", nullable = false))
     val anonymousId: AnonymousId,
 
     @Column(name = "category_id", nullable = false)
     val categoryId: UUID,
 
     @Embedded
-    @Column(name = "name", nullable = false)
+    @AttributeOverride(name = "value", column = Column(name = "name", nullable = false))
     val name: UserTierName,
 
     @Column(name = "is_public", nullable = false)
-    val isPublic: Visibility,
+    val isPublic: Boolean = false,
 
     @Embedded
-    @Column(name = "access_url", nullable = false)
+    @AttributeOverride(name = "value", column = Column(name = "access_url", nullable = false))
     val accessUrl: AccessUrl,
 
     @Column(name = "created_at", nullable = false)
     val createdAt: Instant = Instant.now(),
 
     @Column(name = "updated_at", nullable = false)
-    val updatedAt: Instant = Instant.now()
+    val updatedAt: Instant = Instant.now(),
 
     @OneToMany(mappedBy = "userTier", cascade = [CascadeType.ALL], orphanRemoval = true)
-    val levels: MutableList<UserTierLevel> = mutableListOf(),
+    private val levels: MutableList<UserTierLevel> = mutableListOf(),
 ) {
-    /**
-     * 新しいレベルを追加し、orderを自動計算
-     */
+    fun getLevels(): List<UserTierLevel> = levels.toList()
+
     fun addLevel(level: UserTierLevel) {
-        val nextOrder = levels.maxOfOrNull { it.order }?.value?.plus(1) ?: 1
-        val newLevel = level.copy(order = Order(nextOrder))
+        val nextOrder = levels.maxOfOrNull { it.order.value }?.plus(1) ?: 1
+        val newLevel = level.copy(order = OrderIndex(nextOrder), userTier = this)
         levels.add(newLevel)
     }
 
-    /**
-     * レベルを削除し、orderを再計算
-     */
     fun removeLevel(level: UserTierLevel) {
         levels.remove(level)
         reorderLevels()
     }
 
-    /**
-     * levelsのorderを再計算
-     */
     private fun reorderLevels() {
         levels.sortBy { it.order.value }
         levels.forEachIndexed { index, level ->
-            level.updateOrder(Order(index + 1))
+            level.updateOrder(OrderIndex(index + 1))
         }
     }
 }
