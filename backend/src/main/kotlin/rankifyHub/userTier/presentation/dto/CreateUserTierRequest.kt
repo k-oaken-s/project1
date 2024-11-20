@@ -3,17 +3,18 @@ package rankifyHub.userTier.presentation.dto
 data class CreateUserTierRequest(
     val anonymousId: String,
     val categoryId: String,
-    val tierName: String,
-    val order: Int,
-    val items: List<UserTierItemRequest>,
-    val configs: List<UserTierConfigRequest>
+    val name: String,
+    val isPublic: Boolean,
+    val levels: List<UserTierLevelRequest>
+)
+
+data class UserTierLevelRequest(
+    val name: String,
+    val orderIndex: Int,
+    val items: List<UserTierItemRequest>
 )
 
 data class UserTierItemRequest(
-    val itemId: String
-)
-
-data class UserTierConfigRequest(
-    val key: String,
-    val value: String
+    val itemId: String,
+    val orderIndex: Int
 )

@@ -1,20 +1,18 @@
 package rankifyHub.userTier.domain.model
 
 import jakarta.persistence.*
-import rankifyHub.userTier.domain.vo.AccessUrl
-import rankifyHub.userTier.domain.vo.AnonymousId
-import java.time.LocalDateTime
+import java.time.Instant
 import java.util.*
 
 /**
- * ユーザーが作成したTierエンティティ
+ * ユーザーが作成したTierを表すエンティティ
  *
- * @property id ユニークな識別子（UUID）
- * @property anonymousId 匿名ユーザー識別子
+ * @property id UUIDv7を使用した一意な識別子
+ * @property anonymousId 匿名ユーザーの識別子
  * @property categoryId 紐づくカテゴリのID
  * @property name Tierの名前
- * @property visibility 公開/非公開の設定（ENUM型）
- * @property accessUrl アクセス用のURL（値オブジェクト）
+ * @property isPublic Tierの公開設定
+ * @property accessUrl アクセスURL（Tierの一意な公開用識別子）
  * @property createdAt 作成日時
  * @property updatedAt 更新日時
  */
@@ -25,49 +23,49 @@ data class UserTier(
     val id: UUID = UUID.randomUUID(),
 
     @Embedded
+    @AttributeOverride(name = "value", column = Column(name = "anonymous_id", nullable = false))
     val anonymousId: AnonymousId,
 
     @Column(name = "category_id", nullable = false)
     val categoryId: UUID,
 
-    @Column(name = "name", nullable = false)
-    val name: String,
+    @Embedded
+    @AttributeOverride(name = "value", column = Column(name = "name", nullable = false))
+    val name: UserTierName,
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "visibility", nullable = false)
-    val visibility: Visibility = Visibility.PRIVATE,
+    @Column(name = "is_public", nullable = false)
+    val isPublic: Boolean = false,
 
     @Embedded
+    @AttributeOverride(name = "value", column = Column(name = "access_url", nullable = false))
     val accessUrl: AccessUrl,
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    val createdAt: LocalDateTime = LocalDateTime.now(),
+    @Column(name = "created_at", nullable = false)
+    val createdAt: Instant = Instant.now(),
 
     @Column(name = "updated_at", nullable = false)
-    var updatedAt: LocalDateTime = LocalDateTime.now()
+    val updatedAt: Instant = Instant.now(),
+
+    @OneToMany(mappedBy = "userTier", cascade = [CascadeType.ALL], orphanRemoval = true)
+    private val levels: MutableList<UserTierLevel> = mutableListOf(),
 ) {
-    /**
-     * 公開設定を変更する
-     *
-     * @param newVisibility 新しい公開設定
-     */
-    fun changeVisibility(newVisibility: Visibility): UserTier {
-        return this.copy(visibility = newVisibility, updatedAt = LocalDateTime.now())
+    fun getLevels(): List<UserTierLevel> = levels.toList()
+
+    fun addLevel(level: UserTierLevel) {
+        val nextOrder = levels.maxOfOrNull { it.order.value }?.plus(1) ?: 1
+        val newLevel = level.copy(order = OrderIndex(nextOrder), userTier = this)
+        levels.add(newLevel)
     }
 
-    /**
-     * 名前を更新する
-     *
-     * @param newName 新しい名前
-     */
-    fun updateName(newName: String): UserTier {
-        return this.copy(name = newName, updatedAt = LocalDateTime.now())
+    fun removeLevel(level: UserTierLevel) {
+        levels.remove(level)
+        reorderLevels()
     }
 
-    /**
-     * アクセスURLを再生成する
-     */
-    fun regenerateAccessUrl(): UserTier {
-        return this.copy(accessUrl = AccessUrl.generate(), updatedAt = LocalDateTime.now())
+    private fun reorderLevels() {
+        levels.sortBy { it.order.value }
+        levels.forEachIndexed { index, level ->
+            level.updateOrder(OrderIndex(index + 1))
+        }
     }
 }

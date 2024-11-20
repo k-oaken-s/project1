@@ -11,28 +11,28 @@ CREATE TABLE user_tier (
 );
 
 
-CREATE TABLE user_tier_levels (
+CREATE TABLE user_tier_level (
     id UUID PRIMARY KEY,
     user_tier_id UUID NOT NULL,
-    tier_name VARCHAR(255) NOT NULL,
-    tier_order INT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    order_index INT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_user_tier FOREIGN KEY (user_tier_id) REFERENCES user_tier(id) ON DELETE CASCADE,
-    UNIQUE (user_tier_id, tier_name),
-    UNIQUE (user_tier_id, tier_order)
+    UNIQUE (user_tier_id, name),
+    UNIQUE (user_tier_id, order_index)
 );
 
-CREATE TABLE user_tier_items (
+CREATE TABLE user_tier_level_item (
     id UUID PRIMARY KEY,
     user_tier_id UUID NOT NULL,
+    user_tier_level_id UUID NOT NULL,
     item_id UUID NOT NULL,
-    tier_config_id UUID NOT NULL,
-    "order" INT NOT NULL,
+    order_index INT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_user_tier FOREIGN KEY (user_tier_id) REFERENCES user_tier(id) ON DELETE CASCADE,
-    CONSTRAINT fk_tier_config FOREIGN KEY (tier_config_id) REFERENCES tier_config(id) ON DELETE CASCADE,
+    CONSTRAINT fk_user_tier_level FOREIGN KEY (user_tier_level_id) REFERENCES user_tier_levels(id) ON DELETE CASCADE,
     CONSTRAINT fk_item FOREIGN KEY (item_id) REFERENCES item(id) ON DELETE CASCADE,
-    UNIQUE (tier_config_id, "order")
+    UNIQUE (user_tier_level_id, order_index)
 );
