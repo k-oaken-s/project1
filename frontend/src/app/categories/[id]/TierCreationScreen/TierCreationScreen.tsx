@@ -1,9 +1,13 @@
 "use client";
 
 import { Item } from "@/types/Item";
+import { getAnonymousId } from "@/utils/getAnonymousId";
+import { getApiBaseUrl } from "@/utils/getApiBaseUrl";
 import {
     DndContext,
+    DragEndEvent,
     DragOverlay,
+    DragStartEvent,
     PointerSensor,
     useSensor,
     useSensors,
@@ -12,8 +16,6 @@ import React, { useState } from "react";
 import DroppableArea from "./DraggableArea";
 import DraggableItem from "./DraggableItem";
 import Tier from "./Tier";
-import { getApiBaseUrl } from "@/utils/getApiBaseUrl";
-import { getAnonymousId } from "@/utils/getAnonymousId"; // 追加
 
 type TierCreationScreenProps = {
     items: Item[];
@@ -50,17 +52,17 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({
         return allItems.find((item) => item.id === id) || null;
     };
 
-    const handleDragStart = ({ active }: any) => {
-        setActiveId(active.id);
+    const handleDragStart = ({ active }: DragStartEvent) => {
+        setActiveId(String(active.id));
     };
 
-    const handleDragEnd = ({ active, over }: any) => {
+    const handleDragEnd = ({ active, over }: DragEndEvent) => {
         if (!over) {
             setActiveId(null);
             return;
         }
 
-        const activeItem = findItemById(active.id);
+        const activeItem = findItemById(String(active.id));
         if (!activeItem) {
             setActiveId(null);
             return;

@@ -2,6 +2,7 @@ import { Category as CategoryType } from '@/types/Category';
 import { getImageUrl } from '@/utils/getImageUrl';
 import { Card } from 'antd';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface CategoryProps {
     category: CategoryType;
@@ -19,7 +20,7 @@ const Category = ({ category }: CategoryProps) => (
             }}
             cover={
                 <div style={{ height: 250, overflow: 'hidden' }}>
-                    <img
+                    <Image
                         src={getImageUrl(category.image)}
                         alt={`${category.name}の画像`}
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
