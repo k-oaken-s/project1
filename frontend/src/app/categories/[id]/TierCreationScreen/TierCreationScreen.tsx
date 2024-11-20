@@ -13,6 +13,7 @@ import DroppableArea from "./DraggableArea";
 import DraggableItem from "./DraggableItem";
 import Tier from "./Tier";
 import { getApiBaseUrl } from "@/utils/getApiBaseUrl";
+import { getAnonymousId } from "@/utils/getAnonymousId"; // 追加
 
 type TierCreationScreenProps = {
     items: Item[];
@@ -38,6 +39,8 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({
     const sensors = useSensors(
         useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
     );
+
+    const anonymousId = getAnonymousId();
 
     const findItemById = (id: string): Item | null => {
         const allItems = [
@@ -122,7 +125,7 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    anonymousId: "anonymous-user", // 匿名ユーザーIDを適宜設定
+                    anonymousId,
                     categoryId,
                     name: "My Custom Tier",
                     isPublic,
