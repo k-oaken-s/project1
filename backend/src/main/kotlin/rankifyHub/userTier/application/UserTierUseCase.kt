@@ -14,15 +14,25 @@ class UserTierUseCase(
 ) {
 
     @Transactional
-    fun createUserTier(request: CreateUserTierRequest): UserTier {
+    fun create(request: CreateUserTierRequest): UserTier {
         val anonymousId = AnonymousId(request.anonymousId)
         val categoryId = UUID.fromString(request.categoryId)
         val name = UserTierName(request.name)
         val isPublic = request.isPublic
+
         val levels = request.levels.map { levelRequest ->
             val levelName = UserTierName(levelRequest.name)
-            val itemIds = levelRequest.items.map { UUID.fromString(it.itemId) }
-            levelName to itemIds
+            val items = levelRequest.items.map { itemRequest ->
+                UserTierItemData(
+                    itemId = UUID.fromString(itemRequest.itemId),
+                    orderIndex = OrderIndex(itemRequest.orderIndex)
+                )
+            }
+            UserTierLevelData(
+                name = levelName,
+                orderIndex = OrderIndex(levelRequest.orderIndex),
+                items = items
+            )
         }
 
         val userTier = userTierFactory.create(
@@ -32,8 +42,6 @@ class UserTierUseCase(
             isPublic = isPublic,
             levels = levels
         )
-
-        // 保存処理
         return userTierRepository.save(userTier)
     }
 }

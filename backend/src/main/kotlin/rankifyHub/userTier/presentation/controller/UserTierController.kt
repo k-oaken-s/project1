@@ -7,11 +7,11 @@ import rankifyHub.userTier.presentation.dto.CreateUserTierRequest
 import rankifyHub.userTier.presentation.dto.UserTierResponse
 
 @RestController
-@RequestMapping("/api/user-tiers")
+@RequestMapping("/user-tiers")
 class UserTierController(private val userTierUseCase: UserTierUseCase) {
 
     @PostMapping
-    fun createUserTier(@RequestBody request: CreateUserTierRequest): ResponseEntity<UserTierResponse> {
+    fun create(@RequestBody request: CreateUserTierRequest): ResponseEntity<UserTierResponse> {
         val userTier = userTierUseCase.createUserTier(request)
         return ResponseEntity.ok(UserTierResponse.fromEntity(userTier))
     }
