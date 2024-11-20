@@ -12,12 +12,17 @@ import React, { useState } from "react";
 import DroppableArea from "./DraggableArea";
 import DraggableItem from "./DraggableItem";
 import Tier from "./Tier";
+import { getApiBaseUrl } from "@/utils/getApiBaseUrl";
 
 type TierCreationScreenProps = {
     items: Item[];
+    categoryId: string;
 };
 
-const TierCreationScreen: React.FC<TierCreationScreenProps> = ({ items }) => {
+const TierCreationScreen: React.FC<TierCreationScreenProps> = ({
+    items,
+    categoryId,
+}) => {
     const [tiers, setTiers] = useState<{ [key: string]: Item[] }>({
         Tier1: [],
         Tier2: [],
@@ -27,6 +32,8 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({ items }) => {
 
     const [availableItems, setAvailableItems] = useState<Item[]>(items);
     const [activeId, setActiveId] = useState<string | null>(null);
+    const [generatedUrl, setGeneratedUrl] = useState<string | null>(null);
+    const [isGenerating, setIsGenerating] = useState(false);
 
     const sensors = useSensors(
         useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
@@ -56,9 +63,10 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({ items }) => {
             return;
         }
 
-        const sourceTier = Object.keys(tiers).find((key) =>
-            tiers[key].some((item) => item.id === active.id)
-        ) || "unassigned";
+        const sourceTier =
+            Object.keys(tiers).find((key) =>
+                tiers[key].some((item) => item.id === active.id)
+            ) || "unassigned";
 
         const destinationTier = over.id;
 
@@ -96,6 +104,50 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({ items }) => {
         setActiveId(null);
     };
 
+    const generateTierUrl = async (isPublic: boolean) => {
+        setIsGenerating(true);
+        try {
+            const levels = Object.keys(tiers).map((tierName, index) => ({
+                name: tierName,
+                orderIndex: index + 1,
+                items: tiers[tierName].map((item, itemIndex) => ({
+                    itemId: item.id,
+                    orderIndex: itemIndex + 1,
+                })),
+            }));
+
+            const response = await fetch(`${getApiBaseUrl()}/user-tiers`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    anonymousId: "anonymous-user", // 匿名ユーザーIDを適宜設定
+                    categoryId,
+                    name: "My Custom Tier",
+                    isPublic,
+                    levels,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error("Tierの生成に失敗しました");
+            }
+
+            const data = await response.json();
+            setGeneratedUrl(data.accessUrl);
+
+            // クリップボードにコピー
+            navigator.clipboard.writeText(data.accessUrl);
+            alert("URLがクリップボードにコピーされました!");
+        } catch (error) {
+            console.error("エラー:", error);
+            alert("URLの生成に失敗しました。");
+        } finally {
+            setIsGenerating(false);
+        }
+    };
+
     return (
         <DndContext
             sensors={sensors}
@@ -116,6 +168,27 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({ items }) => {
                     ))}
                 </div>
             </DroppableArea>
+
+            <div style={{ marginTop: "16px" }}>
+                <button
+                    onClick={() => generateTierUrl(true)}
+                    disabled={isGenerating}
+                    style={{ marginRight: "8px" }}
+                >
+                    公開してURL生成
+                </button>
+                <button onClick={() => generateTierUrl(false)} disabled={isGenerating}>
+                    非公開でURL生成
+                </button>
+                {generatedUrl && (
+                    <div style={{ marginTop: "16px" }}>
+                        <p>生成されたURL:</p>
+                        <a href={generatedUrl} target="_blank" rel="noopener noreferrer">
+                            {generatedUrl}
+                        </a>
+                    </div>
+                )}
+            </div>
 
             <DragOverlay>
                 {activeId ? (
