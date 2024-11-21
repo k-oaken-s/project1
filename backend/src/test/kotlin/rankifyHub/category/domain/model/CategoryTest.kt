@@ -1,4 +1,4 @@
-package rankifyHub.domain.model
+package rankifyHub.category.domain.model
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec

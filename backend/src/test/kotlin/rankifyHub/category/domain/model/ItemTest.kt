@@ -1,4 +1,4 @@
-package tierMaker.domain.model
+package rankifyHub.category.domain.model
 
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe

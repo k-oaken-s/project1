@@ -1,12 +1,13 @@
-package tierMaker.application.category
+package rankifyHub.category.application
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.*
 import java.util.*
-import tierMaker.domain.model.Category
-import tierMaker.domain.model.Item
-import tierMaker.domain.repository.CategoryRepository
+import rankifyHub.category.domain.model.Category
+import rankifyHub.category.domain.model.Item
+import rankifyHub.category.domain.repository.CategoryRepository
 
 class CategoryUseCaseTest :
   DescribeSpec({
