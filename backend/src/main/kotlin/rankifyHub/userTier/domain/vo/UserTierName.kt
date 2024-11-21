@@ -1,5 +1,7 @@
 package rankifyHub.userTier.domain.vo
 
+import jakarta.persistence.Embeddable
+
 /**
  * ユーザーが作成したTierの名前を表す値オブジェクト
  *
@@ -8,7 +10,7 @@ package rankifyHub.userTier.domain.vo
  */
 @Embeddable
 data class UserTierName(
-    val value: String
+    val value: String = ""
 ) {
     init {
         require(value.isNotBlank()) { "Tierの名前は空白にできません。" }

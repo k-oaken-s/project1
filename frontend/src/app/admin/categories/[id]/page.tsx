@@ -1,4 +1,3 @@
-// CategoryDetailPage.tsx
 "use client";
 
 import { useFetchCategoryWithItems } from '@/hooks/useFetchCategoryWithItems';
@@ -8,6 +7,7 @@ import { getImageUrl } from '@/utils/getImageUrl';
 import { ArrowLeftOutlined, UploadOutlined } from '@ant-design/icons';
 import { Button, Card, Input, List, message, Spin, Typography, Upload } from 'antd';
 import axios from 'axios';
+import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -93,7 +93,7 @@ const CategoryDetailPage = () => {
                             title={<Title level={3}>{category.name}</Title>}
                             cover={
                                 category.image ? (
-                                    <img
+                                    <Image
                                         src={getImageUrl(category.image)}
                                         alt={`${category.name} image`}
                                         style={{ maxHeight: "300px", objectFit: "cover", width: "100%" }}
@@ -117,7 +117,7 @@ const CategoryDetailPage = () => {
                                 <List.Item.Meta
                                     avatar={
                                         item.image ? (
-                                            <img
+                                            <Image
                                                 src={getImageUrl(item.image)}
                                                 alt={`${item.name} image`}
                                                 style={{ width: 50, height: 50, objectFit: "cover" }}

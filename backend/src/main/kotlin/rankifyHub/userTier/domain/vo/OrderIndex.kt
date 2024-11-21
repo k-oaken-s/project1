@@ -1,6 +1,9 @@
+package rankifyHub.userTier.domain.vo
+
+import jakarta.persistence.Embeddable
+
 @Embeddable
-data class OderIndex(
-    @Column(name = "order_index", nullable = false)
+data class OrderIndex(
     val value: Int
 ) {
     init {

@@ -1,5 +1,6 @@
 import { Item } from "@/types/Item";
 import { getImageUrl } from "@/utils/getImageUrl";
+import Image from 'next/image';
 
 interface ItemListProps {
     items: Item[];
@@ -12,7 +13,7 @@ const ItemList = ({ items, onEdit }: ItemListProps) => (
             items.map((item) => (
                 <li key={item.id} className="border rounded p-4 shadow-md flex items-center">
                     {item.image && (
-                        <img
+                        <Image
                             src={getImageUrl(item.image)}
                             alt={`${item.name}の画像`}
                             className="w-16 h-16 object-cover mr-4"

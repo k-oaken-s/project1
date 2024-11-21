@@ -1,8 +1,9 @@
 "use client";
 
 import { Category as CategoryType } from '@/types/Category';
-import Link from 'next/link';
 import { getImageUrl } from '@/utils/getImageUrl';
+import Link from 'next/link';
+import Image from 'next/image';
 
 interface UserCategoryTileProps {
     category: CategoryType;
@@ -12,7 +13,7 @@ const UserCategoryTile = ({ category }: UserCategoryTileProps) => {
     return (
         <Link href={`/categories/${category.id}`}>
             <div className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-200 cursor-pointer">
-                <img
+                <Image
                     src={getImageUrl(category.image)}
                     alt={`${category.name}の画像`}
                     className="w-full h-32 object-cover rounded-md mb-3"

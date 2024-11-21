@@ -1,6 +1,7 @@
 package rankifyHub.userTier.domain.model
 
 import jakarta.persistence.*
+import rankifyHub.userTier.domain.vo.OrderIndex
 import java.time.Instant
 import java.util.UUID
 
@@ -28,7 +29,7 @@ data class UserTierLevelItem(
     val createdAt: Instant = Instant.now(),
 
     @Column(name = "updated_at", nullable = false)
-    val updatedAt: Instant = Instant.now()
+    val updatedAt: Instant = Instant.now(),
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_tier_level_id", nullable = false)

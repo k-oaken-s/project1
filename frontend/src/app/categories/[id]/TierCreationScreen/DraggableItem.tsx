@@ -3,6 +3,7 @@ import { getImageUrl } from "@/utils/getImageUrl";
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import React from "react";
+import Image from 'next/image';
 
 type DraggableItemProps = {
     item: Item;
@@ -36,7 +37,7 @@ const DraggableItem: React.FC<DraggableItemProps> = ({ item, isOverlay = false }
             {...listeners}
             {...attributes}
         >
-            <img
+            <Image
                 src={getImageUrl(item.image)}
                 alt={item.name}
                 style={{

@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
-import rankifyHub.domain.model.Category
-import rankifyHub.domain.model.Item
+import rankifyHub.category.domain.model.Category
+import rankifyHub.category.domain.model.Item
 import rankifyHub.category.domain.repository.CategoryRepository
 
 /**

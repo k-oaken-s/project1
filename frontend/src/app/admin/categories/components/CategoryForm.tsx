@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Image from 'next/image';
 
 interface CategoryFormProps {
     onAddCategory: (name: string, image: File | null) => void;
@@ -51,7 +52,7 @@ const CategoryForm = ({ onAddCategory }: CategoryFormProps) => {
 
             {imagePreview && (
                 <div className="mb-6">
-                    <img src={imagePreview} alt="Preview" className="w-full h-48 object-cover rounded-lg shadow-md" />
+                    <Image src={imagePreview} alt="Preview" className="w-full h-48 object-cover rounded-lg shadow-md" />
                 </div>
             )}
 
