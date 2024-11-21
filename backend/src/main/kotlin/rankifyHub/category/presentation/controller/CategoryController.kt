@@ -88,7 +88,7 @@ class CategoryController(
     @PostMapping
     fun addCategory(
         @RequestPart("category") categoryDto: AddCategoryDto,
-        @RequestPart("file", org.springframework.web.bind.annotation.RequestPart.required = false) file: MultipartFile?
+        @RequestPart("file", required = false) file: MultipartFile?
     ): ResponseEntity<CategoryResponse> {
         val category = categoryUseCase.addCategory(categoryDto, file?.bytes)
         val response =

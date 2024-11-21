@@ -1,6 +1,10 @@
 package rankifyHub.userTier.domain.model
 
 import jakarta.persistence.*
+import rankifyHub.userTier.domain.vo.AccessUrl
+import rankifyHub.userTier.domain.vo.AnonymousId
+import rankifyHub.userTier.domain.vo.OrderIndex
+import rankifyHub.userTier.domain.vo.UserTierName
 import java.time.Instant
 import java.util.*
 
@@ -52,8 +56,8 @@ data class UserTier(
     fun getLevels(): List<UserTierLevel> = levels.toList()
 
     fun addLevel(level: UserTierLevel) {
-        val nextOrder = levels.maxOfOrNull { it.order.value }?.plus(1) ?: 1
-        val newLevel = level.copy(order = OrderIndex(nextOrder), userTier = this)
+        val nextOrder = levels.maxOfOrNull { it.orderIndex as Int }?.plus(1) ?: 1
+        val newLevel = level.copy(orderIndex = OrderIndex(nextOrder), userTier = this)
         levels.add(newLevel)
     }
 
@@ -63,7 +67,7 @@ data class UserTier(
     }
 
     private fun reorderLevels() {
-        levels.sortBy { it.order.value }
+        levels.sortBy { it.orderIndex.value }
         levels.forEachIndexed { index, level ->
             level.updateOrder(OrderIndex(index + 1))
         }

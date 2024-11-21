@@ -15,7 +15,7 @@ import java.util.*
  * @property category このアイテムが属するカテゴリー。
  */
 @Entity
-@Table(jakarta.persistence.Table.name = "item")
+@Table(name = "item")
 data class Item(
   @Id val id: String = UUID.randomUUID().toString(),
   @Column(nullable = false) val name: String = "",
