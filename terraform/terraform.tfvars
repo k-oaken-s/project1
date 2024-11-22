@@ -1,0 +1,9 @@
+aws_region       = "ap-northeast-1"
+cluster_name     = "ecs-integrated"
+service_name     = "rankify-hub-service"
+container_image  = "020873189351.dkr.ecr.ap-northeast-1.amazonaws.com/koakens/rankify-hub:latest"
+cpu              = 256
+memory           = 512
+desired_count    = 1
+vpc_id           = "vpc-078aae8138eeceba7"
+subnets          = ["subnet-05235cf5f5c3ae2b9", "subnet-0de85aed7ef074a4d", "subnet-00b1e29a466f21e5d"]
