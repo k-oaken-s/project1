@@ -1,0 +1,18 @@
+{
+  "family": "ecs-sample",
+  "containerDefinitions": [
+    {
+      "name": "ecs-sample",
+      "image": "<ECR_REPOSITORY>:<TAG>",
+      "essential": true,
+      "memory": 512,
+      "cpu": 256,
+      "portMappings": [
+        {
+          "containerPort": 80,
+          "protocol": "tcp"
+        }
+      ]
+    }
+  ]
+}
