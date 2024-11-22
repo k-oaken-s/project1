@@ -1,10 +1,14 @@
 name: CD Pipeline
 
+#on:
+#    workflow_run:
+#        workflows: ["CI Pipeline"] # CI の成功をトリガー
+#        types:
+#            - completed
 on:
-    workflow_run:
-        workflows: ["CI Pipeline"] # CI の成功をトリガー
-        types:
-            - completed
+    push:
+        branches:
+            - main
 
 jobs:
     cd:
