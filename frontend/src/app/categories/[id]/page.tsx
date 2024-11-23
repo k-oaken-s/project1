@@ -38,7 +38,7 @@ const HomePage = () => {
             {loading ? (
                 <p>データを読み込み中...</p>
             ) : (
-                <TierCreationScreen items={items} />
+                <TierCreationScreen items={items} categoryId={String(categoryId)} />
             )}
         </div>
     );

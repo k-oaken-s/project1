@@ -10,6 +10,7 @@ import axios from 'axios';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import ImageWrapper from "@/components/ImageWrapper";
 
 const { Title, Text } = Typography;
 
@@ -93,10 +94,12 @@ const CategoryDetailPage = () => {
                             title={<Title level={3}>{category.name}</Title>}
                             cover={
                                 category.image ? (
-                                    <Image
+                                    <ImageWrapper
                                         src={getImageUrl(category.image)}
                                         alt={`${category.name} image`}
                                         style={{ maxHeight: "300px", objectFit: "cover", width: "100%" }}
+                                                                     width={400}
+                                        height={400}
                                     />
                                 ) : null
                             }
@@ -117,10 +120,12 @@ const CategoryDetailPage = () => {
                                 <List.Item.Meta
                                     avatar={
                                         item.image ? (
-                                            <Image
+                                            <ImageWrapper
                                                 src={getImageUrl(item.image)}
                                                 alt={`${item.name} image`}
                                                 style={{ width: 50, height: 50, objectFit: "cover" }}
+                                                                                             width={400}
+                                                height={400}
                                             />
                                         ) : null
                                     }

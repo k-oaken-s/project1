@@ -1,5 +1,6 @@
-import { useState } from 'react';
 import Image from 'next/image';
+import { useState } from 'react';
+import ImageWrapper from "@/components/ImageWrapper";
 
 interface CategoryFormProps {
     onAddCategory: (name: string, image: File | null) => void;
@@ -52,7 +53,11 @@ const CategoryForm = ({ onAddCategory }: CategoryFormProps) => {
 
             {imagePreview && (
                 <div className="mb-6">
-                    <Image src={imagePreview} alt="Preview" className="w-full h-48 object-cover rounded-lg shadow-md" />
+                    <ImageWrapper src={imagePreview}
+                    width={400}
+                    height={400}
+                    alt="Preview"
+                    className="w-full h-48 object-cover rounded-lg shadow-md" />
                 </div>
             )}
 
