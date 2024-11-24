@@ -13,5 +13,8 @@ COPY build/libs/*.jar app.jar
 # ポート番号を指定（Spring Bootのデフォルトポート）
 EXPOSE 8080
 
+# ヘルスチェックを追加
+HEALTHCHECK --interval=10s --timeout=3s --start-period=30s --retries=3 CMD curl --fail http://localhost:8080/actuator/health || exit 1
+
 # Spring Bootアプリケーションを起動
 ENTRYPOINT ["java", "-jar", "app.jar"]
