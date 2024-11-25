@@ -1,9 +1,11 @@
 import Image, { ImageProps } from "next/image";
 import { useState } from "react";
+import {getApiBaseUrl} from "@/utils/getApiBaseUrl";
+import {getImageUrl} from "@/utils/getImageUrl";
 
 const MAX_RETRY_COUNT = 3;
 
-function CustomImage({ src, alt, ...props }: ImageProps) {
+function ImageWrapper({ src, alt, ...props }: ImageProps) {
     const [retryCount, setRetryCount] = useState(0);
     const [currentSrc, setCurrentSrc] = useState(src);
 
@@ -26,4 +28,4 @@ function CustomImage({ src, alt, ...props }: ImageProps) {
     );
 }
 
-export default CustomImage;
+export default ImageWrapper;
