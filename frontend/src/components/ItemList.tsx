@@ -1,7 +1,6 @@
 import { Item } from "@/types/Item";
-import { getImageUrl } from "@/utils/getImageUrl";
-import Image from 'next/image';
 import ImageWrapper from "@/components/ImageWrapper";
+import {getImageUrl} from "@/utils/getImageUrl";
 
 interface ItemListProps {
     items: Item[];

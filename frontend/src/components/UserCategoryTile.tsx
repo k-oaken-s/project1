@@ -1,10 +1,9 @@
 "use client";
 
 import { Category as CategoryType } from '@/types/Category';
-import { getImageUrl } from '@/utils/getImageUrl';
 import Link from 'next/link';
-import Image from 'next/image';
 import ImageWrapper from "@/components/ImageWrapper";
+import {getImageUrl} from "@/utils/getImageUrl";
 
 interface UserCategoryTileProps {
     category: CategoryType;

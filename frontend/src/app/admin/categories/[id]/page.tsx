@@ -7,7 +7,6 @@ import { getImageUrl } from '@/utils/getImageUrl';
 import { ArrowLeftOutlined, UploadOutlined } from '@ant-design/icons';
 import { Button, Card, Input, List, message, Spin, Typography, Upload } from 'antd';
 import axios from 'axios';
-import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import ImageWrapper from "@/components/ImageWrapper";
@@ -124,7 +123,7 @@ const CategoryDetailPage = () => {
                                                 src={getImageUrl(item.image)}
                                                 alt={`${item.name} image`}
                                                 style={{ width: 50, height: 50, objectFit: "cover" }}
-                                                                                             width={400}
+                                                width={400}
                                                 height={400}
                                             />
                                         ) : null

@@ -39,7 +39,7 @@ const DraggableItem: React.FC<DraggableItemProps> = ({ item, isOverlay = false }
             {...attributes}
         >
             <ImageWrapper
-                src={getImageUrl(item.image)}
+                src={getImageUrl(item.image || "")}
                 alt={item.name}
                 width={400}
                 height={400}
