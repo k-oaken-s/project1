@@ -3,6 +3,7 @@ import { getImageUrl } from '@/utils/getImageUrl';
 import { Card } from 'antd';
 import Link from 'next/link';
 import Image from 'next/image';
+import ImageWrapper from "@/components/ImageWrapper";
 
 interface CategoryProps {
     category: CategoryType;
@@ -20,10 +21,12 @@ const Category = ({ category }: CategoryProps) => (
             }}
             cover={
                 <div style={{ height: 250, overflow: 'hidden' }}>
-                    <Image
+                    <ImageWrapper
                         src={getImageUrl(category.image)}
                         alt={`${category.name}の画像`}
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                          width={400}
+                        height={400}
                         onError={(e) => {
                             e.currentTarget.src = '/default-thumbnail.jpg';
                         }}

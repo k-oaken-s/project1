@@ -23,6 +23,16 @@ const nextConfig: NextConfig = {
         }
         return config;
     },
+    images: {
+        remotePatterns: [
+          {
+            protocol: 'http',
+            hostname: 'backend',
+            port: '8080',
+            pathname: '/images/**',
+          },
+        ],
+      },
 };
 
 export default nextConfig;

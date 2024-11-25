@@ -1,6 +1,6 @@
 import { Item } from "@/types/Item";
-import { getImageUrl } from "@/utils/getImageUrl";
-import Image from 'next/image';
+import ImageWrapper from "@/components/ImageWrapper";
+import {getImageUrl} from "@/utils/getImageUrl";
 
 interface ItemListProps {
     items: Item[];
@@ -13,11 +13,14 @@ const ItemList = ({ items, onEdit }: ItemListProps) => (
             items.map((item) => (
                 <li key={item.id} className="border rounded p-4 shadow-md flex items-center">
                     {item.image && (
-                        <Image
+                        <ImageWrapper
                             src={getImageUrl(item.image)}
                             alt={`${item.name}の画像`}
                             className="w-16 h-16 object-cover mr-4"
                             loading="lazy"
+                            layout="responsive"
+                            width={400}
+                            height={400}
                         />
                     )}
                     <div className="flex-1">

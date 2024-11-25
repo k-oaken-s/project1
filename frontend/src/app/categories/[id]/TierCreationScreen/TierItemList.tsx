@@ -19,7 +19,7 @@ const TierItemList: React.FC<TierItemListProps> = ({ items }) => (
                 }}
             >
                 <Avatar
-                    src={getImageUrl(item.image)}
+                    src={getImageUrl(item.image ?? '')}
                     alt={item.name}
                     size={100}
                     style={{ marginBottom: '10px' }}

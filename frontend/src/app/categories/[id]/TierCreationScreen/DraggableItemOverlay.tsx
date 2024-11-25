@@ -18,7 +18,7 @@ const DraggableItemOverlay: React.FC<DraggableItemOverlayProps> = ({ id, findIte
             style={{ width: 150, display: 'flex', alignItems: 'center' }}
         >
             <Avatar
-                src={getImageUrl(item.image)}
+                src={getImageUrl(item.image ?? '')}
                 alt={item.name}
                 size={50}
                 style={{ marginRight: '16px' }}

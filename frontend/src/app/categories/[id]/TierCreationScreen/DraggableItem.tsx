@@ -4,6 +4,7 @@ import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import React from "react";
 import Image from 'next/image';
+import ImageWrapper from "@/components/ImageWrapper";
 
 type DraggableItemProps = {
     item: Item;
@@ -37,9 +38,11 @@ const DraggableItem: React.FC<DraggableItemProps> = ({ item, isOverlay = false }
             {...listeners}
             {...attributes}
         >
-            <Image
-                src={getImageUrl(item.image)}
+            <ImageWrapper
+                src={getImageUrl(item.image || "")}
                 alt={item.name}
+                width={400}
+                height={400}
                 style={{
                     width: "100%",
                     height: "100%",
