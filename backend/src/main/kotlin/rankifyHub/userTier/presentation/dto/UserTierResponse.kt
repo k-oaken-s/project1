@@ -38,7 +38,7 @@ data class UserTierLevelResponse(
     fun fromEntity(userTierLevel: UserTierLevel): UserTierLevelResponse {
       return UserTierLevelResponse(
         id = userTierLevel.id.toString(),
-        name = userTierLevel.tierName,
+        name = userTierLevel.name,
         order = userTierLevel.orderIndex.value,
         items = userTierLevel.items.map { UserTierItemResponse.fromEntity(it) }
       )

@@ -15,8 +15,8 @@ data class UserTierLevel(
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_tier_id", nullable = false)
   val userTier: UserTier? = null,
-  @Column(name = "tier_name", nullable = false) val tierName: String = "",
-  @Embedded
+    @Column(name = "name", nullable = false) val name: String = "",
+    @Embedded
   @AttributeOverrides(
     AttributeOverride(name = "value", column = Column(name = "order_index", nullable = false))
   )

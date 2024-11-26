@@ -44,7 +44,7 @@ class UserTierFactory {
         val level =
           UserTierLevel(
             userTier = userTier,
-            tierName = levelData.name.value,
+            name = levelData.name.value,
             orderIndex = levelData.orderIndex
           )
         userTier.addLevel(level)
