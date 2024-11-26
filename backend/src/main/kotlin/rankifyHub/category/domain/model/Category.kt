@@ -40,16 +40,16 @@ data class Category(
     }
   }
 
-  fun addItem(name: String, image: ByteArray?): Item {
-    val item = Item.create(name = name, image = image)
+  fun addItem(name: String, image: ByteArray?, description: String?): Item {
+    val item = Item.create(name = name, image = image, category = this, description = description)
     _items.add(item)
     return item
   }
 
-  fun updateItem(itemId: String, name: String, image: ByteArray?, keepCurrentImage: Boolean): Item {
+  fun updateItem(itemId: String, name: String, image: ByteArray?, keepCurrentImage: Boolean, description: String?): Item {
     val item = _items.find { it.id == itemId } ?: throw IllegalArgumentException("Item not found")
     val updatedImage = if (keepCurrentImage) item.image else image
-    val updatedItem = item.update(name = name, image = updatedImage)
+    val updatedItem = item.update(name = name, image = updatedImage, description = description)
     _items.removeIf { it.id == itemId }
     _items.add(updatedItem)
     return updatedItem

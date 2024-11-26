@@ -75,7 +75,7 @@ class CategoryUseCase(private val categoryRepository: CategoryRepository) {
         IllegalArgumentException("Category not found")
       }
     val itemName = ObjectMapper().readTree(itemJson).get("name").asText()
-    val newItem = category.addItem(name = itemName, image = imageBytes)
+    val newItem = category.addItem(name = itemName, image = imageBytes, "")
     categoryRepository.save(category) // cascadeにより新しいアイテムも保存される
     return newItem
   }
@@ -110,7 +110,8 @@ class CategoryUseCase(private val categoryRepository: CategoryRepository) {
         itemId = itemId,
         name = itemName,
         image = imageBytes,
-        keepCurrentImage = keepCurrentImage
+        keepCurrentImage = keepCurrentImage,
+        ""
       )
     categoryRepository.save(category) // cascadeによりアイテムの更新が反映される
     return updatedItem
