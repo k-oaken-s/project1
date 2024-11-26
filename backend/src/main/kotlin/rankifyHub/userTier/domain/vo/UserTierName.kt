@@ -11,7 +11,7 @@ import jakarta.persistence.Embeddable
 @Embeddable
 data class UserTierName(val value: String = "") {
   init {
-    require(value.isNotBlank()) { "Tierの名前は空白にできません。" }
+//    require(value.isNotBlank()) { "Tierの名前は空白にできません。" }
     require(value.length <= 255) { "Tierの名前は255文字以下である必要があります。" }
   }
 
