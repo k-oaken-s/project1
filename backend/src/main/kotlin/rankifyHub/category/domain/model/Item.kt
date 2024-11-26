@@ -19,7 +19,7 @@ import java.util.*
 data class Item(
   @Id val id: String = UUID.randomUUID().toString(),
   @Column(nullable = false) val name: String = "",
-  @Lob @Column(name = "image", columnDefinition = "BLOB") val image: ByteArray? = null
+  @Lob @Column(name = "image", columnDefinition = "BLOB") val image: ByteArray? = null,
 ) {
 
   companion object {
