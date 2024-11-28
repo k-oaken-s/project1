@@ -1,4 +1,5 @@
 plugins {
+    application
     id("org.jetbrains.kotlin.jvm") version "1.9.25"
     id("org.jetbrains.kotlin.plugin.spring") version "1.9.25"
     id("org.springframework.boot") version "3.3.5"
@@ -63,12 +64,12 @@ tasks.test {
     useJUnitPlatform()
 }
 
-application {
-    mainClass.set("tierMaker.TierMakerApplicationKt")
-}
-
 spotless {
     kotlin {
         ktfmt().googleStyle()
     }
+}
+
+application {
+    mainClass.set("rankifyHub.RankifyHubApplicationKt")
 }
