@@ -1,28 +1,25 @@
 package rankifyHub.userTier.domain.model
 
 import jakarta.persistence.*
-import java.time.Instant
-import java.util.UUID
 import rankifyHub.userTier.domain.vo.OrderIndex
-import rankifyHub.userTier.domain.model.UserTierLevelItem
+import java.time.Instant
+import java.util.*
 
 @Entity
 @Table(
     name = "user_tier_level",
-    uniqueConstraints = [
-        UniqueConstraint(columnNames = ["user_tier_id", "order_index"])
-    ]
+    uniqueConstraints = [UniqueConstraint(columnNames = ["user_tier_id", "order_index"])]
 )
-data class UserTierLevel(
+class UserTierLevel(
     @Id
-    val id: UUID = UUID.randomUUID(),
+    val id: String = UUID.randomUUID().toString(),
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_tier_id", nullable = false)
-    val userTier: UserTier? = null,
+    var userTier: UserTier? = null, // var に変更
 
-    @Column(name = "tier_name", nullable = false)
-    val tierName: String = "",
+    @Column(name = "name", nullable = false)
+    val name: String = "",
 
     @Embedded
     @AttributeOverrides(
@@ -39,11 +36,13 @@ data class UserTierLevel(
     @OneToMany(mappedBy = "userTierLevel", cascade = [CascadeType.ALL], orphanRemoval = true)
     val items: MutableList<UserTierLevelItem> = mutableListOf()
 ) {
-    fun retrieveItems(): List<UserTierLevelItem> = items.toList()
+    constructor() : this(id = UUID.randomUUID().toString())
 
     fun addItem(item: UserTierLevelItem) {
         val nextOrder = items.maxOfOrNull { it.orderIndex.value }?.plus(1) ?: 1
-        items.add(item.copy(orderIndex = OrderIndex(nextOrder), userTierLevel = this))
+        item.orderIndex = OrderIndex(nextOrder)
+        item.userTierLevel = this
+        items.add(item)
     }
 
     fun removeItem(item: UserTierLevelItem) {
@@ -53,9 +52,7 @@ data class UserTierLevel(
 
     private fun reorderItems() {
         items.sortBy { it.orderIndex.value }
-        items.forEachIndexed { index, item ->
-            item.updateOrder(OrderIndex(index + 1))
-        }
+        items.forEachIndexed { index, item -> item.updateOrder(OrderIndex(index + 1)) }
     }
 
     fun updateOrder(newOrder: OrderIndex) {

@@ -2,8 +2,8 @@ package rankifyHub.admin.presentation.controller
 
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import rankifyHub.common.security.JwtUtil
 import rankifyHub.category.presentation.dto.LoginRequest
+import rankifyHub.common.security.JwtUtil
 
 /** RESTコントローラー: 管理者認証を処理します。 */
 @RestController

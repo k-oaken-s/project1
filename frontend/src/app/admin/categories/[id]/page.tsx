@@ -8,7 +8,8 @@ import { ArrowLeftOutlined, UploadOutlined } from '@ant-design/icons';
 import { Button, Card, Input, List, message, Spin, Typography, Upload } from 'antd';
 import axios from 'axios';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import debounce from 'lodash/debounce';
 import ImageWrapper from "@/components/ImageWrapper";
 
 const { Title, Text } = Typography;
@@ -74,6 +75,38 @@ const CategoryDetailPage = () => {
         setItemImage(null);
     };
 
+    const debouncedSetItemName = useCallback(
+        debounce((name: string) => setItemName(name), 300),
+        []
+    );
+
+    const handleItemNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        debouncedSetItemName(e.target.value);
+    };
+
+    const renderItem = useCallback((item: Item) => (
+        <List.Item key={item.id} actions={[
+            <Button key={`edit-${item.id}`} onClick={() => startEditingItem(item)}>
+                編集
+            </Button>
+        ]}>
+            <List.Item.Meta
+                avatar={
+                    item.image ? (
+                        <ImageWrapper
+                            src={getImageUrl(item.image)}
+                            alt={`${item.name} image`}
+                            style={{ width: 50, height: 50, objectFit: "cover" }}
+                            width={400}
+                            height={400}
+                        />
+                    ) : null
+                }
+                title={item.name}
+            />
+        </List.Item>
+    ), [startEditingItem]);
+
     return (
         <div className="p-8 max-w-4xl mx-auto">
             {isLoading ? (
@@ -97,7 +130,7 @@ const CategoryDetailPage = () => {
                                         src={getImageUrl(category.image)}
                                         alt={`${category.name} image`}
                                         style={{ maxHeight: "300px", objectFit: "cover", width: "100%" }}
-                                                                     width={400}
+                                        width={400}
                                         height={400}
                                     />
                                 ) : null
@@ -106,39 +139,16 @@ const CategoryDetailPage = () => {
                             {category.description && <Text>{category.description}</Text>}
                         </Card>
                     )}
-
                     <Title level={4} className="mb-4">カテゴリーのアイテム一覧</Title>
                     <List
                         dataSource={items}
-                        renderItem={(item) => (
-                            <List.Item key={item.id} actions={[
-                                <Button key={`edit-${item.id}`} onClick={() => startEditingItem(item)}>
-                                    編集
-                                </Button>
-                            ]}>
-                                <List.Item.Meta
-                                    avatar={
-                                        item.image ? (
-                                            <ImageWrapper
-                                                src={getImageUrl(item.image)}
-                                                alt={`${item.name} image`}
-                                                style={{ width: 50, height: 50, objectFit: "cover" }}
-                                                width={400}
-                                                height={400}
-                                            />
-                                        ) : null
-                                    }
-                                    title={item.name}
-                                />
-                            </List.Item>
-                        )}
+                        renderItem={renderItem}
                     />
-
                     <Card title={editingItem ? "アイテムを編集" : "新しいアイテムを追加"} className="mt-8">
                         <Input
                             placeholder="アイテム名を入力"
                             value={itemName}
-                            onChange={(e) => setItemName(e.target.value)}
+                            onChange={handleItemNameChange}
                             className="mb-3"
                         />
                         <Upload

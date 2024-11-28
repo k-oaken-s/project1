@@ -13,9 +13,12 @@ import {
     useSensors,
 } from "@dnd-kit/core";
 import React, { useState } from "react";
+import { Button, message, Typography } from 'antd';
 import DroppableArea from "./DraggableArea";
 import DraggableItem from "./DraggableItem";
 import Tier from "./Tier";
+
+const { Text } = Typography;
 
 type TierCreationScreenProps = {
     items: Item[];
@@ -23,9 +26,9 @@ type TierCreationScreenProps = {
 };
 
 const TierCreationScreen: React.FC<TierCreationScreenProps> = ({
-    items,
-    categoryId,
-}) => {
+                                                                   items,
+                                                                   categoryId,
+                                                               }) => {
     const [tiers, setTiers] = useState<{ [key: string]: Item[] }>({
         Tier1: [],
         Tier2: [],
@@ -45,10 +48,7 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({
     const anonymousId = getAnonymousId();
 
     const findItemById = (id: string): Item | null => {
-        const allItems = [
-            ...availableItems,
-            ...Object.values(tiers).flat(),
-        ];
+        const allItems = [...availableItems, ...Object.values(tiers).flat()];
         return allItems.find((item) => item.id === id) || null;
     };
 
@@ -68,11 +68,7 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({
             return;
         }
 
-        const sourceTier =
-            Object.keys(tiers).find((key) =>
-                tiers[key].some((item) => item.id === active.id)
-            ) || "unassigned";
-
+        const sourceTier = Object.keys(tiers).find((key) => tiers[key].some((item) => item.id === active.id)) || "unassigned";
         const destinationTier = over.id;
 
         if (sourceTier === destinationTier) {
@@ -81,28 +77,20 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({
         }
 
         if (sourceTier === "unassigned") {
-            // 未割り当てアイテムから移動
-            setAvailableItems((prev) =>
-                prev.filter((item) => item.id !== active.id)
-            );
+            setAvailableItems((prev) => prev.filter((item) => item.id !== active.id));
         } else {
-            // 他のTierから移動
             setTiers((prev) => ({
                 ...prev,
-                [sourceTier]: prev[sourceTier].filter(
-                    (item) => item.id !== active.id
-                ),
+                [sourceTier]: prev[sourceTier].filter((item) => item.id !== active.id)
             }));
         }
 
         if (destinationTier === "unassigned") {
-            // 未割り当てエリアに戻す
             setAvailableItems((prev) => [...prev, activeItem]);
         } else {
-            // 他のTierに移動
             setTiers((prev) => ({
                 ...prev,
-                [destinationTier]: [...prev[destinationTier], activeItem],
+                [destinationTier]: [...prev[destinationTier], activeItem]
             }));
         }
 
@@ -142,23 +130,18 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({
             const data = await response.json();
             setGeneratedUrl(data.accessUrl);
 
-            // クリップボードにコピー
             navigator.clipboard.writeText(data.accessUrl);
-            alert("URLがクリップボードにコピーされました!");
+            message.success("URLが生成されクリップボードにコピーされました");
         } catch (error) {
             console.error("エラー:", error);
-            alert("URLの生成に失敗しました。");
+            message.error("URLの生成に失敗しました");
         } finally {
             setIsGenerating(false);
         }
     };
 
     return (
-        <DndContext
-            sensors={sensors}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-        >
+        <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
             <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
                 {Object.keys(tiers).map((tierName) => (
                     <Tier key={tierName} name={tierName} items={tiers[tierName]} />
@@ -175,33 +158,24 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({
             </DroppableArea>
 
             <div style={{ marginTop: "16px" }}>
-                <button
-                    onClick={() => generateTierUrl(true)}
-                    disabled={isGenerating}
-                    style={{ marginRight: "8px" }}
-                >
+                <Button type="default" onClick={() => generateTierUrl(true)} loading={isGenerating} className="mb-4">
                     公開してURL生成
-                </button>
-                <button onClick={() => generateTierUrl(false)} disabled={isGenerating}>
+                </Button>
+                <Button type="primary" onClick={() => generateTierUrl(false)} loading={isGenerating}>
                     非公開でURL生成
-                </button>
+                </Button>
                 {generatedUrl && (
                     <div style={{ marginTop: "16px" }}>
-                        <p>生成されたURL:</p>
-                        <a href={generatedUrl} target="_blank" rel="noopener noreferrer">
-                            {generatedUrl}
-                        </a>
+                        <Text>生成されたURL: <a href={generatedUrl} target="_blank" rel="noopener noreferrer">{generatedUrl}</a></Text>
                     </div>
                 )}
             </div>
 
             <DragOverlay>
-                {activeId ? (
-                    (() => {
-                        const item = findItemById(activeId);
-                        return item ? <DraggableItem item={item} isOverlay /> : null;
-                    })()
-                ) : null}
+                {activeId ? (() => {
+                    const item = findItemById(activeId);
+                    return item ? <DraggableItem item={item} isOverlay /> : null;
+                })() : null}
             </DragOverlay>
         </DndContext>
     );

@@ -10,9 +10,9 @@ import rankifyHub.userTier.presentation.dto.UserTierResponse
 @RequestMapping("/user-tiers")
 class UserTierController(private val userTierUseCase: UserTierUseCase) {
 
-    @PostMapping
-    fun create(@RequestBody request: CreateUserTierRequest): ResponseEntity<UserTierResponse> {
-        val userTier = userTierUseCase.create(request)
-        return ResponseEntity.ok(UserTierResponse.fromEntity(userTier))
-    }
+  @PostMapping
+  fun create(@RequestBody request: CreateUserTierRequest): ResponseEntity<UserTierResponse> {
+    val userTier = userTierUseCase.create(request)
+    return ResponseEntity.ok(UserTierResponse.fromEntity(userTier))
+  }
 }

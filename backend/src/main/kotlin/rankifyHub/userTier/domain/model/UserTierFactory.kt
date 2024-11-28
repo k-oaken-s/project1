@@ -5,7 +5,7 @@ import rankifyHub.userTier.domain.vo.AccessUrl
 import rankifyHub.userTier.domain.vo.AnonymousId
 import rankifyHub.userTier.domain.vo.OrderIndex
 import rankifyHub.userTier.domain.vo.UserTierName
-import java.util.UUID
+import java.util.*
 
 @Component
 class UserTierFactory {
@@ -22,12 +22,11 @@ class UserTierFactory {
      */
     fun create(
         anonymousId: AnonymousId,
-        categoryId: UUID,
+        categoryId: String,
         name: UserTierName,
         isPublic: Boolean,
         levels: List<UserTierLevelData>
     ): UserTier {
-        // UserTierの初期化
         val userTier = UserTier(
             anonymousId = anonymousId,
             categoryId = categoryId,
@@ -36,22 +35,32 @@ class UserTierFactory {
             accessUrl = AccessUrl(UUID.randomUUID().toString())
         )
 
-        // 各レベルとアイテムをUserTierに追加（フロントエンドの順序で処理）
-        levels.sortedBy { it.orderIndex.value }.forEach { levelData ->
-            val level = UserTierLevel(
-                userTier = userTier,
-                tierName = levelData.name.value,
-                orderIndex = levelData.orderIndex
-            )
-            userTier.addLevel(level)
-            levelData.items.sortedBy { it.orderIndex.value }.forEach { itemData ->
-                level.addItem(UserTierLevelItem(level.id, itemData.itemId, OrderIndex(itemData.orderIndex.value), userTierLevel = level))
+        levels
+            .sortedBy { it.orderIndex.value }
+            .forEach { levelData ->
+                val level = UserTierLevel(
+                    name = levelData.name.value,
+                    userTier = userTier,
+                    orderIndex = levelData.orderIndex
+                )
+                userTier.getLevels().add(level)
+                levelData.items
+                    .sortedBy { it.orderIndex.value }
+                    .forEach { itemData ->
+                        val item = UserTierLevelItem(
+                            userTierLevel = level,
+                            userTier = userTier,
+                            itemId = itemData.itemId.toString(),
+                            orderIndex = itemData.orderIndex
+                        )
+                        level.items.add(item)
+                    }
             }
-        }
 
         return userTier
     }
 }
+
 
 /**
  * UserTierLevelのデータクラス
@@ -72,7 +81,4 @@ data class UserTierLevelData(
  * @property itemId アイテムのID
  * @property orderIndex アイテムの並び順（フロントエンドからの入力順序）
  */
-data class UserTierItemData(
-    val itemId: UUID,
-    val orderIndex: OrderIndex
-)
+data class UserTierItemData(val itemId: UUID, val orderIndex: OrderIndex)

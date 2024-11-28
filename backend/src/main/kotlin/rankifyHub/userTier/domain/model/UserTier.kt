@@ -22,16 +22,16 @@ import java.util.*
  */
 @Entity
 @Table(name = "user_tier")
-data class UserTier(
+class UserTier(
     @Id
-    val id: UUID = UUID.randomUUID(),
+    val id: String = UUID.randomUUID().toString(),
 
     @Embedded
     @AttributeOverride(name = "value", column = Column(name = "anonymous_id", nullable = false))
     val anonymousId: AnonymousId,
 
     @Column(name = "category_id", nullable = false)
-    val categoryId: UUID,
+    val categoryId: String,
 
     @Embedded
     @AttributeOverride(name = "value", column = Column(name = "name", nullable = false))
@@ -52,13 +52,27 @@ data class UserTier(
 
     @OneToMany(mappedBy = "userTier", cascade = [CascadeType.ALL], orphanRemoval = true)
     private val levels: MutableList<UserTierLevel> = mutableListOf(),
-) {
-    fun getLevels(): List<UserTierLevel> = levels.toList()
+
+    ) {
+    constructor() : this(
+        UUID.randomUUID().toString(),
+        AnonymousId(),
+        "",
+        UserTierName(),
+        false,
+        AccessUrl(),
+        Instant.now(),
+        Instant.now(),
+        mutableListOf()
+    )
+
+    fun getLevels(): MutableList<UserTierLevel> = levels
 
     fun addLevel(level: UserTierLevel) {
-        val nextOrder = levels.maxOfOrNull { it.orderIndex as Int }?.plus(1) ?: 1
-        val newLevel = level.copy(orderIndex = OrderIndex(nextOrder), userTier = this)
-        levels.add(newLevel)
+        val nextOrder = levels.maxOfOrNull { it.orderIndex.value }?.plus(1) ?: 1
+        level.orderIndex = OrderIndex(nextOrder)
+        level.userTier = this
+        levels.add(level)
     }
 
     fun removeLevel(level: UserTierLevel) {
@@ -68,8 +82,6 @@ data class UserTier(
 
     private fun reorderLevels() {
         levels.sortBy { it.orderIndex.value }
-        levels.forEachIndexed { index, level ->
-            level.updateOrder(OrderIndex(index + 1))
-        }
+        levels.forEachIndexed { index, level -> level.updateOrder(OrderIndex(index + 1)) }
     }
 }
