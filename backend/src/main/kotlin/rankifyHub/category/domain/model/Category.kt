@@ -46,7 +46,13 @@ data class Category(
     return item
   }
 
-  fun updateItem(itemId: String, name: String, image: ByteArray?, keepCurrentImage: Boolean, description: String?): Item {
+  fun updateItem(
+    itemId: String,
+    name: String,
+    image: ByteArray?,
+    keepCurrentImage: Boolean,
+    description: String?
+  ): Item {
     val item = _items.find { it.id == itemId } ?: throw IllegalArgumentException("Item not found")
     val updatedImage = if (keepCurrentImage) item.image else image
     val updatedItem = item.update(name = name, image = updatedImage, description = description)

@@ -10,7 +10,7 @@ import jakarta.persistence.Embeddable
 @Embeddable
 data class AnonymousId(val value: String = "") {
   init {
-//    require(value.isNotBlank()) { "AnonymousId cannot be blank" }
+    //    require(value.isNotBlank()) { "AnonymousId cannot be blank" }
     require(value.length <= 255) { "AnonymousId must be 255 characters or less" }
   }
 }

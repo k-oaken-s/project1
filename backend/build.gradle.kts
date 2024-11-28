@@ -1,4 +1,5 @@
 plugins {
+    application
     id("org.jetbrains.kotlin.jvm") version "1.9.25"
     id("org.jetbrains.kotlin.plugin.spring") version "1.9.25"
     id("org.springframework.boot") version "3.3.5"
@@ -15,6 +16,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-devtools")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework.boot:spring-boot-starter-logging")
 
     // Kotlin dependencies
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.10")
@@ -28,7 +30,6 @@ dependencies {
 
     // Database dependencies
     implementation("mysql:mysql-connector-java:8.0.33")
-    runtimeOnly("mysql:mysql-connector-java:8.0.33")
     runtimeOnly("com.h2database:h2:2.2.222")
 
     // Flyway
@@ -63,12 +64,12 @@ tasks.test {
     useJUnitPlatform()
 }
 
-application {
-    mainClass.set("tierMaker.TierMakerApplicationKt")
-}
-
 spotless {
     kotlin {
         ktfmt().googleStyle()
     }
+}
+
+application {
+    mainClass.set("rankifyHub.RankifyHubApplicationKt")
 }

@@ -10,5 +10,4 @@ import rankifyHub.category.domain.model.Item
  * @see JpaRepository
  * @see Category
  */
-@Repository
-internal interface ItemRepository : JpaRepository<Item, String> {}
+@Repository internal interface ItemRepository : JpaRepository<Item, String> {}

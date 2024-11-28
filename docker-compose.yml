@@ -20,23 +20,24 @@ services:
             context: ./backend
             dockerfile: Dockerfile
         volumes:
-            - ./src/main/kotlin:/app/src/main/kotlin
-            - ./src/main/resources:/app/src/main/resources
-            - ./backend/build:/app/build # コンパイル済みファイルを反映
-            - ~/.m2:/root/.m2 # ローカルのMavenキャッシュ共有で依存関係のダウンロードを高速化
+            - ./backend/build/libs:/app/build/libs
+            - ./backend/src/main/kotlin:/app/src/main/kotlin
+            - ./backend/src/main/resources:/app/src/main/resources
+            - ~/.m2:/root/.m2 # Mavenキャッシュを共有
         ports:
             - "8080:8080"
         environment:
             - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/my_database
             - SPRING_DATASOURCE_USERNAME=root
             - SPRING_DATASOURCE_PASSWORD=root_password
-            - JAVA_OPTS=-Dspring.devtools.restart.enabled=true # DevToolsの再起動機能を明示的に有効化
+            - SPRING_DEVTOOLS_RESTART_ENABLED=true
+            - SPRING_DEVTOOLS_RESTART_TRIGGER_FILE=.reload
         depends_on:
             db:
                 condition: service_healthy
         networks:
             - app-network
-        command: ./gradlew bootRun # ホットリロード対応のための起動コマンド
+        command: ./gradlew bootRun
         container_name: backend
 
     frontend:
