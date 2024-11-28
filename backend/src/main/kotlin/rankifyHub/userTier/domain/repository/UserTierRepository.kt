@@ -10,11 +10,10 @@ interface UserTierRepository : JpaRepository<UserTier, UUID> {
   /**
    * 匿名ユーザーのIDとカテゴリIDで特定のUserTierを検索
    *
-   * @param anonymousId 匿名ユーザーのID
    * @param categoryId カテゴリのID
    * @return 該当するUserTierのリスト
    */
-  fun findByAnonymousIdAndCategoryId(anonymousId: String, categoryId: UUID): List<UserTier>
+  fun findByCategoryId(categoryId: String): List<UserTier>
 
   /**
    * 公開されているUserTierを取得

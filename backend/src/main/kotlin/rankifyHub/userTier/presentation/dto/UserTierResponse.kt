@@ -50,7 +50,7 @@ data class UserTierItemResponse(val itemId: String, val order: Int) {
   companion object {
     fun fromEntity(userTierItem: UserTierLevelItem): UserTierItemResponse {
       return UserTierItemResponse(
-        itemId = userTierItem.itemId.toString(),
+        itemId = userTierItem.id,
         order = userTierItem.orderIndex.value
       )
     }
