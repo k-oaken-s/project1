@@ -65,11 +65,20 @@ const CategoryForm = ({onAddCategory}: CategoryFormProps) => {
             </div>
 
             <div className="mb-6">
-                <img
-                    src={imagePreview || '/default-thumbnail.jpg'}
-                    alt="Preview"
-                    className="w-full h-48 object-cover rounded-lg shadow-md"
-                />
+                <div className="mb-6">
+                    {imagePreview ? (
+                        <img
+                            src={imagePreview}
+                            alt="Preview"
+                            className="w-full h-48 object-cover rounded-lg shadow-md"
+                        />
+                    ) : (
+                        // No image placeholder text or icon
+                        <div className="w-full h-48 flex items-center justify-center border-2 border-dashed rounded-lg">
+                            <span className="text-gray-500">No Image Selected</span>
+                        </div>
+                    )}
+                </div>
             </div>
 
             <button

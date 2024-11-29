@@ -1,13 +1,13 @@
-import { Category as CategoryType } from '@/types/Category';
-import { Col, Row } from 'antd';
+import {Category as CategoryType} from '@/types/Category';
+import {Col, Row} from 'antd';
 import Category from './Category';
 
 interface CategoryListProps {
     categories: CategoryType[];
 }
 
-const CategoryList = ({ categories }: CategoryListProps) => (
-    <Row gutter={[16, 16]}>
+const CategoryList = ({categories}: CategoryListProps) => (
+    <Row gutter={[16, 16]} justify="center">
         {categories.length > 0 ? (
             categories.map((category) => (
                 <Col
@@ -16,9 +16,9 @@ const CategoryList = ({ categories }: CategoryListProps) => (
                     sm={12}
                     md={8}
                     lg={6}
-                    style={{ height: '100%' }} // 高さを100%に設定
+                    style={{height: '100%'}}
                 >
-                    <Category category={category} />
+                    <Category category={category}/>
                 </Col>
             ))
         ) : (
