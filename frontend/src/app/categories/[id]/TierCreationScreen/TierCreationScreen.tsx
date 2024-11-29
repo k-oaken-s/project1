@@ -12,7 +12,7 @@ import {
     useSensors
 } from "@dnd-kit/core";
 import React, {useState} from "react";
-import {Button, message, Typography} from 'antd';
+import {Button, Input, message, Typography} from 'antd';
 import DroppableArea from "./DraggableArea";
 import DraggableItem from "./DraggableItem";
 import Tier from "./Tier";
@@ -31,14 +31,14 @@ type TierCreationScreenProps = {
 const TierCreationScreen: React.FC<TierCreationScreenProps> = ({
                                                                    items,
                                                                    categoryId,
-                                                                   categoryName,  // プロパティから受け取り
-                                                                   categoryImageUrl,  // プロパティから受け取り
+                                                                   categoryName,
+                                                                   categoryImageUrl,
                                                                }) => {
-    const [tiers, setTiers] = useState<{ [key: string]: Item[] }>({
-        Tier1: [],
-        Tier2: [],
-        Tier3: [],
-        Tier4: [],
+    const [tiers, setTiers] = useState<{ [key: string]: { name: string; items: Item[] } }>({
+        Tier1: {name: "Tier 1", items: []},
+        Tier2: {name: "Tier 2", items: []},
+        Tier3: {name: "Tier 3", items: []},
+        Tier4: {name: "Tier 4", items: []},
     });
 
     const [availableItems, setAvailableItems] = useState<Item[]>(items);
@@ -53,7 +53,7 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({
     const anonymousId = getAnonymousId();
 
     const findItemById = (id: string): Item | null => {
-        const allItems = [...availableItems, ...Object.values(tiers).flat()];
+        const allItems = [...availableItems, ...Object.values(tiers).flatMap(tier => tier.items)];
         return allItems.find((item) => item.id === id) || null;
     };
 
@@ -73,7 +73,7 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({
             return;
         }
 
-        const sourceTier = Object.keys(tiers).find((key) => tiers[key].some((item) => item.id === active.id)) || "unassigned";
+        const sourceTier = Object.keys(tiers).find((key) => tiers[key].items.some((item) => item.id === active.id)) || "unassigned";
         const destinationTier = over.id;
 
         if (sourceTier === destinationTier) {
@@ -86,7 +86,10 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({
         } else {
             setTiers((prev) => ({
                 ...prev,
-                [sourceTier]: prev[sourceTier].filter((item) => item.id !== active.id)
+                [sourceTier]: {
+                    ...prev[sourceTier],
+                    items: prev[sourceTier].items.filter((item) => item.id !== active.id)
+                }
             }));
         }
 
@@ -95,20 +98,33 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({
         } else {
             setTiers((prev) => ({
                 ...prev,
-                [destinationTier]: [...prev[destinationTier], activeItem]
+                [destinationTier]: {
+                    ...prev[destinationTier],
+                    items: [...prev[destinationTier].items, activeItem]
+                }
             }));
         }
 
         setActiveId(null);
     };
 
+    const handleTierNameChange = (tierKey: string, newName: string) => {
+        setTiers((prev) => ({
+            ...prev,
+            [tierKey]: {
+                ...prev[tierKey],
+                name: newName,
+            },
+        }));
+    };
+
     const generateTierUrl = async (isPublic: boolean) => {
         setIsGenerating(true);
         try {
-            const levels = Object.keys(tiers).map((tierName, index) => ({
-                name: tierName,
+            const levels = Object.keys(tiers).map((tierKey, index) => ({
+                name: tiers[tierKey].name,
                 orderIndex: index + 1,
-                items: tiers[tierName].map((item, itemIndex) => ({
+                items: tiers[tierKey].items.map((item, itemIndex) => ({
                     itemId: item.id,
                     orderIndex: itemIndex + 1,
                 })),
@@ -145,12 +161,10 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({
         }
     };
 
-    // JSXの最初にカテゴリー情報を表示
     return (
         <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-            {/* カテゴリー名と画像の表示 */}
             <div style={{textAlign: 'center', marginBottom: '24px'}}>
-                <h1>{categoryName}</h1> {/* カテゴリー名 */}
+                <h1>{categoryName}</h1>
                 <ImageWrapper
                     src={getImageUrl(categoryImageUrl)}
                     alt={categoryName}
@@ -162,12 +176,19 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({
             </div>
 
             <div style={{display: "flex", flexDirection: "column", gap: "16px"}}>
-                {Object.keys(tiers).map((tierName) => (
-                    <Tier key={tierName} name={tierName} items={tiers[tierName]}/>
+                {Object.keys(tiers).map((tierKey) => (
+                    <div key={tierKey} style={{marginBottom: "16px"}}>
+                        <Input
+                            value={tiers[tierKey].name}
+                            onChange={(e) => handleTierNameChange(tierKey, e.target.value)}
+                            style={{marginBottom: "8px"}}
+                        />
+                        <Tier name={tiers[tierKey].name} items={tiers[tierKey].items}/>
+                    </div>
                 ))}
             </div>
 
-            <div style={{marginTop: "16px"}}> {/* ここでスペースを追加 */}
+            <div style={{marginTop: "16px"}}>
                 <DroppableArea id="unassigned" items={availableItems}>
                     <h3>未割り当てアイテム</h3>
                     <div style={{display: "flex", gap: "8px", flexWrap: "wrap"}}>

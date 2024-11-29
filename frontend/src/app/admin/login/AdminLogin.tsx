@@ -1,9 +1,12 @@
 "use client";
 
-import { getApiBaseUrl } from '@/utils/getApiBaseUrl';
+import {getApiBaseUrl} from '@/utils/getApiBaseUrl';
 import axios from 'axios';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import {useRouter} from 'next/navigation';
+import {useState} from 'react';
+import {Button, Form, Input, Typography} from 'antd'; // Ant Designのコンポーネントをインポート
+
+const {Title} = Typography;
 
 const AdminLogin = () => {
     const [username, setUsername] = useState('');
@@ -32,11 +35,30 @@ const AdminLogin = () => {
     };
 
     return (
-        <form onSubmit={handleLogin}>
-            <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
-            <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-            <button type="submit">Login</button>
-        </form>
+        <div style={{maxWidth: '400px', margin: 'auto', padding: '40px', textAlign: 'center'}}>
+            <Title level={2}>Admin Login</Title>
+            <Form onSubmitCapture={handleLogin} layout="vertical">
+                <Form.Item label="Username" required>
+                    <Input
+                        placeholder="Enter your username"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                    />
+                </Form.Item>
+                <Form.Item label="Password" required>
+                    <Input.Password
+                        placeholder="Enter your password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                </Form.Item>
+                <Form.Item>
+                    <Button type="primary" htmlType="submit" style={{width: '100%'}}>
+                        Login
+                    </Button>
+                </Form.Item>
+            </Form>
+        </div>
     );
 };
 

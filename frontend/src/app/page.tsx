@@ -1,10 +1,12 @@
 "use client";
 
 import UserCategoryList from '@/components/UserCategoryList';
-import { Category as CategoryType } from '@/types/Category';
-import { getApiBaseUrl } from '@/utils/getApiBaseUrl';
+import {Category as CategoryType} from '@/types/Category';
+import {getApiBaseUrl} from '@/utils/getApiBaseUrl';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
+import 'tailwindcss/tailwind.css';
+
 const TopPage = () => {
     const [categories, setCategories] = useState<CategoryType[]>([]);
 
@@ -18,7 +20,7 @@ const TopPage = () => {
     return (
         <>
             <h1 className="text-3xl font-bold text-gray-800 mb-8">カテゴリ一覧</h1>
-            <UserCategoryList categories={categories} />
+            <UserCategoryList categories={categories}/>
         </>
     );
 };

@@ -1,11 +1,10 @@
-import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import {useEffect, useState} from 'react';
 
 interface CategoryFormProps {
     onAddCategory: (name: string, image: File | null) => void;
 }
 
-const CategoryForm = ({ onAddCategory }: CategoryFormProps) => {
+const CategoryForm = ({onAddCategory}: CategoryFormProps) => {
     const [newCategoryName, setNewCategoryName] = useState('');
     const [categoryImage, setCategoryImage] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -41,14 +40,15 @@ const CategoryForm = ({ onAddCategory }: CategoryFormProps) => {
     };
 
     return (
-        <div className="p-8 border rounded-lg shadow-lg bg-gray-50 hover:shadow-xl transition-shadow duration-300 mb-8 max-w-md mx-auto">
+        <div
+            className="p-8 border rounded-lg shadow-lg bg-white hover:shadow-xl transition-shadow duration-300 mb-8 max-w-md mx-auto">
             <h2 className="text-2xl font-semibold mb-6 text-center text-gray-800">新しいカテゴリーを追加</h2>
 
             <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-2">カテゴリー名</label>
                 <input
                     type="text"
-                    placeholder="カテゴリー名を入力a"
+                    placeholder="カテゴリー名を入力"
                     value={newCategoryName}
                     onChange={(e) => setNewCategoryName(e.target.value)}
                     className="border border-gray-300 rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-700"
@@ -66,7 +66,7 @@ const CategoryForm = ({ onAddCategory }: CategoryFormProps) => {
 
             <div className="mb-6">
                 <img
-                    src={imagePreview || '/default-thumbnail.jpg'} // デフォルト画像を表示
+                    src={imagePreview || '/default-thumbnail.jpg'}
                     alt="Preview"
                     className="w-full h-48 object-cover rounded-lg shadow-md"
                 />
