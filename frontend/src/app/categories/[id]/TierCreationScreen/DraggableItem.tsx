@@ -1,9 +1,8 @@
-import { Item } from "@/types/Item";
-import { getImageUrl } from "@/utils/getImageUrl";
-import { useDraggable } from "@dnd-kit/core";
-import { CSS } from "@dnd-kit/utilities";
+import {Item} from "@/types/Item";
+import {getImageUrl} from "@/utils/getImageUrl";
+import {useDraggable} from "@dnd-kit/core";
+import {CSS} from "@dnd-kit/utilities";
 import React from "react";
-import Image from 'next/image';
 import ImageWrapper from "@/components/ImageWrapper";
 
 type DraggableItemProps = {
@@ -11,15 +10,18 @@ type DraggableItemProps = {
     isOverlay?: boolean;
 };
 
-const DraggableItem: React.FC<DraggableItemProps> = ({ item, isOverlay = false }) => {
-    const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+const DraggableItem: React.FC<DraggableItemProps> = ({item, isOverlay = false}) => {
+    const {attributes, listeners, setNodeRef, transform, isDragging} = useDraggable({
         id: item.id,
     });
 
+    // スタイル設定
     const style: React.CSSProperties = {
-        transform: transform ? CSS.Transform.toString(transform) : undefined,
+        // ドラッグ中は元のアイテムを非表示
+        visibility: isDragging ? 'hidden' : 'visible',
+        // ドラッグ中のtransformを無効化
+        transform: isDragging ? undefined : transform ? CSS.Transform.toString(transform) : undefined,
         transition: "transform 0.2s ease",
-        opacity: isDragging ? 0.5 : 1,
         width: "80px",
         height: "80px",
         borderRadius: "8px",
@@ -33,7 +35,7 @@ const DraggableItem: React.FC<DraggableItemProps> = ({ item, isOverlay = false }
 
     return (
         <div
-            ref={isOverlay ? undefined : setNodeRef}
+            ref={isOverlay ? undefined : setNodeRef} // オーバーレイの場合はrefを設定しない
             style={style}
             {...listeners}
             {...attributes}
@@ -41,8 +43,8 @@ const DraggableItem: React.FC<DraggableItemProps> = ({ item, isOverlay = false }
             <ImageWrapper
                 src={getImageUrl(item.image || "")}
                 alt={item.name}
-                width={400}
-                height={400}
+                width={80}
+                height={80}
                 style={{
                     width: "100%",
                     height: "100%",

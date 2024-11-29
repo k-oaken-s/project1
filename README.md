@@ -1,9 +1,5 @@
-# Rankify Hub
-
-## 概要
-
-## 技術スタック
 ### backend
+
 - Kotlin
 - Spring Boot
 - Hibernate
@@ -11,6 +7,7 @@
 - kotest
 
 ### frontend
+
 - TypeScript
 - Next.js
 - React
@@ -20,8 +17,11 @@
 - Ant Design
 
 ### infra
+
 - Docker
-- AWS(todo)
+- Terraform
+- AWS
 
 ### CI/CD
-- GitHub Actions(todo)
+
+- GitHub Actions

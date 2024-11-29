@@ -1,5 +1,5 @@
-import { getApiBaseUrl } from '@/utils/getApiBaseUrl';
-import { StaticImport } from 'next/dist/shared/lib/get-img-props';
+import {getApiBaseUrl} from '@/utils/getApiBaseUrl';
+import {StaticImport} from 'next/dist/shared/lib/get-img-props';
 
 /**
  * Generate a full URL for an image based on its type and filename.
@@ -9,6 +9,7 @@ import { StaticImport } from 'next/dist/shared/lib/get-img-props';
 export function getImageUrl(imageName: string | StaticImport | null | undefined): string {
     // ベースURLをメモ化して取得
     const baseUrl = getApiBaseUrl(true);
+    // const baseUrl = 'http://backend:8080';
 
     // 入力が null または undefined の場合、デフォルトのサムネイル画像を返す
     if (!imageName) {
