@@ -1,4 +1,4 @@
-import type { NextConfig } from "next";
+import type {NextConfig} from "next";
 
 const nextConfig: NextConfig = {
     output: "standalone",
@@ -12,7 +12,7 @@ const nextConfig: NextConfig = {
     //     // https://github.com/vercel/next.js/issues/65447
     //     "ts"
     // ],
-    webpack: (config, { isServer }) => {
+    webpack: (config, {isServer}) => {
         // config.cache = false; // キャッシュを無効化
 
         if (!isServer) {
@@ -25,14 +25,20 @@ const nextConfig: NextConfig = {
     },
     images: {
         remotePatterns: [
-          {
-            protocol: 'http',
-            hostname: 'backend',
-            port: '8080',
-            pathname: '/images/**',
-          },
+            {
+                protocol: 'http',
+                hostname: 'backend',
+                port: '8080',
+                pathname: '/images/**',
+            },
+            {
+                protocol: 'http',
+                hostname: 'localhost',
+                port: '8080',
+                pathname: '/images/**',
+            }
         ],
-      },
+    },
 };
 
 export default nextConfig;
