@@ -50,17 +50,14 @@ const AdminDashboard = () => {
     };
 
     return (
-        <div className="p-8 max-w-4xl mx-auto bg-white rounded-lg shadow-lg">
-            <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">管理者ダッシュボード</h1>
+        <div className="p-8 max-w-4xl mx-auto bg-gray-100 rounded-lg shadow-lg">
+            <h1 className="text-3xl font-bold text-center text-gray-900 mb-6">カテゴリーリスト</h1>
 
             <div
-                className="mb-8 bg-gray-50 px-8 py-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-                <h2 className="text-xl font-semibold text-gray-700 mb-4 text-center">新しいカテゴリを追加</h2>
+                className="mb-8 bg-white px-8 py-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
                 <CategoryForm onAddCategory={addCategory}/>
+                <CategoryList categories={categories}/>
             </div>
-
-            <h2 className="text-2xl font-semibold text-gray-700 mb-6 text-center">カテゴリー一覧</h2>
-            <CategoryList categories={categories}/>
         </div>
     );
 };
