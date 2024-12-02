@@ -5,6 +5,7 @@ import {AppstoreOutlined, HomeOutlined, LikeOutlined, UnorderedListOutlined} fro
 import 'antd/dist/reset.css';
 import 'tailwindcss/tailwind.css';
 import './globals.css';
+import Link from 'next/link';
 import {useState} from 'react';
 
 const {Header, Content, Footer} = Layout;
@@ -51,19 +52,19 @@ export default function RootLayout({children}: { children: React.ReactNode }) {
                 >
                     <Menu.Item key="1" icon={<HomeOutlined/>} style={{color: '#fff'}}
                                className="hover:text-yellow-300 transition duration-200">
-                        ホーム
+                        <Link href="/">ホーム</Link>
                     </Menu.Item>
                     <Menu.Item key="2" icon={<AppstoreOutlined/>} style={{color: '#fff'}}
                                className="hover:text-yellow-300 transition duration-200">
-                        カテゴリー一覧
+                        <Link href="/categories">カテゴリー一覧</Link>
                     </Menu.Item>
                     <Menu.Item key="3" icon={<UnorderedListOutlined/>} style={{color: '#fff'}}
                                className="hover:text-yellow-300 transition duration-200">
-                        最新順
+                        <Link href="/latest">最新順</Link>
                     </Menu.Item>
                     <Menu.Item key="4" icon={<LikeOutlined/>} style={{color: '#fff'}}
                                className="hover:text-yellow-300 transition duration-200">
-                        イイね順
+                        <Link href="/popular">イイね順</Link>
                     </Menu.Item>
                 </Menu>
             </Header>
