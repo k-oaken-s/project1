@@ -6,15 +6,11 @@
 *.iml
 /out/
 build/
-backend/build/
 backend/bin/
-backend/bin/*
-/backend/bin/
-/backend/bin/*
 backend/out/
 !gradle/wrapper/gradle-wrapper.jar
-.gradle
-backend/.gradle
+.gradle/
+backend/.gradle/
 
 # OS generated files
 .DS_Store
@@ -26,8 +22,6 @@ backend/.idea/
 *.iws
 *.ipr
 *.iml
-.idea/
-backend/out/
 
 # VS Code
 .vscode/
@@ -44,7 +38,6 @@ frontend/out/
 
 # Docker
 *.log
-doc
 
-#
+# Secrets and sensitive files
 .secrets

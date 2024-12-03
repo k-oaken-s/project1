@@ -14,7 +14,7 @@ import rankifyHub.userTier.domain.vo.UserTierName
 import rankifyHub.userTier.presentation.dto.CreateUserTierRequest
 
 @Service
-class UserTierUseCase(
+class CreateUserTierUseCase(
   private val userTierRepository: UserTierRepository,
   private val userTierFactory: UserTierFactory
 ) {

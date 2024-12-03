@@ -1,24 +1,39 @@
 package rankifyHub.userTier.domain.repository
 
-import java.util.UUID
-import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.stereotype.Repository
+import java.time.Instant
 import rankifyHub.userTier.domain.model.UserTier
 
-@Repository
-interface UserTierRepository : JpaRepository<UserTier, UUID> {
-  /**
-   * 匿名ユーザーのIDとカテゴリIDで特定のUserTierを検索
-   *
-   * @param categoryId カテゴリのID
-   * @return 該当するUserTierのリスト
-   */
-  fun findByCategoryId(categoryId: String): List<UserTier>
+/** UserTierリポジトリのドメイン層インターフェース */
+interface UserTierRepository {
 
   /**
-   * 公開されているUserTierを取得
+   * UserTierを保存します。
+   *
+   * @param userTier 保存するUserTier
+   * @return 保存されたUserTier
+   */
+  fun save(userTier: UserTier): UserTier
+
+  /**
+   * 公開されているUserTierを取得します。
    *
    * @return 公開されているUserTierのリスト
    */
-  fun findByIsPublicTrue(): List<UserTier>
+  fun findByIsPublicTrueOrderByCreatedAtDesc(): List<UserTier>
+
+  /**
+   * 指定した件数の最新のUserTierを取得します。
+   *
+   * @param limit 取得する件数
+   * @return 最新のUserTierリスト
+   */
+  fun findLatest(limit: Int): List<UserTier>
+
+  /**
+   * 指定した時刻以降のUserTierを取得します。
+   *
+   * @param timestamp 開始時刻
+   * @return 指定時刻以降のUserTierリスト
+   */
+  fun findSince(timestamp: Instant): List<UserTier>
 }

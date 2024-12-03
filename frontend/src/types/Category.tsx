@@ -1,4 +1,4 @@
-import { Item } from "./Item";
+import {Item} from "./Item";
 
 export interface Category {
     id: string;
@@ -6,4 +6,5 @@ export interface Category {
     description: string;
     image: string
     items: Item[];
+    createdAt: string;
 }
