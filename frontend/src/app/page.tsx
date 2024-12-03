@@ -1,9 +1,9 @@
 "use client";
 
 import UserCategoryList from '@/components/UserCategoryList';
-import UserTierList from '@/components/UserTierList'; // 新しく作成するコンポーネント
+import UserTierList from '@/components/UserTierList';
 import {Category as CategoryType} from '@/types/Category';
-import {Tier as TierType} from '@/types/Tier'; // Tierの型をインポート
+import {Tier as TierType} from '@/types/Tier';
 import {getApiBaseUrl} from '@/utils/getApiBaseUrl';
 import axios from 'axios';
 import {useEffect, useState} from 'react';
@@ -12,6 +12,7 @@ import 'tailwindcss/tailwind.css';
 const TopPage = () => {
     const [categories, setCategories] = useState<CategoryType[]>([]);
     const [tiers, setTiers] = useState<TierType[]>([]);
+    const [lastUpdated, setLastUpdated] = useState<number>(Date.now());
 
     useEffect(() => {
         // カテゴリの取得（最近追加された順にN件）
@@ -22,8 +23,14 @@ const TopPage = () => {
 
         // Tierの取得（新着N件）
         axios
-            .get<TierType[]>(`${getApiBaseUrl()}/tiers?limit=10&sort=createdAt_desc`)
-            .then((res) => setTiers(res.data))
+            .get<TierType[]>(`${getApiBaseUrl()}/user-tiers/latest?limit=10`)
+            .then((res) => {
+                setTiers(res.data);
+                if (res.data.length > 0) {
+                    const latestTimestamp = new Date(res.data[0].createdAt).getTime();
+                    setLastUpdated(latestTimestamp);
+                }
+            })
             .catch((err) => console.error("Failed to fetch tiers:", err));
     }, []);
 
@@ -33,13 +40,16 @@ const TopPage = () => {
 
         const longPolling = () => {
             axios
-                .get<TierType[]>(`${getApiBaseUrl()}/tiers/long-polling?since=${Date.now()}`)
+                .get<TierType[]>(`${getApiBaseUrl()}/user-tiers/since?since=${lastUpdated}`)
                 .then((res) => {
                     if (isMounted && res.data.length > 0) {
                         setTiers((prevTiers) => {
-                            const newTiers = res.data.concat(prevTiers);
+                            const newTiers = [...res.data, ...prevTiers];
                             return newTiers.slice(0, 10); // 最新10件を保持
                         });
+                        // 最新の更新日時を更新
+                        const latestTimestamp = new Date(res.data[0].createdAt).getTime();
+                        setLastUpdated(latestTimestamp);
                     }
                     // 再度ポーリング
                     longPolling();
@@ -59,7 +69,7 @@ const TopPage = () => {
         return () => {
             isMounted = false;
         };
-    }, []);
+    }, [lastUpdated]);
 
     return (
         <div className="container mx-auto px-4">

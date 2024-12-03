@@ -1,6 +1,9 @@
+// types/Tier.ts
+
 export interface Tier {
-    id: string;
-    title: string;
-    description: string;
+    accessUrl: string;
     createdAt: string;
+    name: string;
+    categoryName: string;
+    categoryImageUrl: string;
 }

@@ -1,5 +1,9 @@
+// components/UserTierList.tsx
+
 import React from 'react';
 import {Tier as TierType} from '@/types/Tier';
+import Link from 'next/link';
+import ImageWrapper from "@/components/ImageWrapper";
 
 interface UserTierListProps {
     tiers: TierType[];
@@ -7,17 +11,31 @@ interface UserTierListProps {
 
 const UserTierList: React.FC<UserTierListProps> = ({tiers}) => {
     return (
-        <ul className="space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 p-6">
             {tiers.map((tier) => (
-                <li key={tier.id} className="border p-4 rounded shadow">
-                    <h2 className="text-2xl font-bold">{tier.title}</h2>
-                    <p>{tier.description}</p>
-                    <p className="text-sm text-gray-500">
-                        作成日時: {new Date(tier.createdAt).toLocaleString()}
-                    </p>
-                </li>
+                <div
+                    key={tier.accessUrl}
+                    className="bg-white rounded-xl shadow-md p-4 hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1 cursor-pointer"
+                >
+                    <Link href={tier.accessUrl}>
+                        <div>
+                            <ImageWrapper
+                                src={tier.categoryImageUrl}
+                                alt={`${tier.categoryName}の画像`}
+                                className="w-full h-40 object-cover rounded-md mb-4"
+                                width={400}
+                                height={200}
+                            />
+                            <h3 className="text-xl font-semibold text-gray-900">{tier.name}</h3>
+                            <p className="text-sm text-gray-700 mt-2">{tier.categoryName}</p>
+                            <p className="text-sm text-gray-500 mt-2">
+                                作成日時: {new Date(tier.createdAt).toLocaleString()}
+                            </p>
+                        </div>
+                    </Link>
+                </div>
             ))}
-        </ul>
+        </div>
     );
 };
 
