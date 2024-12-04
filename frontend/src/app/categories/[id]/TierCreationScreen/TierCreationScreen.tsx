@@ -3,26 +3,33 @@
 import {Item} from "@/types/Item";
 import {getAnonymousId} from "@/utils/getAnonymousId";
 import {
-    closestCenter,
     DndContext,
     DragEndEvent,
     DragOverlay,
     DragStartEvent,
     PointerSensor,
+    rectIntersection,
     useSensor,
     useSensors,
 } from "@dnd-kit/core";
-import {arrayMove, SortableContext, verticalListSortingStrategy,} from "@dnd-kit/sortable";
-import React, {useState} from "react";
+import {arrayMove, rectSortingStrategy, SortableContext} from "@dnd-kit/sortable";
+import {useState} from "react";
 import {Button, Input, message, Typography} from "antd";
-import DroppableArea from "./DraggableArea";
+import SortableTier from "./SortableTier";
 import DraggableItem from "./DraggableItem";
-import Tier from "./Tier";
-import SortableTier from "./SortableTier"; // 新規作成
 import ImageWrapper from "@/components/ImageWrapper";
 import {getImageUrl} from "@/utils/getImageUrl";
+import Tier from "@/app/categories/[id]/TierCreationScreen/Tier";
 
 const {Text, Title} = Typography;
+
+// Tier の構造を型定義
+type Tier = {
+    name: string;
+    items: Item[];
+};
+
+type Tiers = Record<string, Tier>;
 
 type TierCreationScreenProps = {
     items: Item[];
@@ -37,14 +44,14 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({
                                                                    categoryName,
                                                                    categoryImageUrl,
                                                                }) => {
-    const initialTiers = {
+    const initialTiers: Tiers = {
         Tier1: {name: "Tier 1", items: []},
         Tier2: {name: "Tier 2", items: []},
         Tier3: {name: "Tier 3", items: []},
         Tier4: {name: "Tier 4", items: []},
     };
 
-    const [tiers, setTiers] = useState<{ [key: string]: { name: string; items: Item[] } }>(initialTiers);
+    const [tiers, setTiers] = useState<Tiers>(initialTiers);
     const [tierOrder, setTierOrder] = useState<string[]>(Object.keys(initialTiers));
 
     const [tierName, setTierName] = useState<string>(""); // Tier全体の名前
@@ -60,6 +67,17 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({
 
     const anonymousId = getAnonymousId();
 
+    const tierColors: Record<string, string> = {
+        Tier1: "#2A1536",
+        Tier2: "#3A1A1A",
+        Tier3: "#3A2A15",
+        Tier4: "#152641",
+        Tier5: "#153A29",
+        default: "#2D2D2D", // グレー背景 (Tier6以降)
+        unassigned: "#8A8A8A",
+    };
+
+
     const findItemById = (id: string): Item | null => {
         const allItems = [...availableItems, ...Object.values(tiers).flatMap((tier) => tier.items)];
         return allItems.find((item) => item.id === id) || null;
@@ -67,27 +85,23 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({
 
     const handleDragStart = (event: DragStartEvent) => {
         const {active} = event;
-        if (tierOrder.includes(String(active.id))) {
+        if (tierOrder.includes(active.id as string)) {
             // Tierをドラッグ開始
-            setActiveTierId(String(active.id));
+            setActiveTierId(active.id as string);
         } else {
             // アイテムをドラッグ開始
-            setActiveId(String(active.id));
+            setActiveId(active.id as string);
         }
-    };
-
-    const handleDragOver = (event: any) => {
-        // 特に処理が必要なければ空でOK
     };
 
     const handleDragEnd = (event: DragEndEvent) => {
         const {active, over} = event;
 
-        if (activeTierId && over && tierOrder.includes(String(active.id))) {
+        if (activeTierId && over && tierOrder.includes(active.id as string)) {
             // Tierのドラッグ終了処理
             if (active.id !== over.id) {
-                const oldIndex = tierOrder.indexOf(String(active.id));
-                const newIndex = tierOrder.indexOf(String(over.id));
+                const oldIndex = tierOrder.indexOf(active.id as string);
+                const newIndex = tierOrder.indexOf(over.id as string);
                 setTierOrder((items) => arrayMove(items, oldIndex, newIndex));
             }
             setActiveTierId(null);
@@ -98,15 +112,17 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({
                 return;
             }
 
-            const activeItem = findItemById(String(active.id));
+            const activeItem = findItemById(active.id as string);
             if (!activeItem) {
                 setActiveId(null);
                 return;
             }
 
             const sourceTier =
-                Object.keys(tiers).find((key) => tiers[key].items.some((item) => item.id === active.id)) || "unassigned";
-            const destinationTier = over.id;
+                Object.keys(tiers).find((key) =>
+                    tiers[key].items.some((item) => item.id === active.id)
+                ) || "unassigned";
+            const destinationTier = over.id as string;
 
             if (sourceTier === destinationTier) {
                 setActiveId(null);
@@ -203,12 +219,11 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({
         <DndContext
             sensors={sensors}
             onDragStart={handleDragStart}
-            onDragOver={handleDragOver}
             onDragEnd={handleDragEnd}
-            collisionDetection={closestCenter}
+            collisionDetection={rectIntersection} // カスタマイズされた挙動
         >
             <div className="text-center mb-6">
-                <Title level={2}>{categoryName}</Title>
+                <Title level={2} className="text-white">{categoryName}</Title>
                 <ImageWrapper
                     src={getImageUrl(categoryImageUrl)}
                     alt={categoryName}
@@ -227,13 +242,23 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({
                         fontSize: "18px",
                         margin: "20px auto",
                         display: "block",
+                        backgroundColor: "#333",
+                        color: "#fff",
+                        borderRadius: "8px",
+                        border: "1px solid #555",
                     }}
                     className="mt-4"
                 />
             </div>
 
-            <SortableContext items={tierOrder} strategy={verticalListSortingStrategy}>
-                <div className="space-y-8">
+            <SortableContext items={tierOrder} strategy={rectSortingStrategy}>
+                <div
+                    style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        rowGap: "1px",
+                    }}
+                >
                     {tierOrder.map((tierKey) => (
                         <SortableTier
                             key={tierKey}
@@ -241,21 +266,29 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({
                             name={tiers[tierKey].name}
                             items={tiers[tierKey].items}
                             onNameChange={(newName) => handleTierNameChange(tierKey, newName)}
+                            backgroundColor={tierColors[tierKey] || tierColors.default}
                         />
                     ))}
                 </div>
             </SortableContext>
 
-            <div className="mt-8">
-                <DroppableArea id="unassigned" items={availableItems}>
-                    <h3 className="text-lg font-semibold mb-4">未割り当てアイテム</h3>
-                    <div className="flex gap-4 flex-wrap">
-                        {availableItems.map((item) => (
-                            <DraggableItem key={item.id} item={item}/>
-                        ))}
-                    </div>
-                </DroppableArea>
+            <div
+                className="mt-8 p-4 rounded-md shadow-md"
+                style={{
+                    backgroundColor: tierColors.unassigned, // 淡いグレーを適用
+                    minHeight: "150px", // 必要に応じて高さを調整
+                }}
+            >
+                <h3 className="text-lg font-semibold mb-4" style={{color: "#333"}}>
+                    未割り当てアイテム
+                </h3>
+                <div className="flex gap-4 flex-wrap">
+                    {availableItems.map((item) => (
+                        <DraggableItem key={item.id} item={item}/>
+                    ))}
+                </div>
             </div>
+
 
             <div className="mt-8 text-center">
                 <Button type="default" onClick={() => generateTierUrl(true)} loading={isGenerating}
@@ -267,7 +300,7 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({
                 </Button>
                 {generatedUrl && (
                     <div className="mt-4">
-                        <Text>
+                        <Text className="text-white">
                             生成されたURL:{" "}
                             <a href={generatedUrl} target="_blank" rel="noopener noreferrer">
                                 {generatedUrl}
@@ -284,7 +317,7 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({
                         name={tiers[activeTierId].name}
                         items={tiers[activeTierId].items}
                         onNameChange={(newName) => handleTierNameChange(activeTierId, newName)}
-                        isOverlay
+                        backgroundColor={tierColors[activeTierId]}
                     />
                 ) : activeId ? (
                     (() => {

@@ -20,9 +20,7 @@ services:
             context: ./backend
             dockerfile: Dockerfile
         volumes:
-            - ./backend/build/libs:/app/build/libs
-            - ./backend/src/main/kotlin:/app/src/main/kotlin
-            - ./backend/src/main/resources:/app/src/main/resources
+            - ./backend:/app
             - ~/.m2:/root/.m2 # Mavenキャッシュを共有
         ports:
             - "8080:8080"

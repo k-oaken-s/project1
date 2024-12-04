@@ -1,5 +1,5 @@
-import { Item } from "@/types/Item";
-import { useDroppable } from "@dnd-kit/core";
+import {Item} from "@/types/Item";
+import {useDroppable} from "@dnd-kit/core";
 import React from "react";
 
 type DroppableAreaProps = {
@@ -8,25 +8,24 @@ type DroppableAreaProps = {
     children: React.ReactNode;
 };
 
-const DroppableArea: React.FC<DroppableAreaProps> = ({ id, items, children }) => {
-    const { setNodeRef } = useDroppable({
+const DroppableArea: React.FC<DroppableAreaProps> = ({id, items, children}) => {
+    const {setNodeRef} = useDroppable({
         id,
-        data: { tierName: id },
+        data: {tierName: id},
     });
 
     return (
         <div
-            ref={setNodeRef}
+            id={id}
+            className="relative flex flex-col gap-4 p-4"
             style={{
-                border: "1px dashed #ccc",
+                backgroundColor: "inherit", // 親要素の背景色を引き継ぐ
                 borderRadius: "8px",
-                padding: "16px",
-                backgroundColor: "#f9f9f9",
-                minHeight: "100px",
             }}
         >
             {children}
         </div>
+
     );
 };
 

@@ -7,6 +7,13 @@ RUN apt-get update && apt-get install -y default-mysql-client
 # アプリケーションを実行する作業ディレクトリを設定
 WORKDIR /app
 
+# キャッシュを利用してMaven依存関係を効率化
+COPY ./gradlew ./gradlew
+COPY ./gradle ./gradle
+COPY ./build.gradle.kts ./build.gradle.kts
+COPY ./settings.gradle.kts ./settings.gradle.kts
+RUN ./gradlew build --no-daemon || return 0
+
 # Gradleビルドを行ったjarファイルをコピー
 COPY build/libs/*.jar app.jar
 
