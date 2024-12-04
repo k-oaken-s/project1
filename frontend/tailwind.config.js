@@ -8,7 +8,13 @@ const config = {
         './src/**/*.{js,ts,jsx,tsx,mdx}',
     ],
     theme: {
-        extend: {},
+        extend: {
+            colors: {
+                'custom-red': '#F28B82',
+                'custom-green': '#81C995',
+                'custom-blue': '#AECBFA',
+            },
+        },
     },
     plugins: [],
 }
