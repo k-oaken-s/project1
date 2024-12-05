@@ -227,10 +227,7 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({
                 <ImageWrapper
                     src={getImageUrl(categoryImageUrl)}
                     alt={categoryName}
-                    layout="responsive"
-                    width={700}
-                    height={475}
-                    style={{maxWidth: "100%", height: "auto"}}
+                    className="tier-creation-screen-category-image"
                 />
                 <Input
                     value={tierName}

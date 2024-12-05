@@ -17,10 +17,8 @@ const DraggableItem: React.FC<DraggableItemProps> = ({item, isOverlay = false}) 
 
     // スタイル設定
     const style: React.CSSProperties = {
-        // ドラッグ中は元のアイテムを非表示
-        visibility: isDragging ? 'hidden' : 'visible',
-        // ドラッグ中のtransformを無効化
-        transform: isDragging ? undefined : transform ? CSS.Transform.toString(transform) : undefined,
+        visibility: isDragging ? "hidden" : "visible",
+        transform: !isDragging && transform ? CSS.Transform.toString(transform) : undefined,
         transition: "transform 0.2s ease",
         width: "80px",
         height: "80px",
@@ -35,7 +33,7 @@ const DraggableItem: React.FC<DraggableItemProps> = ({item, isOverlay = false}) 
 
     return (
         <div
-            ref={isOverlay ? undefined : setNodeRef} // オーバーレイの場合はrefを設定しない
+            ref={isOverlay ? undefined : (node) => setNodeRef(node)} // 動的にrefを設定
             style={style}
             {...listeners}
             {...attributes}
