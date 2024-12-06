@@ -6,7 +6,7 @@ interface UserCategoryListProps {
 }
 
 const UserCategoryList = ({categories}: UserCategoryListProps) => (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 p-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 p-2">
         {categories.map((category) => (
             <UserCategoryTile key={category.id} category={category}/>
         ))}
