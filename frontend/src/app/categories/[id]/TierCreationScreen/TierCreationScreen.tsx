@@ -14,7 +14,7 @@ import {
 } from "@dnd-kit/core";
 import {arrayMove, rectSortingStrategy, SortableContext} from "@dnd-kit/sortable";
 import {useState} from "react";
-import {Button, Input, message, Typography} from "antd";
+import {Input, message, Typography} from "antd";
 import SortableTier from "./SortableTier";
 import DraggableItem from "./DraggableItem";
 import ImageWrapper from "@/components/ImageWrapper";
@@ -220,32 +220,41 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({
             sensors={sensors}
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
-            collisionDetection={rectIntersection} // カスタマイズされた挙動
+            collisionDetection={rectIntersection}
         >
-            <div className="text-center mb-6">
-                <Title level={2} className="text-white">{categoryName}</Title>
-                <ImageWrapper
-                    src={getImageUrl(categoryImageUrl)}
-                    alt={categoryName}
-                    className="tier-creation-screen-category-image"
-                />
+            <div className="text-center mb-8">
+                <div
+                    className="flex justify-center items-center p-6 mb-6">
+                    <ImageWrapper
+                        src={getImageUrl(categoryImageUrl)}
+                        alt={categoryName}
+                        className="w-24 h-24 object-cover rounded-lg mr-6 shadow-md"
+                    />
+                    <h2 className="text-gray-300 text-3xl">
+                        {categoryName}
+                    </h2>
+                </div>
+                <label htmlFor="tierNameInput" className="block text-lg font-medium text-gray-300 mb-2">
+                    Your Tier Name
+                </label>
                 <Input
+                    id="tierNameInput"
                     value={tierName}
                     onChange={(e) => setTierName(e.target.value)}
-                    placeholder="Tier全体の名前を入力してください"
+                    placeholder="例: 最強キャラランキング"
                     style={{
-                        width: "80%",
-                        height: "50px",
-                        fontSize: "18px",
-                        margin: "20px auto",
-                        display: "block",
-                        backgroundColor: "#333",
+                        width: "100%",
+                        height: "45px",
+                        fontSize: "16px",
+                        backgroundColor: "#444",
                         color: "#fff",
-                        borderRadius: "8px",
-                        border: "1px solid #555",
+                        borderRadius: "6px",
+                        border: "1px solid #666",
+                        padding: "0 10px",
                     }}
-                    className="mt-4"
+                    className="focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
                 />
+                {/*</div>*/}
             </div>
 
             <SortableContext items={tierOrder} strategy={rectSortingStrategy}>
@@ -272,8 +281,8 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({
             <div
                 className="mt-8 p-4 rounded-md shadow-md"
                 style={{
-                    backgroundColor: tierColors.unassigned, // 淡いグレーを適用
-                    minHeight: "150px", // 必要に応じて高さを調整
+                    backgroundColor: tierColors.unassigned,
+                    minHeight: "150px",
                 }}
             >
                 <h3 className="text-lg font-semibold mb-4" style={{color: "#333"}}>
@@ -286,26 +295,46 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({
                 </div>
             </div>
 
-
             <div className="mt-8 text-center">
-                <Button type="default" onClick={() => generateTierUrl(true)} loading={isGenerating}
-                        className="mb-4 mr-4">
+                <button
+                    onClick={() => generateTierUrl(true)}
+                    disabled={isGenerating}
+                    className={`mb-4 mr-4 px-6 py-3 rounded-lg font-semibold text-base transition duration-200 ${
+                        isGenerating
+                            ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
+                            : 'bg-gray-800 text-white hover:bg-gray-700'
+                    }`}
+                >
                     公開してURL生成
-                </Button>
-                <Button type="primary" onClick={() => generateTierUrl(false)} loading={isGenerating}>
+                </button>
+                <button
+                    onClick={() => generateTierUrl(false)}
+                    disabled={isGenerating}
+                    className={`px-6 py-3 rounded-lg font-semibold text-base transition duration-200 ${
+                        isGenerating
+                            ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
+                            : 'bg-gray-800 text-white hover:bg-gray-700'
+                    }`}
+                >
                     非公開でURL生成
-                </Button>
+                </button>
                 {generatedUrl && (
-                    <div className="mt-4">
-                        <Text className="text-white">
+                    <div className="mt-6">
+                        <p className="text-gray-400">
                             生成されたURL:{" "}
-                            <a href={generatedUrl} target="_blank" rel="noopener noreferrer">
+                            <a
+                                href={generatedUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-400 underline hover:text-blue-300"
+                            >
                                 {generatedUrl}
                             </a>
-                        </Text>
+                        </p>
                     </div>
                 )}
             </div>
+
 
             <DragOverlay>
                 {activeTierId ? (
