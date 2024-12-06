@@ -17,9 +17,9 @@ import {useState} from "react";
 import {Input, message, Typography} from "antd";
 import SortableTier from "./SortableTier";
 import DraggableItem from "./DraggableItem";
-import ImageWrapper from "@/components/ImageWrapper";
 import {getImageUrl} from "@/utils/getImageUrl";
 import Tier from "@/app/categories/[id]/TierCreationScreen/Tier";
+import ImageWrapper from "@/components/ImageWrapper";
 
 const {Text, Title} = Typography;
 
@@ -225,11 +225,16 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({
             <div className="text-center mb-8">
                 <div
                     className="flex justify-center items-center p-6 mb-6">
-                    <ImageWrapper
-                        src={getImageUrl(categoryImageUrl)}
-                        alt={categoryName}
-                        className="w-24 h-24 object-cover rounded-lg mr-6 shadow-md"
-                    />
+                    <div
+                        className="flex items-center justify-center max-w-full max-h-full rounded-lg shadow-md overflow-hidden bg-transparent">
+                        <ImageWrapper
+                            src={getImageUrl(categoryImageUrl)}
+                            alt={categoryName}
+                            className="object-cover w-full h-full"
+                        />
+                    </div>
+
+
                     <h2 className="text-gray-300 text-3xl">
                         {categoryName}
                     </h2>
