@@ -6,7 +6,13 @@ interface UserCategoryListProps {
 }
 
 const UserCategoryList = ({categories}: UserCategoryListProps) => (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 p-2">
+    <div
+        className="grid gap-4 p-4"
+        style={{
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            placeItems: 'center',
+        }}
+    >
         {categories.map((category) => (
             <UserCategoryTile key={category.id} category={category}/>
         ))}
