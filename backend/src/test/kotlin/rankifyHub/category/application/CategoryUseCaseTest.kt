@@ -15,8 +15,10 @@ class CategoryUseCaseTest :
     val categoryUseCase = CategoryUseCase(categoryRepository)
 
     describe("CategoryUseCase") {
+
+      // getAllCategoriesメソッドのテスト
       context("getAllCategories") {
-        it("should return all categories") {
+        it("すべてのカテゴリを取得できること") {
           val categories =
             listOf(
               Category.create("Category1", "Description1", null),
@@ -31,8 +33,9 @@ class CategoryUseCaseTest :
         }
       }
 
+      // getCategoryWithItemsメソッドのテスト
       context("getCategoryWithItems") {
-        it("should return the category with the given ID") {
+        it("指定されたIDのカテゴリを取得できること") {
           val categoryId = UUID.randomUUID().toString()
           val category = Category.create("Category1", "Description1", null)
           every { categoryRepository.findById(categoryId) } returns Optional.of(category)
@@ -43,7 +46,7 @@ class CategoryUseCaseTest :
           verify { categoryRepository.findById(categoryId) }
         }
 
-        it("should throw IllegalArgumentException if category not found") {
+        it("カテゴリが見つからない場合に例外をスローすること") {
           val categoryId = UUID.randomUUID().toString()
           every { categoryRepository.findById(categoryId) } returns Optional.empty()
 
@@ -54,8 +57,9 @@ class CategoryUseCaseTest :
         }
       }
 
+      // addCategoryメソッドのテスト
       context("addCategory") {
-        it("should add a new category") {
+        it("新しいカテゴリを追加できること") {
           val addCategoryDto = AddCategoryDto("New Category", "New Description")
           val category = Category.create(addCategoryDto.name, addCategoryDto.description, null)
           every { categoryRepository.save(any()) } returns category
@@ -64,12 +68,13 @@ class CategoryUseCaseTest :
 
           result.name shouldBe addCategoryDto.name
           result.description shouldBe addCategoryDto.description
-          verify { categoryRepository.save(any()) }
+          verify { categoryRepository.save(match { it.name == addCategoryDto.name }) }
         }
       }
 
+      // deleteCategoryメソッドのテスト
       context("deleteCategory") {
-        it("should delete a category by ID") {
+        it("指定されたIDのカテゴリを削除できること") {
           val categoryId = UUID.randomUUID().toString()
           every { categoryRepository.deleteById(categoryId) } just Runs
 
@@ -79,24 +84,25 @@ class CategoryUseCaseTest :
         }
       }
 
+      // addItemToCategoryメソッドのテスト
       context("addItemToCategory") {
-        it("should add an item to a category") {
+        it("カテゴリにアイテムを追加できること") {
           val categoryId = UUID.randomUUID().toString()
-          val category = mockk<Category>(relaxed = true)
-          val item = Item.create("New Item", null)
+          val category = mockk<Category>()
+          val item = Item.create("New Item", null, category, "")
           every { categoryRepository.findById(categoryId) } returns Optional.of(category)
-          every { category.addItem("New Item", null) } returns item
+          every { category.addItem("New Item", null, "") } returns item
           every { categoryRepository.save(category) } returns category
 
           val result =
             categoryUseCase.addItemToCategory(categoryId, """{"name":"New Item"}""", null)
 
           result.name shouldBe "New Item"
-          verify { category.addItem("New Item", null) }
+          verify { category.addItem("New Item", null, "") }
           verify { categoryRepository.save(category) }
         }
 
-        it("should throw IllegalArgumentException if category not found") {
+        it("カテゴリが見つからない場合に例外をスローすること") {
           val categoryId = UUID.randomUUID().toString()
           every { categoryRepository.findById(categoryId) } returns Optional.empty()
 
@@ -109,19 +115,21 @@ class CategoryUseCaseTest :
         }
       }
 
+      // updateItemInCategoryメソッドのテスト
       context("updateItemInCategory") {
-        it("should update an item in a category") {
+        it("カテゴリ内のアイテムを更新できること") {
           val categoryId = UUID.randomUUID().toString()
           val itemId = UUID.randomUUID().toString()
-          val category = mockk<Category>(relaxed = true)
-          val updatedItem = Item.create("Updated Item", null)
+          val category = mockk<Category>()
+          val updatedItem = Item.create("Updated Item", null, category, "")
           every { categoryRepository.findById(categoryId) } returns Optional.of(category)
           every {
             category.updateItem(
               itemId = itemId,
               name = "Updated Item",
               image = null,
-              keepCurrentImage = true
+              keepCurrentImage = true,
+              description = ""
             )
           } returns updatedItem
           every { categoryRepository.save(category) } returns category
@@ -136,11 +144,11 @@ class CategoryUseCaseTest :
             )
 
           result.name shouldBe "Updated Item"
-          verify { category.updateItem(itemId, "Updated Item", null, true) }
+          verify { category.updateItem(itemId, "Updated Item", null, true, "") }
           verify { categoryRepository.save(category) }
         }
 
-        it("should throw IllegalArgumentException if category not found") {
+        it("カテゴリが見つからない場合に例外をスローすること") {
           val categoryId = UUID.randomUUID().toString()
           val itemId = UUID.randomUUID().toString()
           every { categoryRepository.findById(categoryId) } returns Optional.empty()
