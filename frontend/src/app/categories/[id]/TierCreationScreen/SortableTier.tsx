@@ -1,5 +1,5 @@
 import React from "react";
-import {rectSortingStrategy, SortableContext, useSortable} from "@dnd-kit/sortable";
+import {useSortable} from "@dnd-kit/sortable";
 import {CSS} from "@dnd-kit/utilities";
 import Tier from "./Tier";
 import {Item} from "@/types/Item";
@@ -13,25 +13,31 @@ type SortableTierProps = {
 };
 
 const SortableTier: React.FC<SortableTierProps> = ({id, name, items, onNameChange, backgroundColor}) => {
-    const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({id});
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging,
+    } = useSortable({id});
+
     const style = {
         transform: CSS.Transform.toString(transform),
         transition,
         opacity: isDragging ? 0.8 : 1,
-        cursor: "move"
+        cursor: "move",
     };
 
     return (
         <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-            <SortableContext items={items.map(i => i.id)} strategy={rectSortingStrategy}>
-                <Tier
-                    id={id}
-                    name={name}
-                    items={items}
-                    onNameChange={onNameChange}
-                    backgroundColor={backgroundColor} // backgroundColorを渡す
-                />
-            </SortableContext>
+            <Tier
+                id={id}
+                name={name}
+                items={items}
+                onNameChange={onNameChange}
+                backgroundColor={backgroundColor}
+            />
         </div>
     );
 };
@@ -42,6 +48,6 @@ export default React.memo(SortableTier, (prev, next) => {
     for (let i = 0; i < prev.items.length; i++) {
         if (prev.items[i].id !== next.items[i].id) return false;
     }
-    if (prev.backgroundColor !== next.backgroundColor) return false; // backgroundColorの変更も比較
+    if (prev.backgroundColor !== next.backgroundColor) return false;
     return true;
 });

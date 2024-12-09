@@ -1,6 +1,6 @@
 import {Item} from "@/types/Item";
 import {getImageUrl} from "@/utils/getImageUrl";
-import {useDraggable} from "@dnd-kit/core";
+import {useSortable} from "@dnd-kit/sortable";
 import {CSS} from "@dnd-kit/utilities";
 import React from "react";
 import ImageWrapper from "@/components/ImageWrapper";
@@ -11,15 +11,14 @@ type DraggableItemProps = {
 };
 
 const DraggableItem: React.FC<DraggableItemProps> = ({item, isOverlay = false}) => {
-    const {attributes, listeners, setNodeRef, transform, isDragging} = useDraggable({
+    const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({
         id: item.id,
     });
 
-    // スタイル設定
     const style: React.CSSProperties = {
-        visibility: isDragging ? "hidden" : "visible",
-        transform: !isDragging && transform ? CSS.Transform.toString(transform) : undefined,
-        transition: "transform 0.2s ease",
+        opacity: isDragging ? 0.5 : 1,
+        transform: transform ? CSS.Transform.toString(transform) : undefined,
+        transition: transition ?? "transform 0.2s ease",
         width: "120px",
         height: "120px",
         borderRadius: "8px",
@@ -30,6 +29,7 @@ const DraggableItem: React.FC<DraggableItemProps> = ({item, isOverlay = false}) 
         backgroundColor: "#fff",
         boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
         position: "relative",
+        cursor: "move",
     };
 
     const textStyle: React.CSSProperties = {
@@ -46,7 +46,7 @@ const DraggableItem: React.FC<DraggableItemProps> = ({item, isOverlay = false}) 
 
     return (
         <div
-            ref={isOverlay ? undefined : (node) => setNodeRef(node)} // 動的にrefを設定
+            ref={setNodeRef}
             style={style}
             {...listeners}
             {...attributes}
