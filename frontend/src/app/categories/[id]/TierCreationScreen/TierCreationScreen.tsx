@@ -97,65 +97,102 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({
     const handleDragEnd = (event: DragEndEvent) => {
         const {active, over} = event;
 
-        if (activeTierId && over && tierOrder.includes(active.id as string)) {
-            // Tierのドラッグ終了処理
+        if (!over || !active) {
+            setActiveId(null);
+            setActiveTierId(null);
+            return;
+        }
+
+        if (activeTierId && tierOrder.includes(active.id as string)) {
+            // Tier全体の移動処理
             if (active.id !== over.id) {
                 const oldIndex = tierOrder.indexOf(active.id as string);
                 const newIndex = tierOrder.indexOf(over.id as string);
                 setTierOrder((items) => arrayMove(items, oldIndex, newIndex));
             }
             setActiveTierId(null);
-        } else if (activeId) {
-            // アイテムのドラッグ終了処理
-            if (!over) {
-                setActiveId(null);
-                return;
-            }
+            return;
+        }
 
+        if (activeId) {
+            // アイテムの移動処理
             const activeItem = findItemById(active.id as string);
             if (!activeItem) {
                 setActiveId(null);
                 return;
             }
 
-            const sourceTier =
-                Object.keys(tiers).find((key) =>
-                    tiers[key].items.some((item) => item.id === active.id)
-                ) || "unassigned";
-            const destinationTier = over.id as string;
+            // 移動元と移動先のTierを特定
+            const sourceTier = Object.keys(tiers).find((key) =>
+                tiers[key].items.some((item) => item.id === active.id)
+            ) || "unassigned";
+
+            const destinationTier = Object.keys(tiers).find((key) =>
+                tiers[key].items.some((item) => item.id === over.id)
+            ) || over.id;
+
+            console.log("Items in sourceTier:", sourceTier);
+            console.log("active.id:", active.id);
+            console.log("over.id:", over.id);
+
 
             if (sourceTier === destinationTier) {
-                setActiveId(null);
-                return;
-            }
+                // 同じTier内での並び替え処理
+                const oldIndex = tiers[sourceTier].items.findIndex((item) => item.id === active.id);
+                const newIndex = tiers[sourceTier].items.findIndex((item) => item.id === over.id);
 
-            if (sourceTier === "unassigned") {
-                setAvailableItems((prev) => prev.filter((item) => item.id !== active.id));
+                if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
+                    setTiers((prev) => ({
+                        ...prev,
+                        [sourceTier]: {
+                            ...prev[sourceTier],
+                            items: arrayMove(prev[sourceTier].items, oldIndex, newIndex),
+                        },
+                    }));
+                }
             } else {
-                setTiers((prev) => ({
-                    ...prev,
-                    [sourceTier]: {
-                        ...prev[sourceTier],
-                        items: prev[sourceTier].items.filter((item) => item.id !== active.id),
-                    },
-                }));
-            }
+                // 異なるTier間の移動処理
+                if (sourceTier === "unassigned") {
+                    setAvailableItems((prev) => prev.filter((item) => item.id !== active.id));
+                } else {
+                    setTiers((prev) => ({
+                        ...prev,
+                        [sourceTier]: {
+                            ...prev[sourceTier],
+                            items: prev[sourceTier].items.filter((item) => item.id !== active.id),
+                        },
+                    }));
+                }
 
-            if (destinationTier === "unassigned") {
-                setAvailableItems((prev) => [...prev, activeItem]);
-            } else {
-                setTiers((prev) => ({
-                    ...prev,
-                    [destinationTier]: {
-                        ...prev[destinationTier],
-                        items: [...prev[destinationTier].items, activeItem],
-                    },
-                }));
+                if (destinationTier === "unassigned") {
+                    setAvailableItems((prev) => [...prev, activeItem]);
+                } else if (tiers[destinationTier]) {
+                    const newIndex = tiers[destinationTier as string].items.findIndex((item) => item.id === (over?.id as string));
+                    // 異なるTier間の移動処理
+                    const updatedDestinationItems = [...tiers[destinationTier as string].items];
+
+
+                    if (newIndex !== -1) {
+                        updatedDestinationItems.splice(newIndex, 0, activeItem);
+                    } else {
+                        updatedDestinationItems.push(activeItem);
+                    }
+
+
+                    setTiers((prev) => ({
+                        ...prev,
+                        [destinationTier as string]: {
+                            ...prev[destinationTier as string],
+                            items: updatedDestinationItems,
+                        },
+                    }));
+                }
             }
 
             setActiveId(null);
         }
     };
+
 
     const handleTierNameChange = (tierKey: string, newName: string) => {
         setTiers((prev) => ({
@@ -218,9 +255,9 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({
     return (
         <DndContext
             sensors={sensors}
+            collisionDetection={rectIntersection}
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
-            collisionDetection={rectIntersection}
         >
             <div className="text-center mb-8">
                 <div
@@ -267,13 +304,14 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({
                     style={{
                         display: "flex",
                         flexDirection: "column",
-                        rowGap: "1px",
+                        gap: "8px", // 見た目を改善するために調整
                     }}
                 >
                     {tierOrder.map((tierKey) => (
                         <SortableTier
                             key={tierKey}
-                            id={tierKey}
+                            id={tierKey} // ドラッグ可能にするために id を渡す
+                            tierKey={tierKey} // 必要に応じて追加情報を渡す
                             name={tiers[tierKey].name}
                             items={tiers[tierKey].items}
                             onNameChange={(newName) => handleTierNameChange(tierKey, newName)}
@@ -282,6 +320,7 @@ const TierCreationScreen: React.FC<TierCreationScreenProps> = ({
                     ))}
                 </div>
             </SortableContext>
+
 
             <div
                 className="mt-8 p-4 rounded-md shadow-md"

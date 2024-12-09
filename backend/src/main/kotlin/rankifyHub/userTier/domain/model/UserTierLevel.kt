@@ -23,7 +23,12 @@ class UserTierLevel(
   var orderIndex: OrderIndex = OrderIndex(1),
   @Column(name = "created_at", nullable = false) val createdAt: Instant = Instant.now(),
   @Column(name = "updated_at", nullable = false) val updatedAt: Instant = Instant.now(),
-  @OneToMany(mappedBy = "userTierLevel", cascade = [CascadeType.ALL], orphanRemoval = true)
+  @OneToMany(
+    mappedBy = "userTierLevel",
+    cascade = [CascadeType.ALL],
+    orphanRemoval = true,
+    fetch = FetchType.LAZY
+  )
   val items: MutableList<UserTierLevelItem> = mutableListOf()
 ) {
   constructor() : this(id = UUID.randomUUID().toString())

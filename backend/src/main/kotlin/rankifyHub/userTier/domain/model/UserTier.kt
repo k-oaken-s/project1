@@ -37,7 +37,12 @@ class UserTier(
   val accessUrl: AccessUrl,
   @Column(name = "created_at", nullable = false) val createdAt: Instant = Instant.now(),
   @Column(name = "updated_at", nullable = false) val updatedAt: Instant = Instant.now(),
-  @OneToMany(mappedBy = "userTier", cascade = [CascadeType.ALL], orphanRemoval = true)
+  @OneToMany(
+    mappedBy = "userTier",
+    cascade = [CascadeType.ALL],
+    orphanRemoval = true,
+    fetch = FetchType.LAZY
+  )
   private val levels: MutableList<UserTierLevel> = mutableListOf(),
 ) {
   constructor() :

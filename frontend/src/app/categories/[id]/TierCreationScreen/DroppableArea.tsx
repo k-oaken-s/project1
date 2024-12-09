@@ -16,16 +16,16 @@ const DroppableArea: React.FC<DroppableAreaProps> = ({id, items, children}) => {
 
     return (
         <div
+            ref={setNodeRef} // setNodeRefを適用
             id={id}
             className="relative flex flex-col gap-4 p-4"
             style={{
-                backgroundColor: "inherit", // 親要素の背景色を引き継ぐ
+                backgroundColor: "inherit",
                 borderRadius: "8px",
             }}
         >
             {children}
         </div>
-
     );
 };
 
