@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {Item} from "@/types/Item";
 import {Input, Typography} from "antd";
 import DraggableItem from "./DraggableItem";
-import DraggableArea from "./DraggableArea";
+import DraggableArea from "./DroppableArea";
 import {rectSortingStrategy, SortableContext} from "@dnd-kit/sortable";
 
 const {Title} = Typography;
