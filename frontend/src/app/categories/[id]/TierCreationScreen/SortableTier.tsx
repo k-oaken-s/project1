@@ -8,6 +8,7 @@ type SortableTierProps = {
     id: string;
     name: string;
     items: Item[];
+    tierKey: string;
     onNameChange: (newName: string) => void;
     backgroundColor: string;
 };
