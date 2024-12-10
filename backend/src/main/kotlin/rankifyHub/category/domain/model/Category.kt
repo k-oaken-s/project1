@@ -17,47 +17,47 @@ import java.util.*
  */
 @Entity
 @Table(name = "category")
-data class Category(
-  @Id val id: String = UUID.randomUUID().toString(),
-  @Column(nullable = false) val name: String = "",
-  val description: String? = null,
-  @Lob val image: ByteArray? = null,
-  @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
-  @JoinColumn(name = "category_id")
-  private val _items: MutableList<Item> = mutableListOf()
+open class Category(
+    @Id val id: String = UUID.randomUUID().toString(),
+    @Column(nullable = false) val name: String = "",
+    val description: String? = null,
+    @Lob val image: ByteArray? = null,
+    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
+    @JoinColumn(name = "category_id")
+    private val _items: MutableList<Item> = mutableListOf()
 ) {
 
-  val items: List<Item>
-    get() = _items.toList()
+    val items: List<Item>
+        get() = _items.toList()
 
-  override fun toString(): String {
-    return "Category(id='$id', name='$name', description=$description)"
-  }
-
-  companion object {
-    fun create(name: String, description: String?, image: ByteArray?): Category {
-      return Category(name = name, description = description, image = image)
+    override fun toString(): String {
+        return "Category(id='$id', name='$name', description=$description)"
     }
-  }
 
-  fun addItem(name: String, image: ByteArray?, description: String?): Item {
-    val item = Item.create(name = name, image = image, category = this, description = description)
-    _items.add(item)
-    return item
-  }
+    companion object {
+        fun create(name: String, description: String?, image: ByteArray?): Category {
+            return Category(name = name, description = description, image = image)
+        }
+    }
 
-  fun updateItem(
-    itemId: String,
-    name: String,
-    image: ByteArray?,
-    keepCurrentImage: Boolean,
-    description: String?
-  ): Item {
-    val item = _items.find { it.id == itemId } ?: throw IllegalArgumentException("Item not found")
-    val updatedImage = if (keepCurrentImage) item.image else image
-    val updatedItem = item.update(name = name, image = updatedImage, description = description)
-    _items.removeIf { it.id == itemId }
-    _items.add(updatedItem)
-    return updatedItem
-  }
+    fun addItem(name: String, image: ByteArray?, description: String?): Item {
+        val item = Item.create(name = name, image = image, category = this, description = description)
+        _items.add(item)
+        return item
+    }
+
+    fun updateItem(
+        itemId: String,
+        name: String,
+        image: ByteArray?,
+        keepCurrentImage: Boolean,
+        description: String?
+    ): Item {
+        val item = _items.find { it.id == itemId } ?: throw IllegalArgumentException("Item not found")
+        val updatedImage = if (keepCurrentImage) item.image else image
+        val updatedItem = item.update(name = name, image = updatedImage, description = description)
+        _items.removeIf { it.id == itemId }
+        _items.add(updatedItem)
+        return updatedItem
+    }
 }

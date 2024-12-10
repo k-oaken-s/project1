@@ -6,6 +6,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.6"
     id("application")
     id("com.diffplug.spotless") version "6.22.0"
+    kotlin("plugin.allopen") version "2.1.0"
 }
 
 dependencies {
