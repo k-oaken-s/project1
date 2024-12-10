@@ -2,6 +2,7 @@ package rankifyHub.category.domain.model
 
 import com.fasterxml.jackson.annotation.JsonBackReference
 import jakarta.persistence.*
+import org.springframework.stereotype.Component
 import java.util.*
 
 /**
@@ -17,41 +18,42 @@ import java.util.*
  * @property description アイテムの詳細情報。省略可能。
  */
 @Entity
+@Component
 @Table(name = "item")
 class Item(
-  @Id val id: String = UUID.randomUUID().toString(),
-  @Column(nullable = false) val name: String = "",
-  @Lob @Column(name = "image", columnDefinition = "BLOB") val image: ByteArray? = null,
-  @ManyToOne
-  @JoinColumn(name = "category_id", nullable = false)
-  @JsonBackReference
-  val category: Category,
-  @Column(name = "description", nullable = true, length = 255) val description: String? = null,
+    @Id val id: String = UUID.randomUUID().toString(),
+    @Column(nullable = false) val name: String = "",
+    @Lob @Column(name = "image", columnDefinition = "BLOB") val image: ByteArray? = null,
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    @JsonBackReference
+    val category: Category,
+    @Column(name = "description", nullable = true, length = 255) val description: String? = null,
 ) {
-  constructor() : this(id = "", name = "", image = null, category = Category(), description = null)
+    constructor() : this(id = "", name = "", image = null, category = Category(), description = null)
 
-  companion object {
-    fun create(
-      name: String,
-      image: ByteArray?,
-      category: Category,
-      description: String? = null
-    ): Item {
-      return Item(name = name, image = image, category = category, description = description)
+    companion object {
+        fun create(
+            name: String,
+            image: ByteArray?,
+            category: Category,
+            description: String? = null
+        ): Item {
+            return Item(name = name, image = image, category = category, description = description)
+        }
     }
-  }
 
-  fun update(name: String, image: ByteArray?, description: String? = null): Item {
-    return Item(
-      id = this.id,
-      name = name,
-      image = image,
-      category = this.category,
-      description = description
-    )
-  }
+    fun update(name: String, image: ByteArray?, description: String? = null): Item {
+        return Item(
+            id = this.id,
+            name = name,
+            image = image,
+            category = this.category,
+            description = description
+        )
+    }
 
-  override fun toString(): String {
-    return "Item(id='$id', name='$name', description='${description}', category='${category.id}')"
-  }
+    override fun toString(): String {
+        return "Item(id='$id', name='$name', description='${description}', category='${category.id}')"
+    }
 }
