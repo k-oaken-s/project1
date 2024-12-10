@@ -1,7 +1,6 @@
 package rankifyHub.category.domain.model
 
 import jakarta.persistence.*
-import org.springframework.stereotype.Component
 import java.util.*
 
 /**
@@ -17,9 +16,8 @@ import java.util.*
  * @property items カテゴリーに関連付けられたアイテムのリスト（読み取り専用）。
  */
 @Entity
-@Component
 @Table(name = "category")
-data class Category(
+open class Category(
     @Id val id: String = UUID.randomUUID().toString(),
     @Column(nullable = false) val name: String = "",
     val description: String? = null,

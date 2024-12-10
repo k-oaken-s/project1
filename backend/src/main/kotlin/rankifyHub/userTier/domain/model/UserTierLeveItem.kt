@@ -1,18 +1,16 @@
 package rankifyHub.userTier.domain.model
 
 import jakarta.persistence.*
-import org.springframework.stereotype.Component
 import rankifyHub.userTier.domain.vo.OrderIndex
 import java.time.Instant
 import java.util.*
 
 @Entity
-@Component
 @Table(
     name = "user_tier_level_item",
     uniqueConstraints = [UniqueConstraint(columnNames = ["user_tier_level_id", "order_index"])]
 )
-class UserTierLevelItem(
+open class UserTierLevelItem(
     @Id val id: String = UUID.randomUUID().toString(),
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_tier_level_id", nullable = false)

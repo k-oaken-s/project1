@@ -1,7 +1,6 @@
 package rankifyHub.userTier.domain.model
 
 import jakarta.persistence.*
-import org.springframework.stereotype.Component
 import rankifyHub.userTier.domain.vo.AccessUrl
 import rankifyHub.userTier.domain.vo.AnonymousId
 import rankifyHub.userTier.domain.vo.OrderIndex
@@ -22,9 +21,8 @@ import java.util.*
  * @property updatedAt 更新日時
  */
 @Entity
-@Component
 @Table(name = "user_tier")
-class UserTier(
+open class UserTier(
     @Id val id: String = UUID.randomUUID().toString(),
     @Embedded
     @AttributeOverride(name = "value", column = Column(name = "anonymous_id", nullable = false))

@@ -2,7 +2,6 @@ package rankifyHub.category.domain.model
 
 import com.fasterxml.jackson.annotation.JsonBackReference
 import jakarta.persistence.*
-import org.springframework.stereotype.Component
 import java.util.*
 
 /**
@@ -18,9 +17,8 @@ import java.util.*
  * @property description アイテムの詳細情報。省略可能。
  */
 @Entity
-@Component
 @Table(name = "item")
-class Item(
+open class Item(
     @Id val id: String = UUID.randomUUID().toString(),
     @Column(nullable = false) val name: String = "",
     @Lob @Column(name = "image", columnDefinition = "BLOB") val image: ByteArray? = null,
