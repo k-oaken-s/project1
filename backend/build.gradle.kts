@@ -68,6 +68,7 @@ tasks.test {
 spotless {
     kotlin {
         ktfmt().googleStyle()
+        target("src/**/*.kt", "src/**/*.kts")
     }
 }
 

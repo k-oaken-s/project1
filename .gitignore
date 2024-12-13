@@ -8,9 +8,7 @@
 build/
 backend/bin/
 backend/out/
-!gradle/wrapper/gradle-wrapper.jar
-.gradle/
-backend/.gradle/
+!backend/gradle/wrapper/gradle-wrapper.jar
 
 # OS generated files
 .DS_Store
