@@ -10,11 +10,12 @@ import axios from "axios";
 import {useParams, useRouter} from "next/navigation";
 import React, {useCallback, useEffect, useMemo, useState} from "react";
 import ImageWrapper from "@/components/ImageWrapper";
+import {Category} from "@/types/Category";
 
 const {Title, Text} = Typography;
 
 // カテゴリヘッダー部分をメモ化
-const CategoryHeader = React.memo(function CategoryHeader({category}: { category: any }) {
+const CategoryHeader = React.memo(function CategoryHeader({category}: { category: Category }) {
     return (
         <div className="mb-8 p-6 bg-gray-800 rounded-lg shadow-lg">
             <h3 className="text-xl font-semibold">{category.name}</h3>
