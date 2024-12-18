@@ -7,6 +7,13 @@ RUN apt-get update && apt-get install -y default-mysql-client
 # 作業ディレクトリ
 WORKDIR /app
 
+# 初期化スクリプトをコピー
+COPY init.sql /app/init.sql
+COPY entrypoint.sh /app/entrypoint.sh
+
+# エントリーポイントスクリプトに実行権限を付与
+RUN chmod +x /app/entrypoint.sh
+
 # Gradleラッパーと設定ファイルをコピー
 COPY ./gradlew ./gradlew
 COPY ./gradle ./gradle
@@ -26,5 +33,5 @@ COPY build/libs/kotlin-project.jar app.jar
 # ポート番号を指定
 EXPOSE 8080
 
-# アプリケーションを起動
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# エントリーポイントを変更
+ENTRYPOINT ["/app/entrypoint.sh"]

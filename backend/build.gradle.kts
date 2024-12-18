@@ -32,7 +32,8 @@ dependencies {
     // Database dependencies
     implementation("mysql:mysql-connector-java:8.0.33")
     runtimeOnly("com.h2database:h2:2.2.222")
-
+    implementation("io.awspring.cloud:spring-cloud-aws-starter-parameterstore")
+    
     // Flyway
     implementation("org.flywaydb:flyway-core:10.10.0")
     implementation("org.flywaydb:flyway-mysql:10.10.0")
