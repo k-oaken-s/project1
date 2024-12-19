@@ -127,6 +127,7 @@ resource "aws_security_group_rule" "ecs_to_rds" {
     description              = "Allow ECS tasks to access RDS"
 }
 
+# RDS用プライベートサブネット (複数AZ対応)
 resource "aws_subnet" "db_subnet_1" {
     vpc_id            = aws_vpc.main.id
     cidr_block        = "10.0.101.0/24"
@@ -136,7 +137,7 @@ resource "aws_subnet" "db_subnet_1" {
 resource "aws_subnet" "db_subnet_2" {
     vpc_id            = aws_vpc.main.id
     cidr_block        = "10.0.102.0/24"
-    availability_zone = "ap-northeast-1a"  # コスト削減のため同一AZ
+    availability_zone = "ap-northeast-1c"  # 別のAZを指定
 }
 
 resource "aws_ecr_repository" "backend" {
@@ -209,8 +210,8 @@ resource "aws_ecs_task_definition" "rankify_hub" {
     family             = "RankifyHubTaskDef"
     network_mode       = "awsvpc"
     requires_compatibilities = ["FARGATE"]
-    cpu = "128"     # CPU削減
-    memory = "256"     # メモリ削減
+    cpu = "256"     # CPU削減
+    memory = "512"     # メモリ削減
     execution_role_arn = aws_iam_role.ecs_task_execution.arn
 
     container_definitions = jsonencode([
