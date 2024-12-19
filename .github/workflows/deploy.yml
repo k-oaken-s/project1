@@ -38,10 +38,21 @@ jobs:
                     docker build -t $IMAGE_URI .
                     docker push $IMAGE_URI
 
-            -   name: Deploy to ECS
-                uses: aws-actions/amazon-ecs-deploy-task-definition@v2
-                with:
-                    cluster: RankifyHubCluster
-                    service: RankifyHubService
-                    task-definition: task-definition.json
-                    wait-for-service-stability: true
+            -   name: Install Terraform
+                run: |
+                    curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+                    sudo apt-get update && sudo apt-get install -y gnupg software-properties-common
+                    sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+                    sudo apt-get update && sudo apt-get install -y terraform
+
+            -   name: Terraform Init
+                working-directory: ./infra
+                run: terraform init
+
+            -   name: Terraform Plan
+                working-directory: ./infra
+                run: terraform plan -out tfplan
+
+            -   name: Terraform Apply
+                working-directory: ./infra
+                run: terraform apply -auto-approve tfplan

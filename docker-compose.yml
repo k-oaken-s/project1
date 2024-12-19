@@ -25,9 +25,6 @@ services:
         ports:
             - "8080:8080"
         environment:
-            - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/my_database
-            - SPRING_DATASOURCE_USERNAME=root
-            - SPRING_DATASOURCE_PASSWORD=root_password
             - SPRING_DEVTOOLS_RESTART_ENABLED=true
             - SPRING_DEVTOOLS_RESTART_TRIGGER_FILE=.reload
         depends_on:
