@@ -8,7 +8,6 @@ RUN apt-get update && apt-get install -y default-mysql-client
 WORKDIR /app
 
 # 初期化スクリプトをコピー
-COPY init.sql /app/init.sql
 COPY entrypoint.sh /app/entrypoint.sh
 
 # エントリーポイントスクリプトに実行権限を付与
