@@ -1,0 +1,6 @@
+region            = "ap-northeast-1"
+aws_account_id    = "020873189351"
+db_admin_username = "admin"
+db_admin_password = "yourpassword"
+app_username      = "app-user"
+app_password      = "amurorei0079"
