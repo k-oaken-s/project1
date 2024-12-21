@@ -19,7 +19,7 @@ class UserTierPresenter(private val publicFileStorageRepository: PublicFileStora
       dto.categoryImage?.let { imageBytes ->
         publicFileStorageRepository.saveFile(
           "images/categories",
-          dto.userTier.categoryId,
+          dto.userTier.categoryId.toString(),
           imageBytes,
           "jpg"
         )

@@ -1,5 +1,6 @@
 package rankifyHub.category.presentation.controller
 
+import java.util.*
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
@@ -33,7 +34,7 @@ class CategoryController(
           description = category.description,
           image =
             category.image?.let {
-              this.publicFileStorageRepository.saveFile("images", category.id, it, "jpg")
+              this.publicFileStorageRepository.saveFile("images", category.id.toString(), it, "jpg")
             }
         )
       }
@@ -47,7 +48,7 @@ class CategoryController(
    * @return 指定されたカテゴリとそのアイテムのレスポンス
    */
   @GetMapping("/{categoryId}")
-  fun getCategoryWithItems(@PathVariable categoryId: String): ResponseEntity<CategoryResponse> {
+  fun getCategoryWithItems(@PathVariable categoryId: UUID): ResponseEntity<CategoryResponse> {
     val category = categoryUseCase.getCategoryWithItems(categoryId)
     val response =
       CategoryResponse(
@@ -56,7 +57,7 @@ class CategoryController(
         description = category.description,
         image =
           category.image?.let {
-            this.publicFileStorageRepository.saveFile("images", category.id, it, "jpg")
+            this.publicFileStorageRepository.saveFile("images", category.id.toString(), it, "jpg")
           },
         items =
           category.items.map { item ->
@@ -67,7 +68,7 @@ class CategoryController(
                 item.image?.let {
                   this.publicFileStorageRepository.saveFile(
                     "images",
-                    category.id + item.id,
+                    category.id.toString() + item.id.toString(),
                     it,
                     "jpg"
                   )
@@ -98,7 +99,7 @@ class CategoryController(
         description = category.description,
         image =
           category.image?.let {
-            this.publicFileStorageRepository.saveFile("images", category.id, it, "jpg")
+            this.publicFileStorageRepository.saveFile("images", category.id.toString(), it, "jpg")
           }
       )
     return ResponseEntity.ok(response)
@@ -114,7 +115,7 @@ class CategoryController(
    */
   @PostMapping("/{categoryId}/items")
   fun addItemToCategory(
-    @PathVariable categoryId: String,
+    @PathVariable categoryId: UUID,
     @RequestPart("item") itemJson: String,
     @RequestPart(value = "file", required = false) file: MultipartFile?
   ): ResponseEntity<ItemResponse> {
@@ -125,7 +126,12 @@ class CategoryController(
         name = item.name,
         image =
           item.image?.let {
-            this.publicFileStorageRepository.saveFile("images", categoryId + item.id, it, "jpg")
+            this.publicFileStorageRepository.saveFile(
+              "images",
+              categoryId.toString() + item.id.toString(),
+              it,
+              "jpg"
+            )
           }
       )
     return ResponseEntity.ok(response)
@@ -143,8 +149,8 @@ class CategoryController(
    */
   @PutMapping("/{categoryId}/items/{itemId}")
   fun updateItemInCategory(
-    @PathVariable categoryId: String,
-    @PathVariable itemId: String,
+    @PathVariable categoryId: UUID,
+    @PathVariable itemId: UUID,
     @RequestPart("item") itemJson: String,
     @RequestPart(value = "file", required = false) file: MultipartFile?,
     @RequestParam(value = "keepCurrentImage", defaultValue = "false") keepCurrentImage: Boolean
@@ -159,7 +165,7 @@ class CategoryController(
           updatedItem.image?.let {
             this.publicFileStorageRepository.saveFile(
               "images",
-              categoryId + updatedItem.id,
+              categoryId.toString() + updatedItem.id.toString(),
               it,
               "jpg"
             )

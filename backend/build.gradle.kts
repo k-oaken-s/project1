@@ -6,6 +6,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.6"
     id("application")
     id("com.diffplug.spotless") version "6.22.0"
+    id("org.flywaydb.flyway") version "10.10.0"
     kotlin("plugin.allopen") version "2.1.0"
 }
 
@@ -30,12 +31,12 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-jackson:0.11.5")
 
     // Database dependencies
-    implementation("mysql:mysql-connector-java:8.0.33")
-    runtimeOnly("com.h2database:h2:2.2.222")
+    implementation("org.postgresql:postgresql:42.7.4")
+    runtimeOnly("com.h2database:h2:2.3.232")
 
     // Flyway
-    implementation("org.flywaydb:flyway-core:10.10.0")
-    implementation("org.flywaydb:flyway-mysql:10.10.0")
+    implementation("org.flywaydb:flyway-core:11.1.0")
+    implementation("org.flywaydb:flyway-database-postgresql:11.1.0")
 
     // Test dependencies
     testImplementation("org.springframework.boot:spring-boot-starter-test")

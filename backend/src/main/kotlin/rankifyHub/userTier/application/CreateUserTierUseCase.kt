@@ -22,7 +22,8 @@ class CreateUserTierUseCase(
   @Transactional
   fun create(request: CreateUserTierRequest): UserTier {
     val anonymousId = AnonymousId(request.anonymousId)
-    val categoryId = String(request.categoryId.toByteArray(Charsets.UTF_8), Charsets.UTF_8)
+    val categoryId = UUID.fromString(request.categoryId)
+    //    val categoryId = String(request.categoryId.toByteArray(Charsets.UTF_8), Charsets.UTF_8)
     val name = UserTierName(request.name)
     val isPublic = request.isPublic
 

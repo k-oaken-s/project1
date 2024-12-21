@@ -10,47 +10,57 @@ import rankifyHub.userTier.domain.vo.OrderIndex
   name = "user_tier_level",
   uniqueConstraints = [UniqueConstraint(columnNames = ["user_tier_id", "order_index"])]
 )
-open class UserTierLevel(
-  @Id val id: String = UUID.randomUUID().toString(),
-  @ManyToOne(fetch = FetchType.LAZY)
+class UserTierLevel(
+  @Id @Column(name = "id", nullable = false, updatable = false) val id: UUID = UUID.randomUUID(),
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "user_tier_id", nullable = false)
-  var userTier: UserTier? = null,
-  @Column(name = "name", nullable = false) val name: String = "",
+  var userTier: UserTier,
+  @Column(name = "name", nullable = false) val name: String,
   @Embedded
-  @AttributeOverrides(
-    AttributeOverride(name = "value", column = Column(name = "order_index", nullable = false))
-  )
+  @AttributeOverride(name = "value", column = Column(name = "order_index", nullable = false))
   var orderIndex: OrderIndex = OrderIndex(1),
-  @Column(name = "created_at", nullable = false) val createdAt: Instant = Instant.now(),
-  @Column(name = "updated_at", nullable = false) val updatedAt: Instant = Instant.now(),
+  @Column(name = "created_at", nullable = false, updatable = false)
+  val createdAt: Instant = Instant.now(),
+  @Column(name = "updated_at", nullable = false) var updatedAt: Instant = Instant.now(),
   @OneToMany(
     mappedBy = "userTierLevel",
     cascade = [CascadeType.ALL],
     orphanRemoval = true,
     fetch = FetchType.LAZY
   )
-  val items: MutableList<UserTierLevelItem> = mutableListOf()
+  private var _items: MutableList<UserTierLevelItem> = mutableListOf()
 ) {
-  constructor() : this(id = UUID.randomUUID().toString())
 
+  val items: List<UserTierLevelItem>
+    get() = _items.toList()
+
+  /** アイテムを追加する */
   fun addItem(item: UserTierLevelItem) {
-    val nextOrder = items.maxOfOrNull { it.orderIndex.value }?.plus(1) ?: 1
+    val nextOrder = _items.maxOfOrNull { it.orderIndex.value }?.plus(1) ?: 1
     item.orderIndex = OrderIndex(nextOrder)
     item.userTierLevel = this
-    items.add(item)
+    _items.add(item)
   }
 
+  /** アイテムを削除する */
   fun removeItem(item: UserTierLevelItem) {
-    items.remove(item)
+    _items.remove(item)
     reorderItems()
   }
 
+  /** アイテムの順序を再整理する */
   private fun reorderItems() {
-    items.sortBy { it.orderIndex.value }
-    items.forEachIndexed { index, item -> item.updateOrder(OrderIndex(index + 1)) }
+    _items.sortBy { it.orderIndex.value }
+    _items.forEachIndexed { index, item -> item.updateOrder(OrderIndex(index + 1)) }
   }
 
+  /** 並び順を更新する */
   fun updateOrder(newOrder: OrderIndex) {
     this.orderIndex = newOrder
+  }
+
+  /** 更新日時をリフレッシュする */
+  fun refreshUpdatedAt() {
+    this.updatedAt = Instant.now()
   }
 }

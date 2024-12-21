@@ -19,16 +19,20 @@ import java.util.*
 @Entity
 @Table(name = "item")
 open class Item(
-  @Id val id: String = UUID.randomUUID().toString(),
-  @Column(nullable = false) val name: String = "",
-  @Lob @Column(name = "image", columnDefinition = "BLOB") val image: ByteArray? = null,
+  @Id
+  @GeneratedValue
+  @Column(columnDefinition = "UUID", updatable = false, nullable = false)
+  val id: UUID = UUID.randomUUID(),
+  @Column(nullable = false) var name: String = "",
+  @Lob var image: ByteArray? = null,
   @ManyToOne
   @JoinColumn(name = "category_id", nullable = false)
   @JsonBackReference
-  val category: Category,
-  @Column(name = "description", nullable = true, length = 255) val description: String? = null,
+  var category: Category? = null,
+  @Column(name = "description", nullable = true, length = 255) var description: String? = null,
 ) {
-  constructor() : this(id = "", name = "", image = null, category = Category(), description = null)
+  // デフォルトコンストラクタ（Hibernate用）
+  protected constructor() : this(name = "", category = null)
 
   companion object {
     fun create(
@@ -42,16 +46,13 @@ open class Item(
   }
 
   fun update(name: String, image: ByteArray?, description: String? = null): Item {
-    return Item(
-      id = this.id,
-      name = name,
-      image = image,
-      category = this.category,
-      description = description
-    )
+    this.name = name
+    this.image = image
+    this.description = description
+    return this
   }
 
   override fun toString(): String {
-    return "Item(id='$id', name='$name', description='${description}', category='${category.id}')"
+    return "Item(id=$id, name='$name', description=$description, category=${category?.id})"
   }
 }

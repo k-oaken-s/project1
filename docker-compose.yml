@@ -1,17 +1,16 @@
 services:
     db:
-        image: mysql:8.0
+        image: postgres:15.0
         environment:
-            MYSQL_ROOT_PASSWORD: root_password
-            MYSQL_DATABASE: my_database
-            MYSQL_USER: user
-            MYSQL_PASSWORD: password
+            POSTGRES_USER: user
+            POSTGRES_PASSWORD: password
+            POSTGRES_DB: my_database
         ports:
-            - "3306:3306"
+            - "5432:5432"
         networks:
             - app-network
         healthcheck:
-            test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+            test: [ "CMD-SHELL", "pg_isready -U user -d my_database" ]
             interval: 10s
             retries: 3
 
@@ -21,10 +20,14 @@ services:
             dockerfile: Dockerfile
         volumes:
             - ./backend:/app
-            - ~/.m2:/root/.m2 # Mavenキャッシュを共有
+            - ./backend/.gradle:/root/.gradle
+            - ~/.m2:/root/.m2
         ports:
             - "8080:8080"
         environment:
+            - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/my_database
+            - SPRING_DATASOURCE_USERNAME=user
+            - SPRING_DATASOURCE_PASSWORD=password
             - SPRING_DEVTOOLS_RESTART_ENABLED=true
             - SPRING_DEVTOOLS_RESTART_TRIGGER_FILE=.reload
         depends_on:
@@ -52,13 +55,17 @@ services:
         command: npm run dev
         container_name: frontend
 
-    phpmyadmin:
-        image: phpmyadmin/phpmyadmin
+    pgadmin:
+        image: dpage/pgadmin4
         environment:
-            PMA_HOST: db
-            MYSQL_ROOT_PASSWORD: root_password
+            PGADMIN_DEFAULT_EMAIL: admin@example.com
+            PGADMIN_DEFAULT_PASSWORD: admin
+            PGADMIN_CONFIG_SERVER_MODE: "False"
+            PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
         ports:
             - "8081:80"
+        volumes:
+            - ./servers.json:/pgadmin4/servers.json
         depends_on:
             - db
         networks:
