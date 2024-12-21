@@ -8,14 +8,14 @@ import rankifyHub.category.domain.repository.CategoryRepository
 
 /** Categoryリポジトリのインフラ層実装 */
 @Repository
-class CategoryRepositoryImpl(private val jpaRepository: JpaRepository<Category, String>) :
+class CategoryRepositoryImpl(private val jpaRepository: JpaRepository<Category, UUID>) :
   CategoryRepository {
 
   override fun findAll(): List<Category> = jpaRepository.findAll()
 
-  override fun findById(id: String): Optional<Category> = jpaRepository.findById(id)
+  override fun findById(id: UUID): Optional<Category> = jpaRepository.findById(id)
 
   override fun save(category: Category): Category = jpaRepository.save(category)
 
-  override fun deleteById(id: String) = jpaRepository.deleteById(id)
+  override fun deleteById(id: UUID) = jpaRepository.deleteById(id)
 }

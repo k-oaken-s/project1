@@ -18,7 +18,10 @@ import java.util.*
 @Entity
 @Table(name = "category")
 open class Category(
-  @Id val id: String = UUID.randomUUID().toString(),
+  @Id
+  @GeneratedValue
+  @Column(columnDefinition = "UUID", updatable = false, nullable = false)
+  val id: UUID = UUID.randomUUID(),
   @Column(nullable = false) val name: String = "",
   val description: String? = null,
   @Lob val image: ByteArray? = null,
@@ -31,12 +34,12 @@ open class Category(
     get() = _items.toList()
 
   override fun toString(): String {
-    return "Category(id='$id', name='$name', description=$description)"
+    return "Category(id=$id, name='$name', description=$description)"
   }
 
   companion object {
     fun create(name: String, description: String?, image: ByteArray?): Category {
-      return Category(name = name, description = description, image = image)
+      return Category(id = UUID.randomUUID(), name = name, description = description, image = image)
     }
   }
 
@@ -47,7 +50,7 @@ open class Category(
   }
 
   fun updateItem(
-    itemId: String,
+    itemId: UUID,
     name: String,
     image: ByteArray?,
     keepCurrentImage: Boolean,

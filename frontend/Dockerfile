@@ -1,20 +1,26 @@
-# frontend/Dockerfile
+# ビルドステージ
+FROM node:18-alpine as build
+
+WORKDIR /app
+
+# package.jsonとlockファイルをコピーして依存関係をインストール
+COPY package*.json ./
+RUN npm install --production
+
+# ソースコードをコピーしてビルド
+COPY . .
+ENV NODE_ENV=production
+RUN npm run build
+
+# 実行ステージ
 FROM node:18-alpine
 
 WORKDIR /app
 
-# package.jsonとpackage-lock.jsonをコピー
-COPY package*.json ./
+# ビルド成果物と必要なファイルのみをコピー
+COPY --from=build /app/.next /app/.next
+COPY --from=build /app/package*.json ./
+RUN npm install --production
 
-# 依存関係をインストール
-RUN npm install
-
-# ソースコードをコピー
-COPY . .
-
-# ビルド
-RUN npm run build
-
-# サーバー起動
 EXPOSE 3000
 CMD ["npm", "start"]

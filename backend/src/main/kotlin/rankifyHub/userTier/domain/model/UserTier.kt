@@ -23,11 +23,14 @@ import rankifyHub.userTier.domain.vo.UserTierName
 @Entity
 @Table(name = "user_tier")
 open class UserTier(
-  @Id val id: String = UUID.randomUUID().toString(),
+  @Id
+  @GeneratedValue
+  @Column(columnDefinition = "UUID", updatable = false, nullable = false)
+  val id: UUID = UUID.randomUUID(),
   @Embedded
   @AttributeOverride(name = "value", column = Column(name = "anonymous_id", nullable = false))
   val anonymousId: AnonymousId,
-  @Column(name = "category_id", nullable = false) val categoryId: String,
+  @Column(name = "category_id", nullable = false) val categoryId: UUID,
   @Embedded
   @AttributeOverride(name = "value", column = Column(name = "name", nullable = false))
   val name: UserTierName,
@@ -35,21 +38,23 @@ open class UserTier(
   @Embedded
   @AttributeOverride(name = "value", column = Column(name = "access_url", nullable = false))
   val accessUrl: AccessUrl,
-  @Column(name = "created_at", nullable = false) val createdAt: Instant = Instant.now(),
-  @Column(name = "updated_at", nullable = false) val updatedAt: Instant = Instant.now(),
+  @Column(name = "created_at", nullable = false, updatable = false)
+  val createdAt: Instant = Instant.now(),
+  @Column(name = "updated_at", nullable = false) var updatedAt: Instant = Instant.now(),
   @OneToMany(
     mappedBy = "userTier",
     cascade = [CascadeType.ALL],
     orphanRemoval = true,
     fetch = FetchType.LAZY
   )
-  private val levels: MutableList<UserTierLevel> = mutableListOf(),
+  private var levels: MutableList<UserTierLevel> = mutableListOf(),
 ) {
-  constructor() :
+  // Hibernate用のデフォルトコンストラクタ
+  protected constructor() :
     this(
-      UUID.randomUUID().toString(),
+      UUID.randomUUID(),
       AnonymousId(),
-      "",
+      UUID.randomUUID(),
       UserTierName(),
       false,
       AccessUrl(),
@@ -65,15 +70,21 @@ open class UserTier(
     level.orderIndex = OrderIndex(nextOrder)
     level.userTier = this
     levels.add(level)
+    updateTimestamp()
   }
 
   fun removeLevel(level: UserTierLevel) {
     levels.remove(level)
     reorderLevels()
+    updateTimestamp()
   }
 
   private fun reorderLevels() {
     levels.sortBy { it.orderIndex.value }
     levels.forEachIndexed { index, level -> level.updateOrder(OrderIndex(index + 1)) }
+  }
+
+  private fun updateTimestamp() {
+    updatedAt = Instant.now()
   }
 }

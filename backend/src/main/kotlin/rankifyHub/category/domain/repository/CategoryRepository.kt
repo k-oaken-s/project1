@@ -18,7 +18,7 @@ interface CategoryRepository {
    * @param id カテゴリーのID
    * @return 指定されたIDのカテゴリー（Optional）
    */
-  fun findById(id: String): Optional<Category>
+  fun findById(id: UUID): Optional<Category>
 
   /**
    * カテゴリーを保存します。
@@ -33,5 +33,5 @@ interface CategoryRepository {
    *
    * @param id 削除するカテゴリーのID
    */
-  fun deleteById(id: String)
+  fun deleteById(id: UUID)
 }

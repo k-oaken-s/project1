@@ -11,25 +11,41 @@ import rankifyHub.userTier.domain.vo.OrderIndex
   uniqueConstraints = [UniqueConstraint(columnNames = ["user_tier_level_id", "order_index"])]
 )
 open class UserTierLevelItem(
-  @Id val id: String = UUID.randomUUID().toString(),
+  @Id val id: UUID = UUID.randomUUID(),
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_tier_level_id", nullable = false)
-  var userTierLevel: UserTierLevel? = null,
+  var userTierLevel: UserTierLevel,
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_tier_id", nullable = false)
-  val userTier: UserTier? = null,
-  @Column(name = "item_id", nullable = false) val itemId: String,
+  val userTier: UserTier,
+  @Column(name = "item_id", nullable = false) val itemId: UUID,
   @Embedded
   @AttributeOverrides(
     AttributeOverride(name = "value", column = Column(name = "order_index", nullable = false))
   )
-  var orderIndex: OrderIndex = OrderIndex(1),
-  @Column(name = "created_at", nullable = false) val createdAt: Instant = Instant.now(),
-  @Column(name = "updated_at", nullable = false) val updatedAt: Instant = Instant.now()
+  var orderIndex: OrderIndex,
+  @Column(name = "created_at", nullable = false) val createdAt: Instant,
+  @Column(name = "updated_at", nullable = false) var updatedAt: Instant
 ) {
-  constructor() : this(itemId = "")
+  constructor(
+    userTierLevel: UserTierLevel,
+    userTier: UserTier,
+    itemId: UUID,
+    orderIndex: OrderIndex,
+    createdAt: Instant = Instant.now(),
+    updatedAt: Instant = Instant.now()
+  ) : this(
+    id = UUID.randomUUID(),
+    userTierLevel = userTierLevel,
+    userTier = userTier,
+    itemId = itemId,
+    orderIndex = orderIndex,
+    createdAt = createdAt,
+    updatedAt = updatedAt
+  )
 
   fun updateOrder(newOrder: OrderIndex) {
     this.orderIndex = newOrder
+    this.updatedAt = Instant.now()
   }
 }

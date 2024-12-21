@@ -22,7 +22,7 @@ class UserTierFactory {
    */
   fun create(
     anonymousId: AnonymousId,
-    categoryId: String,
+    categoryId: UUID,
     name: UserTierName,
     isPublic: Boolean,
     levels: List<UserTierLevelData>
@@ -45,7 +45,7 @@ class UserTierFactory {
             userTier = userTier,
             orderIndex = levelData.orderIndex
           )
-        userTier.getLevels().add(level)
+        userTier.addLevel(level) // 修正: addLevelを利用
         levelData.items
           .sortedBy { it.orderIndex.value }
           .forEach { itemData ->
@@ -53,10 +53,10 @@ class UserTierFactory {
               UserTierLevelItem(
                 userTierLevel = level,
                 userTier = userTier,
-                itemId = itemData.itemId.toString(),
+                itemId = itemData.itemId,
                 orderIndex = itemData.orderIndex
               )
-            level.items.add(item)
+            level.addItem(item) // 修正: addItemを利用
           }
       }
 

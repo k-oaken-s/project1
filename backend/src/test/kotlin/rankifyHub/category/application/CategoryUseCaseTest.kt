@@ -36,7 +36,7 @@ class CategoryUseCaseTest :
       // getCategoryWithItemsメソッドのテスト
       context("getCategoryWithItems") {
         it("指定されたIDのカテゴリを取得できること") {
-          val categoryId = UUID.randomUUID().toString()
+          val categoryId = UUID.randomUUID()
           val category = Category.create("Category1", "Description1", null)
           every { categoryRepository.findById(categoryId) } returns Optional.of(category)
 
@@ -47,7 +47,7 @@ class CategoryUseCaseTest :
         }
 
         it("カテゴリが見つからない場合に例外をスローすること") {
-          val categoryId = UUID.randomUUID().toString()
+          val categoryId = UUID.randomUUID()
           every { categoryRepository.findById(categoryId) } returns Optional.empty()
 
           shouldThrow<IllegalArgumentException> { categoryUseCase.getCategoryWithItems(categoryId) }
@@ -75,7 +75,7 @@ class CategoryUseCaseTest :
       // deleteCategoryメソッドのテスト
       context("deleteCategory") {
         it("指定されたIDのカテゴリを削除できること") {
-          val categoryId = UUID.randomUUID().toString()
+          val categoryId = UUID.randomUUID()
           every { categoryRepository.deleteById(categoryId) } just Runs
 
           categoryUseCase.deleteCategory(categoryId)
@@ -87,7 +87,7 @@ class CategoryUseCaseTest :
       // addItemToCategoryメソッドのテスト
       context("addItemToCategory") {
         it("カテゴリにアイテムを追加できること") {
-          val categoryId = UUID.randomUUID().toString()
+          val categoryId = UUID.randomUUID()
           val category = mockk<Category>()
           val item = Item.create("New Item", null, category, "")
           every { categoryRepository.findById(categoryId) } returns Optional.of(category)
@@ -103,7 +103,7 @@ class CategoryUseCaseTest :
         }
 
         it("カテゴリが見つからない場合に例外をスローすること") {
-          val categoryId = UUID.randomUUID().toString()
+          val categoryId = UUID.randomUUID()
           every { categoryRepository.findById(categoryId) } returns Optional.empty()
 
           shouldThrow<IllegalArgumentException> {
@@ -118,8 +118,8 @@ class CategoryUseCaseTest :
       // updateItemInCategoryメソッドのテスト
       context("updateItemInCategory") {
         it("カテゴリ内のアイテムを更新できること") {
-          val categoryId = UUID.randomUUID().toString()
-          val itemId = UUID.randomUUID().toString()
+          val categoryId = UUID.randomUUID()
+          val itemId = UUID.randomUUID()
           val category = mockk<Category>()
           val updatedItem = Item.create("Updated Item", null, category, "")
           every { categoryRepository.findById(categoryId) } returns Optional.of(category)
@@ -149,8 +149,8 @@ class CategoryUseCaseTest :
         }
 
         it("カテゴリが見つからない場合に例外をスローすること") {
-          val categoryId = UUID.randomUUID().toString()
-          val itemId = UUID.randomUUID().toString()
+          val categoryId = UUID.randomUUID()
+          val itemId = UUID.randomUUID()
           every { categoryRepository.findById(categoryId) } returns Optional.empty()
 
           shouldThrow<IllegalArgumentException> {

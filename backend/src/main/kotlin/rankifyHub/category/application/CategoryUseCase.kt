@@ -2,6 +2,7 @@ package rankifyHub.category.application
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.transaction.Transactional
+import java.util.*
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import rankifyHub.category.domain.model.Category
@@ -32,7 +33,7 @@ class CategoryUseCase(private val categoryRepository: CategoryRepository) {
    * @return 指定されたIDのカテゴリー
    * @throws IllegalArgumentException カテゴリーが見つからない場合
    */
-  fun getCategoryWithItems(id: String): Category =
+  fun getCategoryWithItems(id: UUID): Category =
     categoryRepository.findById(id).orElseThrow { IllegalArgumentException("Category not found") }
 
   /**
@@ -57,7 +58,7 @@ class CategoryUseCase(private val categoryRepository: CategoryRepository) {
    *
    * @param id 削除するカテゴリーのID
    */
-  fun deleteCategory(id: String) = categoryRepository.deleteById(id)
+  fun deleteCategory(id: UUID) = categoryRepository.deleteById(id)
 
   /**
    * カテゴリーにアイテムを追加します。
@@ -69,7 +70,7 @@ class CategoryUseCase(private val categoryRepository: CategoryRepository) {
    * @throws IllegalArgumentException カテゴリーが見つからない場合
    */
   @Transactional
-  fun addItemToCategory(categoryId: String, itemJson: String, imageBytes: ByteArray?): Item {
+  fun addItemToCategory(categoryId: UUID, itemJson: String, imageBytes: ByteArray?): Item {
     val category =
       categoryRepository.findById(categoryId).orElseThrow {
         IllegalArgumentException("Category not found")
@@ -93,8 +94,8 @@ class CategoryUseCase(private val categoryRepository: CategoryRepository) {
    */
   @Transactional
   fun updateItemInCategory(
-    categoryId: String,
-    itemId: String,
+    categoryId: UUID,
+    itemId: UUID,
     itemJson: String,
     file: MultipartFile?,
     keepCurrentImage: Boolean
