@@ -18,7 +18,7 @@ open class UserTierLevelItem(
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_tier_id", nullable = false)
   val userTier: UserTier,
-  @Column(name = "item_id", nullable = false) val itemId: String,
+  @Column(name = "item_id", nullable = false) val itemId: UUID,
   @Embedded
   @AttributeOverrides(
     AttributeOverride(name = "value", column = Column(name = "order_index", nullable = false))
@@ -30,7 +30,7 @@ open class UserTierLevelItem(
   constructor(
     userTierLevel: UserTierLevel,
     userTier: UserTier,
-    itemId: String,
+    itemId: UUID,
     orderIndex: OrderIndex,
     createdAt: Instant = Instant.now(),
     updatedAt: Instant = Instant.now()

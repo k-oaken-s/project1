@@ -41,7 +41,13 @@ open class Item(
       category: Category,
       description: String? = null
     ): Item {
-      return Item(name = name, image = image, category = category, description = description)
+      return Item(
+        id = UUID.randomUUID(),
+        name = name,
+        image = image,
+        category = category,
+        description = description
+      )
     }
   }
 

@@ -53,7 +53,7 @@ class UserTierFactory {
               UserTierLevelItem(
                 userTierLevel = level,
                 userTier = userTier,
-                itemId = itemData.itemId.toString(),
+                itemId = itemData.itemId,
                 orderIndex = itemData.orderIndex
               )
             level.addItem(item) // 修正: addItemを利用

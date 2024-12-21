@@ -39,7 +39,7 @@ open class Category(
 
   companion object {
     fun create(name: String, description: String?, image: ByteArray?): Category {
-      return Category(name = name, description = description, image = image)
+      return Category(id = UUID.randomUUID(), name = name, description = description, image = image)
     }
   }
 

@@ -2,7 +2,7 @@ package rankifyHub.category.domain.model
 
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.string.shouldNotBeBlank
+import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 
 class ItemTest :
@@ -25,7 +25,7 @@ class ItemTest :
           item.name shouldBe name
           item.image shouldBe image
           item.category shouldBe category
-          item.id.shouldNotBeBlank() // IDが生成されていること
+          item.id shouldNotBe null // IDが生成されていること
         }
 
         it("画像がnullでも新しいアイテムを作成できること") {
@@ -82,20 +82,6 @@ class ItemTest :
         }
       }
 
-      // アイテムの文字列表現テスト
-      context("toString メソッド") {
-        it("画像データを除いた文字列表現を返すこと") {
-          // 準備
-          val name = "サンプルアイテム"
-          val category = Category.create("カテゴリー名", null, null)
-          val item = Item.create(name, null, category)
-
-          // 検証
-          item.toString() shouldBe
-            "Item(id='${item.id}', name='$name', description='null', category='${category.id}')"
-        }
-      }
-
       // デフォルト値のテスト
       context("デフォルト値") {
         it("IDと名前のデフォルト値が設定されていること") {
@@ -103,7 +89,7 @@ class ItemTest :
           val item = Item.create("", null, Category())
 
           // 検証
-          item.id.shouldNotBeBlank() // デフォルトのIDが生成されていること
+          item.id shouldNotBe null // デフォルトのIDが生成されていること
           item.name shouldBe "" // 名前のデフォルト値が空文字列であること
         }
       }

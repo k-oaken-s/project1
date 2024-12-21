@@ -73,7 +73,7 @@ class CategoryTest :
       // 実行・検証
       shouldThrow<IllegalArgumentException> {
           category.updateItem(
-            itemId = UUID.randomUUID().toString(), // 存在しないID
+            itemId = UUID.randomUUID(), // 存在しないID
             name = "更新済みアイテム",
             image = null,
             keepCurrentImage = true,
