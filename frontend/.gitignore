@@ -1,19 +1,6 @@
-# Kotlin/Java specific
-*.jar
-*.war
-*.ear
-
-#gradle
-.gradle/
-gradle/
-!gradle/wrapper/gradle-wrapper.jar
-
 # OS generated files
 .DS_Store
 Thumbs.db
-
-# IntelliJ IDEA
-.idea/
 
 # VS Code
 .vscode/
@@ -22,6 +9,8 @@ Thumbs.db
 node_modules/
 npm-debug.log*
 yarn-error.log*
+.next/
+out/
 
 # Docker
 *.log
