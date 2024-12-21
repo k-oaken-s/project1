@@ -10,9 +10,10 @@ services:
         networks:
             - app-network
         healthcheck:
-            test: [ "CMD-SHELL", "pg_isready -U user -d my_database" ]
+            test: [ "CMD-SHELL", "pg_isready -U user -d my_database -h localhost || exit 1" ]
             interval: 10s
-            retries: 3
+            retries: 5
+            start_period: 30s
 
     backend:
         build:
@@ -21,7 +22,7 @@ services:
         volumes:
             - ./backend:/app
             - ./backend/.gradle:/root/.gradle
-            - ~/.m2:/root/.m2
+            - ${HOME}/.m2:/root/.m2
         ports:
             - "8080:8080"
         environment:
@@ -35,7 +36,7 @@ services:
                 condition: service_healthy
         networks:
             - app-network
-        command: ./gradlew bootRun
+        command: ./gradlew bootRun --no-daemon
         container_name: backend
 
     frontend:
@@ -45,9 +46,8 @@ services:
         ports:
             - "3000:3000"
         environment:
-            - NODE_ENV=production
-            - NEXT_PUBLIC_API_BASE_URL=http://localhost:8080
-            - API_BASE_URL=http://backend:8080
+            - NODE_ENV=development
+            - NEXT_PUBLIC_API_BASE_URL=http://backend:8080
         networks:
             - app-network
         volumes:

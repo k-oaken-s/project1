@@ -13,8 +13,6 @@ const nextConfig: NextConfig = {
     //     "ts"
     // ],
     webpack: (config, {isServer}) => {
-        // config.cache = false; // キャッシュを無効化
-
         if (!isServer) {
             config.resolve.fallback = {
                 ...config.resolve.fallback,

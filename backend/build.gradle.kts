@@ -4,7 +4,6 @@ plugins {
     id("org.jetbrains.kotlin.plugin.spring") version "1.9.25"
     id("org.springframework.boot") version "3.3.5"
     id("io.spring.dependency-management") version "1.1.6"
-    id("application")
     id("com.diffplug.spotless") version "6.22.0"
     id("org.flywaydb.flyway") version "10.10.0"
     kotlin("plugin.allopen") version "2.1.0"
@@ -18,11 +17,10 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-devtools")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.springframework.boot:spring-boot-starter-logging")
 
     // Kotlin dependencies
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.10")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.10")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.25")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.25")
 
     // JSON/JWT dependencies
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2")
@@ -36,14 +34,14 @@ dependencies {
 
     // Flyway
     implementation("org.flywaydb:flyway-core:11.1.0")
-    implementation("org.flywaydb:flyway-database-postgresql:11.1.0")
 
     // Test dependencies
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
-    testImplementation("io.kotest:kotest-runner-junit5:5.6.2")
-    testImplementation("io.kotest:kotest-assertions-core:5.6.2")
+    testImplementation("org.springframework.boot:spring-boot-starter-test") {
+        exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
+    }
+    testImplementation("io.kotest:kotest-property:5.9.0")
+    testImplementation("io.kotest:kotest-runner-junit5:5.9.0")
+    testImplementation("io.kotest:kotest-assertions-core:5.9.0")
     testImplementation("io.mockk:mockk:1.13.5")
 
     // AWS dependencies
@@ -64,8 +62,6 @@ kotlin {
 
 repositories {
     mavenCentral()
-    maven { url = uri("https://repo.spring.io/milestone") }
-    maven { url = uri("https://repo.spring.io/snapshot") }
 }
 
 tasks.test {
@@ -75,7 +71,7 @@ tasks.test {
 spotless {
     kotlin {
         ktfmt().googleStyle()
-        target("src/**/*.kt", "src/**/*.kts")
+        target("src/**/*.kt")
     }
 }
 
